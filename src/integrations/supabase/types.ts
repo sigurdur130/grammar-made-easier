@@ -87,6 +87,13 @@ export type Database = {
             referencedRelation: "subcategories"
             referencedColumns: ["subcategory"]
           },
+          {
+            foreignKeyName: "sentences_word_category_fkey"
+            columns: ["word_category"]
+            isOneToOne: false
+            referencedRelation: "word_categories"
+            referencedColumns: ["word_category"]
+          },
         ]
       }
       subcategories: {
