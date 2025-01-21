@@ -41,7 +41,6 @@ export type Database = {
           person: string | null
           subcategory: string | null
           "weak/strong": string | null
-          word_category: string | null
         }
         Insert: {
           base_form?: string | null
@@ -59,7 +58,6 @@ export type Database = {
           person?: string | null
           subcategory?: string | null
           "weak/strong"?: string | null
-          word_category?: string | null
         }
         Update: {
           base_form?: string | null
@@ -77,7 +75,6 @@ export type Database = {
           person?: string | null
           subcategory?: string | null
           "weak/strong"?: string | null
-          word_category?: string | null
         }
         Relationships: [
           {
