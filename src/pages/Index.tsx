@@ -1,13 +1,36 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useQuery } from "@tanstack/react-query";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
+import { CategoryCard } from "@/components/CategoryCard";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
+  const { data: subcategories } = useQuery({
+    queryKey: ["featuredSubcategories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subcategories")
+        .select("subcategory")
+        .limit(6);
+      if (error) throw error;
+      return data;
+    },
+  });
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full">
+        <AppSidebar />
+        <main className="flex-1 p-6">
+          <h1 className="text-3xl font-bold mb-6">Featured Categories</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {subcategories?.map((sub) => (
+              <CategoryCard key={sub.subcategory} title={sub.subcategory} />
+            ))}
+          </div>
+        </main>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
