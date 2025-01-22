@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, Folder } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Sidebar,
@@ -15,6 +16,8 @@ import {
 } from "@/components/ui/sidebar";
 
 export function AppSidebar() {
+  const navigate = useNavigate();
+
   const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ["wordCategories"],
     queryFn: async () => {
@@ -97,7 +100,14 @@ export function AppSidebar() {
                         (sub) => sub.word_category === category.word_category
                       )
                       .map((sub) => (
-                        <SidebarMenuSubButton key={sub.subcategory}>
+                        <SidebarMenuSubButton
+                          key={sub.subcategory}
+                          onClick={() =>
+                            navigate(
+                              `/exercises/${category.word_category}/${sub.subcategory}`
+                            )
+                          }
+                        >
                           {sub.subcategory}
                         </SidebarMenuSubButton>
                       ))}
