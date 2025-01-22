@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ExerciseCard } from "@/components/ExerciseCard";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 
 const Exercises = () => {
@@ -20,7 +21,7 @@ const Exercises = () => {
         .eq("word_category", category)
         .eq("subcategory", subcategory)
         .limit(6)
-        .order('id', { ascending: false });
+        .order('id');
 
       if (error) {
         console.error("Error fetching sentences:", error);
@@ -37,12 +38,15 @@ const Exercises = () => {
     }
   };
 
+  const progress = sentences ? ((currentIndex + 1) / sentences.length) * 100 : 0;
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <main className="flex-1 p-6">
           <div className="max-w-3xl mx-auto">
+            <Progress value={progress} className="mb-6" />
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-3xl font-bold">{subcategory}</h1>
               <div className="text-muted-foreground">
