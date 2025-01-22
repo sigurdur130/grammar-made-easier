@@ -1,5 +1,5 @@
 import { useState, useEffect, KeyboardEvent } from "react";
-import { Check, X, HelpCircle } from "lucide-react";
+import { Check, X, HelpCircle, Eye } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
 
   useEffect(() => {
     // Reset state when sentence changes
@@ -29,6 +30,7 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
     setIsCorrect(null);
     setShowHint(false);
     setIsTyping(false);
+    setShowAnswer(false);
   }, [sentence]);
 
   const handleCheck = () => {
@@ -69,15 +71,22 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
         </div>
 
         {showHint && (
-          <div className="bg-[#EDF2F7] p-4 mb-6 rounded-lg">
-            <p className="text-[#4A5568] mb-4">{hint}</p>
-            <Button
-              variant="outline"
-              onClick={() => setAnswer(sentence.correct_answer || "")}
-              className="text-[#6B46C1] hover:bg-[#E9D8FD] hover:text-[#553C9A] border-[#6B46C1]"
-            >
-              Show Answer
-            </Button>
+          <div className="bg-[#FFF9E5] p-4 mb-6 rounded-lg">
+            <div className="flex justify-between items-center">
+              <p className="text-[#B45309]">{hint}</p>
+              <button
+                onClick={() => setShowAnswer(!showAnswer)}
+                className="flex items-center gap-2 text-[#B45309] hover:text-[#92400E]"
+              >
+                <Eye className="h-4 w-4" />
+                <span>{showAnswer ? "Hide Answer" : "Show Answer"}</span>
+              </button>
+            </div>
+            {showAnswer && (
+              <p className="mt-2 text-[#B45309] font-medium">
+                Answer: {sentence.correct_answer}
+              </p>
+            )}
           </div>
         )}
 
@@ -92,13 +101,13 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
                 value={answer}
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
-                className={`w-64 text-center border-t-0 border-x-0 rounded-none focus:ring-0 ${
+                className={`w-64 text-center border-t-0 border-x-0 rounded-none focus:ring-0 bg-[#F8FAFF] ${
                   isCorrect === true
                     ? "border-green-500 bg-green-50"
                     : isCorrect === false
                     ? "border-red-200 bg-red-50"
                     : "border-b-2 border-[#CBD5E0] hover:border-[#6B46C1] focus:border-[#6B46C1]"
-                } placeholder:text-[#A0AEC0]`}
+                } placeholder:text-[#A0AEC0] focus:outline-none`}
                 placeholder={!isTyping ? sentence.base_form || "" : ""}
               />
               {isCorrect === true && (
