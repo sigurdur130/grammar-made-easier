@@ -126,7 +126,7 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
             onClick={handleCheck}
             className="bg-[#6B46C1] hover:bg-[#553C9A] text-white px-8"
           >
-            Check Answer
+            Check
           </Button>
         </div>
       </CardContent>
