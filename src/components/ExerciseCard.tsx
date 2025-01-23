@@ -101,13 +101,13 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
                 value={answer}
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
-                className={`w-64 text-center border-t-0 border-x-0 rounded-none focus:ring-0 bg-[#F8FAFF] ${
+                className={`w-64 text-center border-t-0 border-x-0 rounded-none focus:ring-0 focus:outline-none bg-[#F8FAFF] ${
                   isCorrect === true
                     ? "border-green-500 bg-green-50"
                     : isCorrect === false
                     ? "border-red-200 bg-red-50"
                     : "border-b-2 border-[#CBD5E0] hover:border-[#6B46C1] focus:border-[#6B46C1]"
-                } placeholder:text-[#A0AEC0] focus:outline-none`}
+                } placeholder:text-[#A0AEC0]`}
                 placeholder={!isTyping ? sentence.base_form || "" : ""}
               />
               {isCorrect === true && (
