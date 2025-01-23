@@ -60,41 +60,13 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
       <CardContent className="pt-6">
         <div className="flex justify-between items-start mb-6">
           <h2 className="text-2xl font-semibold text-[#2D3748]">Gender Recognition</h2>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowHint(!showHint)}
-            className="rounded-full hover:bg-[#EDF2F7]"
-          >
-            <HelpCircle className="h-5 w-5 text-[#718096]" />
-          </Button>
         </div>
-
-        {showHint && (
-          <div className="bg-[#FFF9E5] p-4 mb-6 rounded-lg">
-            <div className="flex justify-between items-center">
-              <p className="text-[#B45309]">{hint}</p>
-              <button
-                onClick={() => setShowAnswer(!showAnswer)}
-                className="flex items-center gap-2 text-[#B45309] hover:text-[#92400E]"
-              >
-                <Eye className="h-4 w-4" />
-                <span>{showAnswer ? "Hide Answer" : "Show Answer"}</span>
-              </button>
-            </div>
-            {showAnswer && (
-              <p className="mt-2 text-[#B45309] font-medium">
-                Answer: {sentence.correct_answer}
-              </p>
-            )}
-          </div>
-        )}
 
         <div className="mb-8">
           <p className="text-[#718096] italic mb-6">
             {sentence.english_translation}
           </p>
-          <div className="flex items-center gap-2 text-lg">
+          <div className="flex items-center gap-2 text-lg mb-4">
             <span className="text-[#2D3748]">{sentence.icelandic_left}</span>
             <div className="relative">
               <Input
@@ -119,9 +91,37 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
             </div>
             <span className="text-[#2D3748]">{sentence.icelandic_right}</span>
           </div>
+
+          {showHint && (
+            <div className="bg-[#FFF9E5] p-4 mb-6 rounded-lg">
+              <div className="flex justify-between items-center">
+                <p className="text-[#B45309]">{hint}</p>
+                <button
+                  onClick={() => setShowAnswer(!showAnswer)}
+                  className="flex items-center gap-2 text-[#B45309] hover:text-[#92400E]"
+                >
+                  <Eye className="h-4 w-4" />
+                  <span>{showAnswer ? "Hide Answer" : "Show Answer"}</span>
+                </button>
+              </div>
+              {showAnswer && (
+                <p className="mt-2 text-[#B45309] font-medium">
+                  Answer: {sentence.correct_answer}
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-4">
+          <Button
+            onClick={() => setShowHint(!showHint)}
+            variant="outline"
+            className="border-[#6B46C1] text-[#6B46C1] hover:bg-[#6B46C1] hover:text-white"
+          >
+            <HelpCircle className="h-4 w-4" />
+            Hint
+          </Button>
           <Button
             onClick={handleCheck}
             className="bg-[#6B46C1] hover:bg-[#553C9A] text-white px-8"
