@@ -91,18 +91,18 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
 
         <div className="flex justify-center gap-4">
           <Button
+            onClick={handleCheck}
+            className="bg-[#6B46C1] hover:bg-[#553C9A] text-white px-8"
+          >
+            Check
+          </Button>
+          <Button
             onClick={() => setShowHint(!showHint)}
             variant="outline"
             className="border-[#6B46C1] text-[#6B46C1] hover:bg-[#6B46C1] hover:text-white"
           >
             <HelpCircle className="h-4 w-4" />
             Hint
-          </Button>
-          <Button
-            onClick={handleCheck}
-            className="bg-[#6B46C1] hover:bg-[#553C9A] text-white px-8"
-          >
-            Check
           </Button>
         </div>
       </CardContent>
