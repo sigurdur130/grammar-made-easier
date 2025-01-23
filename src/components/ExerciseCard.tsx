@@ -1,8 +1,9 @@
 import { useState, useEffect, KeyboardEvent } from "react";
-import { Check, X, HelpCircle, Eye } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { HintDisplay } from "./exercise/HintDisplay";
+import { ExerciseInput } from "./exercise/ExerciseInput";
 
 interface ExerciseCardProps {
   sentence: {
@@ -25,7 +26,6 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
   const [showAnswer, setShowAnswer] = useState(false);
 
   useEffect(() => {
-    // Reset state when sentence changes
     setAnswer("");
     setIsCorrect(null);
     setShowHint(false);
@@ -68,48 +68,24 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
           </p>
           <div className="flex items-center gap-2 text-lg mb-4">
             <span className="text-[#2D3748]">{sentence.icelandic_left}</span>
-            <div className="relative">
-              <Input
-                value={answer}
-                onChange={handleInputChange}
-                onKeyPress={handleKeyPress}
-                className={`w-64 text-center border-t-0 border-x-0 rounded-none focus:ring-0 focus:outline-none bg-[#F8FAFF] ${
-                  isCorrect === true
-                    ? "border-green-500 bg-green-50"
-                    : isCorrect === false
-                    ? "border-red-200 bg-red-50"
-                    : "border-b-2 border-[#CBD5E0] hover:border-[#6B46C1] focus:border-[#6B46C1]"
-                } placeholder:text-[#A0AEC0]`}
-                placeholder={!isTyping ? sentence.base_form || "" : ""}
-              />
-              {isCorrect === true && (
-                <Check className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
-              )}
-              {isCorrect === false && (
-                <X className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-red-500" />
-              )}
-            </div>
+            <ExerciseInput
+              answer={answer}
+              isCorrect={isCorrect}
+              isTyping={isTyping}
+              baseForm={sentence.base_form}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+            />
             <span className="text-[#2D3748]">{sentence.icelandic_right}</span>
           </div>
 
           {showHint && (
-            <div className="bg-[#FFF9E5] p-4 mb-6 rounded-lg">
-              <div className="flex justify-between items-center">
-                <p className="text-[#B45309]">{hint}</p>
-                <button
-                  onClick={() => setShowAnswer(!showAnswer)}
-                  className="flex items-center gap-2 text-[#B45309] hover:text-[#92400E]"
-                >
-                  <Eye className="h-4 w-4" />
-                  <span>{showAnswer ? "Hide Answer" : "Show Answer"}</span>
-                </button>
-              </div>
-              {showAnswer && (
-                <p className="mt-2 text-[#B45309] font-medium">
-                  Answer: {sentence.correct_answer}
-                </p>
-              )}
-            </div>
+            <HintDisplay
+              hint={hint}
+              showAnswer={showAnswer}
+              correctAnswer={sentence.correct_answer}
+              onToggleAnswer={() => setShowAnswer(!showAnswer)}
+            />
           )}
         </div>
 
