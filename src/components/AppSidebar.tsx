@@ -15,7 +15,7 @@ export function AppSidebar() {
       console.log("Fetching word categories...");
       const { data, error } = await supabase
         .from("word_categories")
-        .select("word_category");
+        .select("word_category, created_at, id");
       if (error) {
         console.error("Error fetching categories:", error);
         throw error;
@@ -31,7 +31,7 @@ export function AppSidebar() {
       console.log("Fetching subcategories...");
       const { data, error } = await supabase
         .from("subcategories")
-        .select("subcategory, word_category");
+        .select("subcategory, word_category, created_at, id");
       if (error) {
         console.error("Error fetching subcategories:", error);
         throw error;
