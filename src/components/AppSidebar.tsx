@@ -18,7 +18,7 @@ import { useState } from "react";
 
 export function AppSidebar() {
   const navigate = useNavigate();
-  const [openCategories, setOpenCategories] = useState<string[]>([]);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
 
   const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ["wordCategories"],
@@ -53,11 +53,7 @@ export function AppSidebar() {
   });
 
   const toggleCategory = (category: string) => {
-    setOpenCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
-    );
+    setOpenCategory(openCategory === category ? null : category);
   };
 
   if (categoriesLoading || subcategoriesLoading) {
@@ -101,17 +97,17 @@ export function AppSidebar() {
                 <SidebarMenuItem key={category.word_category}>
                   <SidebarMenuButton
                     onClick={() => toggleCategory(category.word_category)}
-                    className={openCategories.includes(category.word_category) ? "bg-accent" : ""}
+                    className={openCategory === category.word_category ? "bg-accent" : ""}
                   >
                     <span>{category.word_category}</span>
                     <ChevronDown 
                       className={`ml-auto h-4 w-4 transition-transform duration-300 ease-in-out ${
-                        openCategories.includes(category.word_category) ? "rotate-180" : ""
+                        openCategory === category.word_category ? "rotate-180" : ""
                       }`}
                     />
                   </SidebarMenuButton>
                   <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                    openCategories.includes(category.word_category) ? "max-h-96" : "max-h-0"
+                    openCategory === category.word_category ? "max-h-96" : "max-h-0"
                   }`}>
                     <SidebarMenuSub>
                       {subcategories
@@ -126,7 +122,7 @@ export function AppSidebar() {
                                 `/exercises/${category.word_category}/${sub.subcategory}`
                               )
                             }
-                            className="cursor-pointer hover:underline"
+                            className="cursor-pointer"
                           >
                             {sub.subcategory}
                           </SidebarMenuSubButton>
