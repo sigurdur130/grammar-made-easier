@@ -14,9 +14,11 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
+import { useState } from "react";
 
 export function AppSidebar() {
   const navigate = useNavigate();
+  const [openCategories, setOpenCategories] = useState<string[]>([]);
 
   const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ["wordCategories"],
@@ -49,6 +51,14 @@ export function AppSidebar() {
       return data;
     },
   });
+
+  const toggleCategory = (category: string) => {
+    setOpenCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
 
   if (categoriesLoading || subcategoriesLoading) {
     return (
@@ -89,29 +99,38 @@ export function AppSidebar() {
             <SidebarMenu>
               {categories?.map((category) => (
                 <SidebarMenuItem key={category.word_category}>
-                  <SidebarMenuButton>
+                  <SidebarMenuButton
+                    onClick={() => toggleCategory(category.word_category)}
+                    className={openCategories.includes(category.word_category) ? "bg-accent" : ""}
+                  >
                     <Folder className="h-4 w-4" />
                     <span>{category.word_category}</span>
-                    <ChevronDown className="ml-auto h-4 w-4" />
+                    <ChevronDown 
+                      className={`ml-auto h-4 w-4 transition-transform duration-200 ${
+                        openCategories.includes(category.word_category) ? "rotate-180" : ""
+                      }`}
+                    />
                   </SidebarMenuButton>
-                  <SidebarMenuSub>
-                    {subcategories
-                      ?.filter(
-                        (sub) => sub.word_category === category.word_category
-                      )
-                      .map((sub) => (
-                        <SidebarMenuSubButton
-                          key={sub.subcategory}
-                          onClick={() =>
-                            navigate(
-                              `/exercises/${category.word_category}/${sub.subcategory}`
-                            )
-                          }
-                        >
-                          {sub.subcategory}
-                        </SidebarMenuSubButton>
-                      ))}
-                  </SidebarMenuSub>
+                  {openCategories.includes(category.word_category) && (
+                    <SidebarMenuSub>
+                      {subcategories
+                        ?.filter(
+                          (sub) => sub.word_category === category.word_category
+                        )
+                        .map((sub) => (
+                          <SidebarMenuSubButton
+                            key={sub.subcategory}
+                            onClick={() =>
+                              navigate(
+                                `/exercises/${category.word_category}/${sub.subcategory}`
+                              )
+                            }
+                          >
+                            {sub.subcategory}
+                          </SidebarMenuSubButton>
+                        ))}
+                    </SidebarMenuSub>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
