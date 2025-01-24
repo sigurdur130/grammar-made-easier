@@ -10,7 +10,7 @@ const Index = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("subcategories")
-        .select("subcategory")
+        .select("subcategory, word_category")
         .limit(6);
       if (error) throw error;
       return data;
@@ -25,7 +25,11 @@ const Index = () => {
           <h1 className="text-3xl font-bold mb-6">Featured Categories</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {subcategories?.map((sub) => (
-              <CategoryCard key={sub.subcategory} title={sub.subcategory} />
+              <CategoryCard 
+                key={sub.subcategory} 
+                title={sub.subcategory || ''} 
+                category={sub.word_category || ''}
+              />
             ))}
           </div>
         </main>
