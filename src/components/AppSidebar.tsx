@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, Folder } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -103,15 +103,16 @@ export function AppSidebar() {
                     onClick={() => toggleCategory(category.word_category)}
                     className={openCategories.includes(category.word_category) ? "bg-accent" : ""}
                   >
-                    <Folder className="h-4 w-4" />
                     <span>{category.word_category}</span>
                     <ChevronDown 
-                      className={`ml-auto h-4 w-4 transition-transform duration-200 ${
+                      className={`ml-auto h-4 w-4 transition-transform duration-300 ease-in-out ${
                         openCategories.includes(category.word_category) ? "rotate-180" : ""
                       }`}
                     />
                   </SidebarMenuButton>
-                  {openCategories.includes(category.word_category) && (
+                  <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                    openCategories.includes(category.word_category) ? "max-h-96" : "max-h-0"
+                  }`}>
                     <SidebarMenuSub>
                       {subcategories
                         ?.filter(
@@ -125,12 +126,13 @@ export function AppSidebar() {
                                 `/exercises/${category.word_category}/${sub.subcategory}`
                               )
                             }
+                            className="cursor-pointer hover:underline"
                           >
                             {sub.subcategory}
                           </SidebarMenuSubButton>
                         ))}
                     </SidebarMenuSub>
-                  )}
+                  </div>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
