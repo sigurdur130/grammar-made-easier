@@ -1,20 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSkeleton,
-} from "@/components/ui/sidebar";
 import { useState } from "react";
+import { LoadingSkeleton } from "./sidebar/LoadingSkeleton";
+import { CategoryList } from "./sidebar/CategoryList";
 
 export function AppSidebar() {
   const navigate = useNavigate();
@@ -56,85 +45,21 @@ export function AppSidebar() {
     setOpenCategory(openCategory === category ? null : category);
   };
 
-  if (categoriesLoading || subcategoriesLoading) {
-    return (
-      <Sidebar>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {[1, 2, 3].map((i) => (
-                  <SidebarMenuSkeleton key={i} showIcon />
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
-    );
-  }
+  const handleSubcategoryClick = (category: string, subcategory: string) => {
+    navigate(`/exercises/${category}/${subcategory}`);
+  };
 
-  if (!categories?.length) {
-    console.log("No categories found");
-    return (
-      <Sidebar>
-        <SidebarContent>
-          <div className="p-4 text-sm text-muted-foreground">
-            No categories available
-          </div>
-        </SidebarContent>
-      </Sidebar>
-    );
+  if (categoriesLoading || subcategoriesLoading) {
+    return <LoadingSkeleton />;
   }
 
   return (
-    <Sidebar>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {categories?.map((category) => (
-                <SidebarMenuItem key={category.word_category}>
-                  <SidebarMenuButton
-                    onClick={() => toggleCategory(category.word_category)}
-                    className={openCategory === category.word_category ? "bg-accent" : ""}
-                  >
-                    <span>{category.word_category}</span>
-                    <ChevronDown 
-                      className={`ml-auto h-4 w-4 transition-transform duration-300 ease-in-out ${
-                        openCategory === category.word_category ? "rotate-180" : ""
-                      }`}
-                    />
-                  </SidebarMenuButton>
-                  <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                    openCategory === category.word_category ? "max-h-96" : "max-h-0"
-                  }`}>
-                    <SidebarMenuSub>
-                      {subcategories
-                        ?.filter(
-                          (sub) => sub.word_category === category.word_category
-                        )
-                        .map((sub) => (
-                          <SidebarMenuSubButton
-                            key={sub.subcategory}
-                            onClick={() =>
-                              navigate(
-                                `/exercises/${category.word_category}/${sub.subcategory}`
-                              )
-                            }
-                            className="cursor-pointer"
-                          >
-                            {sub.subcategory}
-                          </SidebarMenuSubButton>
-                        ))}
-                    </SidebarMenuSub>
-                  </div>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+    <CategoryList
+      categories={categories || []}
+      subcategories={subcategories || []}
+      openCategory={openCategory}
+      onToggleCategory={toggleCategory}
+      onSubcategoryClick={handleSubcategoryClick}
+    />
   );
 }
