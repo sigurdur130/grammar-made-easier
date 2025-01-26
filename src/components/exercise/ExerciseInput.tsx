@@ -33,7 +33,7 @@ export function ExerciseInput({
             ? "border-red-200 bg-red-50"
             : "border-b-2 border-[#CBD5E0] hover:border-[#6B46C1] focus:border-[#6B46C1]"
         } placeholder:text-[#A0AEC0] ${
-          shake ? "animate-[shake_0.5s_ease-in-out]"
+          shake ? "animate-[shake_0.5s_ease-in-out]" : ""
         }`}
         placeholder={!isTyping ? baseForm || "" : ""}
       />
