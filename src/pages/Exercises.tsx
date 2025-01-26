@@ -15,7 +15,7 @@ const Exercises = () => {
   const [seenSentenceIds, setSeenSentenceIds] = useState<number[]>([]);
   const [isCompleted, setIsCompleted] = useState(false);
 
-  const { data: sentences, refetch } = useQuery({
+  const { data: sentences, isLoading, refetch } = useQuery({
     queryKey: ["sentences", category, subcategory, seenSentenceIds],
     queryFn: async () => {
       console.log("Fetching sentences for:", category, subcategory);
@@ -77,6 +77,8 @@ const Exercises = () => {
                 onContinue={handleContinue}
                 answeredCount={answeredCount}
               />
+            ) : isLoading ? (
+              <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
             ) : sentences && sentences.length > 0 ? (
               <ExerciseCard 
                 sentence={sentences[currentIndex]} 
