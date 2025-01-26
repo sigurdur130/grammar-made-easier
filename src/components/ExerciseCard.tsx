@@ -93,14 +93,14 @@ export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardP
             <span className="text-[#2D3748]">{sentence.icelandic_right}</span>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div className="flex flex-wrap gap-1.5 mb-6">
             {icelandicChars.map((char) => (
               <Button
                 key={char}
                 variant="outline"
                 size="sm"
                 onClick={() => insertCharacter(char)}
-                className="min-w-8 h-8 p-0"
+                className="min-w-6 h-6 p-0 text-xs"
               >
                 {char}
               </Button>
