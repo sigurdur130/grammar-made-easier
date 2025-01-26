@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 const Exercises = () => {
   const { category, subcategory } = useParams();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [answeredCount, setAnsweredCount] = useState(0);
 
   const { data: sentences, isLoading } = useQuery({
     queryKey: ["sentences", category, subcategory],
@@ -38,7 +39,12 @@ const Exercises = () => {
     }
   };
 
-  const progress = sentences ? ((currentIndex + 1) / sentences.length) * 100 : 0;
+  const handleCorrectAnswer = () => {
+    setAnsweredCount(answeredCount + 1);
+    setTimeout(handleNext, 500); // Reduced from 1000ms to 500ms
+  };
+
+  const progress = sentences ? ((answeredCount) / sentences.length) * 100 : 0;
 
   return (
     <SidebarProvider>
@@ -47,19 +53,13 @@ const Exercises = () => {
         <main className="flex-1 p-6">
           <div className="max-w-3xl mx-auto">
             <Progress value={progress} className="mb-6" />
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold">{subcategory}</h1>
-              <div className="text-muted-foreground">
-                Progress: {currentIndex + 1}/{sentences?.length || 6}
-              </div>
-            </div>
-            
             {isLoading ? (
               <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
             ) : sentences && sentences.length > 0 ? (
               <ExerciseCard 
                 sentence={sentences[currentIndex]} 
-                onCorrect={handleNext}
+                onCorrect={handleCorrectAnswer}
+                subcategory={subcategory || ''}
               />
             ) : null}
           </div>

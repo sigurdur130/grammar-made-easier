@@ -16,14 +16,16 @@ interface ExerciseCardProps {
     gender: string | null;
   };
   onCorrect?: () => void;
+  subcategory: string;
 }
 
-export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
+export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardProps) {
   const [answer, setAnswer] = useState("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [shake, setShake] = useState(false);
 
   useEffect(() => {
     setAnswer("");
@@ -31,13 +33,17 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
     setShowHint(false);
     setIsTyping(false);
     setShowAnswer(false);
+    setShake(false);
   }, [sentence]);
 
   const handleCheck = () => {
     const correct = answer.toLowerCase().trim() === sentence.correct_answer?.toLowerCase().trim();
     setIsCorrect(correct);
     if (correct && onCorrect) {
-      setTimeout(onCorrect, 1000);
+      onCorrect();
+    } else {
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
     }
   };
 
@@ -53,13 +59,20 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
     setIsTyping(value.length > 0);
   };
 
+  const insertCharacter = (char: string) => {
+    setAnswer(prev => prev + char);
+    setIsTyping(true);
+  };
+
   const hint = `${sentence.base_form} (${sentence.english_translation}) is a ${sentence.gender} noun in Icelandic`;
+
+  const icelandicChars = ['á', 'é', 'í', 'ó', 'ú', 'ý', 'þ', 'ð', 'æ', 'ö'];
 
   return (
     <Card className="w-full max-w-3xl mx-auto bg-[#F8FAFF] border-none shadow-lg">
       <CardContent className="pt-6">
         <div className="flex justify-between items-start mb-6">
-          <h2 className="text-2xl font-semibold text-[#2D3748]">Gender Recognition</h2>
+          <h2 className="text-2xl font-semibold text-[#2D3748]">{subcategory}</h2>
         </div>
 
         <div className="mb-8">
@@ -75,8 +88,23 @@ export function ExerciseCard({ sentence, onCorrect }: ExerciseCardProps) {
               baseForm={sentence.base_form}
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
+              shake={shake}
             />
             <span className="text-[#2D3748]">{sentence.icelandic_right}</span>
+          </div>
+
+          <div className="flex flex-wrap gap-2 mb-6">
+            {icelandicChars.map((char) => (
+              <Button
+                key={char}
+                variant="outline"
+                size="sm"
+                onClick={() => insertCharacter(char)}
+                className="min-w-8 h-8 p-0"
+              >
+                {char}
+              </Button>
+            ))}
           </div>
 
           {showHint && (
