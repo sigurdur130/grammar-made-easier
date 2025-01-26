@@ -1,9 +1,9 @@
 import { useState, useEffect, KeyboardEvent } from "react";
-import { HelpCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { HintDisplay } from "./exercise/HintDisplay";
-import { ExerciseInput } from "./exercise/ExerciseInput";
+import { ExerciseContent } from "./exercise/ExerciseContent";
+import { CharacterButtons } from "./exercise/CharacterButtons";
+import { ActionButtons } from "./exercise/ActionButtons";
 
 interface ExerciseCardProps {
   sentence: {
@@ -66,73 +66,38 @@ export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardP
 
   const hint = `${sentence.base_form} (${sentence.english_translation}) is a ${sentence.gender} noun in Icelandic`;
 
-  const icelandicChars = ['á', 'é', 'í', 'ó', 'ú', 'ý', 'þ', 'ð', 'æ', 'ö'];
-
   return (
     <Card className="w-full max-w-3xl mx-auto bg-[#F8FAFF] border-none shadow-lg">
       <CardContent className="pt-6">
-        <div className="flex justify-between items-start mb-6">
+        <div className="mb-6">
           <h2 className="text-2xl font-semibold text-[#2D3748]">{subcategory}</h2>
         </div>
 
-        <div className="mb-8">
-          <p className="text-[#718096] italic mb-6">
-            {sentence.english_translation}
-          </p>
-          <div className="flex items-center gap-2 text-lg mb-4">
-            <span className="text-[#2D3748]">{sentence.icelandic_left}</span>
-            <ExerciseInput
-              answer={answer}
-              isCorrect={isCorrect}
-              isTyping={isTyping}
-              baseForm={sentence.base_form}
-              onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
-              shake={shake}
-            />
-            <span className="text-[#2D3748]">{sentence.icelandic_right}</span>
-          </div>
+        <ExerciseContent
+          sentence={sentence}
+          answer={answer}
+          isCorrect={isCorrect}
+          isTyping={isTyping}
+          shake={shake}
+          onInputChange={handleInputChange}
+          onKeyPress={handleKeyPress}
+        />
 
-          <div className="flex flex-wrap gap-1.5 mb-6">
-            {icelandicChars.map((char) => (
-              <Button
-                key={char}
-                variant="outline"
-                size="sm"
-                onClick={() => insertCharacter(char)}
-                className="min-w-6 h-6 p-0 text-xs"
-              >
-                {char}
-              </Button>
-            ))}
-          </div>
+        <CharacterButtons onCharacterClick={insertCharacter} />
 
-          {showHint && (
-            <HintDisplay
-              hint={hint}
-              showAnswer={showAnswer}
-              correctAnswer={sentence.correct_answer}
-              onToggleAnswer={() => setShowAnswer(!showAnswer)}
-            />
-          )}
-        </div>
+        {showHint && (
+          <HintDisplay
+            hint={hint}
+            showAnswer={showAnswer}
+            correctAnswer={sentence.correct_answer}
+            onToggleAnswer={() => setShowAnswer(!showAnswer)}
+          />
+        )}
 
-        <div className="flex justify-center gap-4">
-          <Button
-            onClick={handleCheck}
-            className="bg-[#6B46C1] hover:bg-[#553C9A] text-white px-8"
-          >
-            Check
-          </Button>
-          <Button
-            onClick={() => setShowHint(!showHint)}
-            variant="outline"
-            className="border-[#6B46C1] text-[#6B46C1] hover:bg-[#6B46C1] hover:text-white"
-          >
-            <HelpCircle className="h-4 w-4" />
-            Hint
-          </Button>
-        </div>
+        <ActionButtons
+          onCheck={handleCheck}
+          onToggleHint={() => setShowHint(!showHint)}
+        />
       </CardContent>
     </Card>
   );
