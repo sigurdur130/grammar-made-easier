@@ -13,6 +13,7 @@ const Exercises = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [completedIds, setCompletedIds] = useState<number[]>([]);
+  const [showEndScreen, setShowEndScreen] = useState(false);
 
   const { data: sentences, isLoading, refetch } = useQuery({
     queryKey: ["sentences", category, subcategory, completedIds],
@@ -53,25 +54,28 @@ const Exercises = () => {
     if (sentences) {
       const currentSentence = sentences[currentIndex];
       if (currentSentence) {
+        const newAnsweredCount = answeredCount + 1;
+        const isLastExercise = newAnsweredCount === sentences.length;
+
         setCompletedIds(prev => [...prev, currentSentence.id]);
-        setAnsweredCount(prev => prev + 1);
-        setTimeout(handleNext, 500);
+        setAnsweredCount(newAnsweredCount);
+
+        if (isLastExercise) {
+          setShowEndScreen(true);
+        } else {
+          setTimeout(handleNext, 500);
+        }
       }
     }
   };
 
   const handleContinue = () => {
     setCurrentIndex(0);
+    setShowEndScreen(false);
     refetch();
   };
 
   const progress = sentences ? ((answeredCount) / sentences.length) * 100 : 0;
-  
-  // Updated condition to show end screen
-  const isComplete = sentences && 
-    sentences.length > 0 && 
-    answeredCount === sentences.length &&
-    (currentIndex === sentences.length - 1 || sentences.length === 1);
 
   return (
     <SidebarProvider>
@@ -83,7 +87,7 @@ const Exercises = () => {
             {isLoading ? (
               <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
             ) : sentences && sentences.length > 0 ? (
-              isComplete ? (
+              showEndScreen ? (
                 <EndScreen 
                   answeredCount={answeredCount}
                   onContinue={handleContinue}
