@@ -20,14 +20,20 @@ const Exercises = () => {
       console.log("Fetching sentences for:", category, subcategory);
       console.log("Excluding completed IDs:", completedIds);
       
-      const { data, error } = await supabase
+      let query = supabase
         .from("sentences")
         .select("*")
         .eq("word_category", category)
         .eq("subcategory", subcategory)
-        .not('id', 'in', completedIds)
         .limit(6)
         .order('id');
+
+      // Only apply the not-in filter if there are completed IDs
+      if (completedIds.length > 0) {
+        query = query.not('id', 'in', completedIds);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching sentences:", error);
