@@ -5,22 +5,27 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { Progress } from "@/components/ui/progress";
+import { EndScreen } from "@/components/exercise/EndScreen";
 import { supabase } from "@/integrations/supabase/client";
 
 const Exercises = () => {
   const { category, subcategory } = useParams();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
+  const [completedIds, setCompletedIds] = useState<number[]>([]);
 
-  const { data: sentences, isLoading } = useQuery({
-    queryKey: ["sentences", category, subcategory],
+  const { data: sentences, isLoading, refetch } = useQuery({
+    queryKey: ["sentences", category, subcategory, completedIds],
     queryFn: async () => {
       console.log("Fetching sentences for:", category, subcategory);
+      console.log("Excluding completed IDs:", completedIds);
+      
       const { data, error } = await supabase
         .from("sentences")
         .select("*")
         .eq("word_category", category)
         .eq("subcategory", subcategory)
+        .not('id', 'in', completedIds)
         .limit(6)
         .order('id');
 
@@ -40,11 +45,20 @@ const Exercises = () => {
   };
 
   const handleCorrectAnswer = () => {
-    setAnsweredCount(answeredCount + 1);
-    setTimeout(handleNext, 500); // Reduced from 1000ms to 500ms
+    if (sentences) {
+      setCompletedIds(prev => [...prev, sentences[currentIndex].id]);
+      setAnsweredCount(answeredCount + 1);
+      setTimeout(handleNext, 500);
+    }
+  };
+
+  const handleContinue = () => {
+    setCurrentIndex(0);
+    refetch();
   };
 
   const progress = sentences ? ((answeredCount) / sentences.length) * 100 : 0;
+  const isComplete = sentences && currentIndex === sentences.length - 1 && answeredCount === sentences.length;
 
   return (
     <SidebarProvider>
@@ -56,11 +70,18 @@ const Exercises = () => {
             {isLoading ? (
               <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
             ) : sentences && sentences.length > 0 ? (
-              <ExerciseCard 
-                sentence={sentences[currentIndex]} 
-                onCorrect={handleCorrectAnswer}
-                subcategory={subcategory || ''}
-              />
+              isComplete ? (
+                <EndScreen 
+                  answeredCount={answeredCount}
+                  onContinue={handleContinue}
+                />
+              ) : (
+                <ExerciseCard 
+                  sentence={sentences[currentIndex]} 
+                  onCorrect={handleCorrectAnswer}
+                  subcategory={subcategory || ''}
+                />
+              )
             ) : null}
           </div>
         </main>
