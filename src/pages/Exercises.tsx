@@ -29,8 +29,9 @@ const Exercises = () => {
         .order('id');
 
       // Only apply the not-in filter if there are completed IDs
+      // Pass the IDs as an array to the not.in filter
       if (completedIds.length > 0) {
-        query = query.not('id', 'in', completedIds);
+        query = query.not('id', 'in', `(${completedIds.join(',')})`);
       }
 
       const { data, error } = await query;
