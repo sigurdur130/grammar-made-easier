@@ -51,31 +51,65 @@ const Exercises = () => {
   };
 
   const handleCorrectAnswer = () => {
-    if (sentences) {
-      const currentSentence = sentences[currentIndex];
-      if (currentSentence) {
-        const newAnsweredCount = answeredCount + 1;
-        const isLastExercise = newAnsweredCount === sentences.length;
+    if (!sentences) return;
+    
+    const currentSentence = sentences[currentIndex];
+    if (!currentSentence) return;
 
-        setCompletedIds(prev => [...prev, currentSentence.id]);
-        setAnsweredCount(newAnsweredCount);
+    const newAnsweredCount = answeredCount + 1;
+    setAnsweredCount(newAnsweredCount);
+    setCompletedIds(prev => [...prev, currentSentence.id]);
 
-        if (isLastExercise) {
-          setShowEndScreen(true);
-        } else {
-          setTimeout(handleNext, 500);
-        }
-      }
+    if (newAnsweredCount === sentences.length) {
+      console.log("All exercises completed, showing end screen");
+      setShowEndScreen(true);
+    } else {
+      setTimeout(handleNext, 500);
     }
   };
 
   const handleContinue = () => {
+    console.log("Continuing with new exercises");
     setCurrentIndex(0);
+    setAnsweredCount(0);
     setShowEndScreen(false);
     refetch();
   };
 
   const progress = sentences ? ((answeredCount) / sentences.length) * 100 : 0;
+
+  if (isLoading) {
+    return (
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full">
+          <AppSidebar />
+          <main className="flex-1 p-6">
+            <div className="max-w-3xl mx-auto">
+              <Progress value={0} className="mb-6" />
+              <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
+            </div>
+          </main>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
+  if (!sentences || sentences.length === 0) {
+    return (
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full">
+          <AppSidebar />
+          <main className="flex-1 p-6">
+            <div className="max-w-3xl mx-auto">
+              <div className="text-center p-8">
+                No exercises available for this category.
+              </div>
+            </div>
+          </main>
+        </div>
+      </SidebarProvider>
+    );
+  }
 
   return (
     <SidebarProvider>
@@ -84,22 +118,18 @@ const Exercises = () => {
         <main className="flex-1 p-6">
           <div className="max-w-3xl mx-auto">
             <Progress value={progress} className="mb-6" />
-            {isLoading ? (
-              <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
-            ) : sentences && sentences.length > 0 ? (
-              showEndScreen ? (
-                <EndScreen 
-                  answeredCount={answeredCount}
-                  onContinue={handleContinue}
-                />
-              ) : (
-                <ExerciseCard 
-                  sentence={sentences[currentIndex]} 
-                  onCorrect={handleCorrectAnswer}
-                  subcategory={subcategory || ''}
-                />
-              )
-            ) : null}
+            {showEndScreen ? (
+              <EndScreen 
+                answeredCount={answeredCount}
+                onContinue={handleContinue}
+              />
+            ) : (
+              <ExerciseCard 
+                sentence={sentences[currentIndex]} 
+                onCorrect={handleCorrectAnswer}
+                subcategory={subcategory || ''}
+              />
+            )}
           </div>
         </main>
       </div>
