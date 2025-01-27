@@ -37,9 +37,7 @@ export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardP
   }, [sentence]);
 
   const handleCheck = () => {
-    if (!sentence?.correct_answer) return;
-    
-    const correct = answer.toLowerCase().trim() === sentence.correct_answer.toLowerCase().trim();
+    const correct = answer.toLowerCase().trim() === sentence.correct_answer?.toLowerCase().trim();
     setIsCorrect(correct);
     if (correct && onCorrect) {
       onCorrect();
@@ -66,14 +64,7 @@ export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardP
     setIsTyping(true);
   };
 
-  // Only construct hint if all required properties are available
-  const hint = sentence?.base_form && sentence?.english_translation && sentence?.gender
-    ? `${sentence.base_form} (${sentence.english_translation}) is a ${sentence.gender} noun in Icelandic`
-    : "Hint not available";
-
-  if (!sentence) {
-    return null;
-  }
+  const hint = `${sentence.base_form} (${sentence.english_translation}) is a ${sentence.gender} noun in Icelandic`;
 
   return (
     <Card className="w-full max-w-3xl mx-auto bg-[#F8FAFF] border-none shadow-lg">
