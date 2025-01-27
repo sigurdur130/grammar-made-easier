@@ -28,8 +28,6 @@ const Exercises = () => {
         .limit(6)
         .order('id');
 
-      // Only apply the not-in filter if there are completed IDs
-      // Pass the IDs as an array to the not.in filter
       if (completedIds.length > 0) {
         query = query.not('id', 'in', `(${completedIds.join(',')})`);
       }
@@ -53,9 +51,12 @@ const Exercises = () => {
 
   const handleCorrectAnswer = () => {
     if (sentences) {
-      setCompletedIds(prev => [...prev, sentences[currentIndex].id]);
-      setAnsweredCount(answeredCount + 1);
-      setTimeout(handleNext, 500);
+      const currentSentence = sentences[currentIndex];
+      if (currentSentence) {
+        setCompletedIds(prev => [...prev, currentSentence.id]);
+        setAnsweredCount(prev => prev + 1);
+        setTimeout(handleNext, 500);
+      }
     }
   };
 
@@ -65,7 +66,12 @@ const Exercises = () => {
   };
 
   const progress = sentences ? ((answeredCount) / sentences.length) * 100 : 0;
-  const isComplete = sentences && currentIndex === sentences.length - 1 && answeredCount === sentences.length;
+  
+  // Updated condition to show end screen
+  const isComplete = sentences && 
+    sentences.length > 0 && 
+    answeredCount === sentences.length &&
+    (currentIndex === sentences.length - 1 || sentences.length === 1);
 
   return (
     <SidebarProvider>
