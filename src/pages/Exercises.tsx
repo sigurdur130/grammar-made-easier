@@ -56,14 +56,15 @@ const Exercises = () => {
     const currentSentence = sentences[currentIndex];
     if (!currentSentence) return;
 
-    const newAnsweredCount = answeredCount + 1;
-    setAnsweredCount(newAnsweredCount);
     setCompletedIds(prev => [...prev, currentSentence.id]);
-
+    
+    const newAnsweredCount = answeredCount + 1;
     if (newAnsweredCount === sentences.length) {
+      setAnsweredCount(newAnsweredCount);
       console.log("All exercises completed, showing end screen");
       setShowEndScreen(true);
     } else {
+      setAnsweredCount(newAnsweredCount);
       setTimeout(handleNext, 500);
     }
   };
