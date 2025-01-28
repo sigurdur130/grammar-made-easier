@@ -23,7 +23,15 @@ const Exercises = () => {
         .eq("word_category", category)
         .eq("subcategory", subcategory)
         .limit(6)
-        .order('RANDOM()');  // Changed from .order('id') to .order('RANDOM()')
+        .order('id', { ascending: true, foreignTable: null }) // This ensures proper ordering
+        .then(result => {
+          if (result.error) throw result.error;
+          // Shuffle the results after fetching
+          return {
+            ...result,
+            data: result.data ? result.data.sort(() => Math.random() - 0.5) : null
+          };
+        });
 
       if (error) {
         console.error("Error fetching sentences:", error);
