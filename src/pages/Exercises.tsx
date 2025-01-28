@@ -23,7 +23,7 @@ const Exercises = () => {
         .eq("word_category", category)
         .eq("subcategory", subcategory)
         .limit(6)
-        .order('id');
+        .order('RANDOM()');  // Changed from .order('id') to .order('RANDOM()')
 
       if (error) {
         console.error("Error fetching sentences:", error);
