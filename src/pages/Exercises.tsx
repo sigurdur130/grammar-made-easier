@@ -5,6 +5,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { Progress } from "@/components/ui/progress";
+import { EndScreen } from "@/components/exercise/EndScreen";
 import { supabase } from "@/integrations/supabase/client";
 
 const Exercises = () => {
@@ -12,7 +13,7 @@ const Exercises = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
 
-  const { data: sentences, isLoading } = useQuery({
+  const { data: sentences, isLoading, refetch } = useQuery({
     queryKey: ["sentences", category, subcategory],
     queryFn: async () => {
       console.log("Fetching sentences for:", category, subcategory);
@@ -33,18 +34,30 @@ const Exercises = () => {
     },
   });
 
-  const handleNext = () => {
+  const handleCorrectAnswer = () => {
+    console.log("Handling correct answer. Current count:", answeredCount);
+    setAnsweredCount(prev => prev + 1);
     if (sentences && currentIndex < sentences.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
   };
 
-  const handleCorrectAnswer = () => {
-    setAnsweredCount(answeredCount + 1);
-    setTimeout(handleNext, 500); // Reduced from 1000ms to 500ms
+  const handleRestart = async () => {
+    console.log("Restarting exercises...");
+    setCurrentIndex(0);
+    setAnsweredCount(0);
+    await refetch();
   };
 
   const progress = sentences ? ((answeredCount) / sentences.length) * 100 : 0;
+  const isComplete = sentences && answeredCount === sentences.length;
+
+  console.log("Render state:", { 
+    answeredCount, 
+    totalSentences: sentences?.length,
+    isComplete,
+    progress 
+  });
 
   return (
     <SidebarProvider>
@@ -56,11 +69,15 @@ const Exercises = () => {
             {isLoading ? (
               <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
             ) : sentences && sentences.length > 0 ? (
-              <ExerciseCard 
-                sentence={sentences[currentIndex]} 
-                onCorrect={handleCorrectAnswer}
-                subcategory={subcategory || ''}
-              />
+              isComplete ? (
+                <EndScreen onRestart={handleRestart} />
+              ) : (
+                <ExerciseCard 
+                  sentence={sentences[currentIndex]} 
+                  onCorrect={handleCorrectAnswer}
+                  subcategory={subcategory || ''}
+                />
+              )
             ) : null}
           </div>
         </main>
