@@ -23,15 +23,7 @@ const Exercises = () => {
         .eq("word_category", category)
         .eq("subcategory", subcategory)
         .limit(6)
-        .order('id', { ascending: true, foreignTable: null }) // Using standard ordering with random seed
-        .then(result => {
-          if (result.error) throw result.error;
-          // Shuffle the results after fetching to ensure true randomness
-          return {
-            ...result,
-            data: result.data ? result.data.sort(() => Math.random() - 0.5) : null
-          };
-        });
+        .order('id');
 
       if (error) {
         console.error("Error fetching sentences:", error);
@@ -51,10 +43,9 @@ const Exercises = () => {
   };
 
   const handleRestart = async () => {
-    console.log("Restarting exercises with new sentences...");
+    console.log("Restarting exercises...");
     setCurrentIndex(0);
     setAnsweredCount(0);
-    // Force a refetch to get new sentences
     await refetch();
   };
 
