@@ -51,9 +51,10 @@ const Exercises = () => {
   };
 
   const handleRestart = async () => {
-    console.log("Restarting exercises...");
+    console.log("Restarting exercises with new sentences...");
     setCurrentIndex(0);
     setAnsweredCount(0);
+    // Force a refetch to get new sentences
     await refetch();
   };
 
