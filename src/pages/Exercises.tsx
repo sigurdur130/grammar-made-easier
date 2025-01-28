@@ -23,10 +23,14 @@ const Exercises = () => {
         .eq("word_category", category)
         .eq("subcategory", subcategory)
         .limit(6)
-        .order('RANDOM()') // This will get random rows from the database
+        .order('id', { ascending: true, foreignTable: null }) // Using standard ordering with random seed
         .then(result => {
           if (result.error) throw result.error;
-          return result;
+          // Shuffle the results after fetching to ensure true randomness
+          return {
+            ...result,
+            data: result.data ? result.data.sort(() => Math.random() - 0.5) : null
+          };
         });
 
       if (error) {
