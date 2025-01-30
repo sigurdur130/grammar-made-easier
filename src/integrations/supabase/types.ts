@@ -148,7 +148,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_random_rows: {
+        Args: {
+          num_rows: number
+          subcategory_filter: string
+        }
+        Returns: {
+          english_translation: string
+          icelandic_left: string
+          icelandic_right: string
+          correct_answer: string
+          subcategory: string
+          base_form: string
+        }[]
+      }
     }
     Enums: {
       subcategories_enum:
