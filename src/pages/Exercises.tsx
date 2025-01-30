@@ -16,20 +16,18 @@ const Exercises = () => {
   const { data: sentences, isLoading, refetch } = useQuery({
     queryKey: ["sentences", category, subcategory],
     queryFn: async () => {
-      console.log("Fetching sentences for:", category, subcategory);
+      console.log("Fetching random sentences for:", category, subcategory);
       const { data, error } = await supabase
-        .from("sentences")
-        .select("*")
-        .eq("word_category", category)
-        .eq("subcategory", subcategory)
-        .limit(6)
-        .order('id');
+        .rpc('get_random_rows', { 
+          num_rows: 6,
+          subcategory_filter: subcategory
+        });
 
       if (error) {
         console.error("Error fetching sentences:", error);
         throw error;
       }
-      console.log("Fetched sentences:", data);
+      console.log("Fetched random sentences:", data);
       return data;
     },
   });
