@@ -7,13 +7,12 @@ import { ActionButtons } from "./exercise/ActionButtons";
 
 interface ExerciseCardProps {
   sentence: {
-    id: number;
+    id?: number;
     icelandic_left: string | null;
     icelandic_right: string | null;
     english_translation: string | null;
     correct_answer: string | null;
     base_form: string | null;
-    gender: string | null;
   };
   onCorrect?: () => void;
   subcategory: string;
@@ -64,7 +63,7 @@ export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardP
     setIsTyping(true);
   };
 
-  const hint = `${sentence.base_form} (${sentence.english_translation}) is a ${sentence.gender} noun in Icelandic`;
+  const hint = `Need help? Try to think about the base form: ${sentence.base_form}`;
 
   return (
     <Card className="w-full max-w-3xl mx-auto bg-[#F8FAFF] border-none shadow-lg">
