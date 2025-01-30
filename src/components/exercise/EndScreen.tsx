@@ -14,22 +14,21 @@ export function EndScreen({ onRestart }: EndScreenProps) {
     <Card className="w-full max-w-3xl mx-auto bg-[#F8FAFF] border-none shadow-lg">
       <CardContent className="pt-6 text-center">
         <div className="flex justify-center mb-6">
-          <Trophy className="w-16 h-16 text-yellow-500 animate-bounce" />
+          <Trophy className="w-16 h-16 text-yellow-500" />
         </div>
         <div className="animate-fade-in">
           <h2 className="text-2xl font-semibold text-[#2D3748] mb-4">Great job!</h2>
           <p className="text-[#718096] mb-6">You've completed all exercises in this set.</p>
-          <div className="space-y-3">
+          <div className="flex justify-center gap-3">
             <Button 
               onClick={onRestart}
-              className="bg-[#6B46C1] hover:bg-[#553C9A] w-full"
+              className="bg-[#6B46C1] hover:bg-[#553C9A]"
             >
               Keep practicing
             </Button>
             <Button 
               onClick={() => navigate('/')}
               variant="outline"
-              className="w-full"
             >
               Practice something else
             </Button>
