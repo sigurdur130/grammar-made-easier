@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/sidebar";
 import { CategoryItem } from "./CategoryItem";
 import { Database } from "@/integrations/supabase/types";
+import { Link } from "react-router-dom";
 
 type CategoryListProps = {
   categories: Array<Database["public"]["Tables"]["word_categories"]["Row"]>;
@@ -38,6 +39,12 @@ export function CategoryList({
   return (
     <Sidebar>
       <SidebarContent>
+        <Link 
+          to="/" 
+          className="block px-4 py-3 text-lg font-semibold text-sidebar-primary hover:text-sidebar-primary/80 transition-colors"
+        >
+          Grammar made easi(er)
+        </Link>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
