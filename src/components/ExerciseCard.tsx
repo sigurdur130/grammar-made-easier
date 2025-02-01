@@ -1,6 +1,5 @@
 import { useState, useEffect, KeyboardEvent } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { HintDisplay } from "./exercise/HintDisplay";
 import { ExerciseContent } from "./exercise/ExerciseContent";
 import { CharacterButtons } from "./exercise/CharacterButtons";
 import { ActionButtons } from "./exercise/ActionButtons";
@@ -21,17 +20,17 @@ interface ExerciseCardProps {
 export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardProps) {
   const [answer, setAnswer] = useState("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [showHint, setShowHint] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
+  const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const [shake, setShake] = useState(false);
 
   useEffect(() => {
     setAnswer("");
     setIsCorrect(null);
-    setShowHint(false);
-    setIsTyping(false);
+    setHasIncorrectAttempt(false);
     setShowAnswer(false);
+    setIsTyping(false);
     setShake(false);
   }, [sentence]);
 
@@ -41,6 +40,7 @@ export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardP
     if (correct && onCorrect) {
       onCorrect();
     } else {
+      setHasIncorrectAttempt(true);
       setShake(true);
       setTimeout(() => setShake(false), 500);
     }
@@ -63,8 +63,6 @@ export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardP
     setIsTyping(true);
   };
 
-  const hint = `Need help? Try to think about the base form: ${sentence.base_form}`;
-
   return (
     <Card className="w-full max-w-3xl mx-auto bg-[#F8FAFF] border-none shadow-lg">
       <CardContent className="pt-6">
@@ -80,22 +78,17 @@ export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardP
           shake={shake}
           onInputChange={handleInputChange}
           onKeyPress={handleKeyPress}
+          showAnswer={showAnswer}
         />
 
         <CharacterButtons onCharacterClick={insertCharacter} />
 
-        {showHint && (
-          <HintDisplay
-            hint={hint}
-            showAnswer={showAnswer}
-            correctAnswer={sentence.correct_answer}
-            onToggleAnswer={() => setShowAnswer(!showAnswer)}
-          />
-        )}
-
         <ActionButtons
           onCheck={handleCheck}
-          onToggleHint={() => setShowHint(!showHint)}
+          showAnswerButton={hasIncorrectAttempt}
+          showAnswer={showAnswer}
+          onToggleAnswer={() => setShowAnswer(!showAnswer)}
+          correctAnswer={sentence.correct_answer}
         />
       </CardContent>
     </Card>

@@ -11,6 +11,7 @@ interface ExerciseContentProps {
   isCorrect: boolean | null;
   isTyping: boolean;
   shake: boolean;
+  showAnswer: boolean;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
@@ -21,6 +22,7 @@ export function ExerciseContent({
   isCorrect,
   isTyping,
   shake,
+  showAnswer,
   onInputChange,
   onKeyPress
 }: ExerciseContentProps) {
