@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      feedback: {
+        Row: {
+          created_at: string
+          email: string | null
+          feedback: string | null
+          id: number
+          screen: string | null
+          sentence: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          feedback?: string | null
+          id?: number
+          screen?: string | null
+          sentence?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          feedback?: string | null
+          id?: number
+          screen?: string | null
+          sentence?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           id: string
@@ -81,39 +108,35 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "sentences_subcategory_fkey"
-            columns: ["subcategory"]
+            foreignKeyName: "fk_sentences_subcategories"
+            columns: ["word_category", "subcategory"]
             isOneToOne: false
             referencedRelation: "subcategories"
-            referencedColumns: ["subcategory"]
-          },
-          {
-            foreignKeyName: "sentences_word_category_fkey"
-            columns: ["word_category"]
-            isOneToOne: false
-            referencedRelation: "word_categories"
-            referencedColumns: ["word_category"]
+            referencedColumns: ["word_category", "subcategory"]
           },
         ]
       }
       subcategories: {
         Row: {
           created_at: string
-          id: number
-          subcategory: string | null
-          word_category: string | null
+          difficulty: string | null
+          status: string | null
+          subcategory: string
+          word_category: string
         }
         Insert: {
           created_at?: string
-          id?: number
-          subcategory?: string | null
-          word_category?: string | null
+          difficulty?: string | null
+          status?: string | null
+          subcategory: string
+          word_category: string
         }
         Update: {
           created_at?: string
-          id?: number
-          subcategory?: string | null
-          word_category?: string | null
+          difficulty?: string | null
+          status?: string | null
+          subcategory?: string
+          word_category?: string
         }
         Relationships: [
           {
@@ -128,18 +151,15 @@ export type Database = {
       word_categories: {
         Row: {
           created_at: string
-          id: number
-          word_category: string | null
+          word_category: string
         }
         Insert: {
           created_at?: string
-          id?: number
-          word_category?: string | null
+          word_category: string
         }
         Update: {
           created_at?: string
-          id?: number
-          word_category?: string | null
+          word_category?: string
         }
         Relationships: []
       }
@@ -148,20 +168,37 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_random_rows: {
-        Args: {
-          num_rows: number
-          subcategory_filter: string
-        }
-        Returns: {
-          english_translation: string
-          icelandic_left: string
-          icelandic_right: string
-          correct_answer: string
-          subcategory: string
-          base_form: string
-        }[]
-      }
+      get_random_rows:
+        | {
+            Args: {
+              num_rows: number
+              subcategory_filter: string
+            }
+            Returns: {
+              english_translation: string
+              icelandic_left: string
+              icelandic_right: string
+              correct_answer: string
+              subcategory: string
+              base_form: string
+            }[]
+          }
+        | {
+            Args: {
+              num_rows: number
+              subcategory_filter: string
+              word_category_filter: string
+            }
+            Returns: {
+              english_translation: string
+              icelandic_left: string
+              icelandic_right: string
+              correct_answer: string
+              subcategory: string
+              base_form: string
+              word_category: string
+            }[]
+          }
     }
     Enums: {
       subcategories_enum:

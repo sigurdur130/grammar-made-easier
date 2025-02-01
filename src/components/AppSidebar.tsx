@@ -31,7 +31,8 @@ export function AppSidebar() {
       console.log("Fetching subcategories...");
       const { data, error } = await supabase
         .from("subcategories")
-        .select("subcategory, word_category, created_at, id");
+        .select("subcategory, word_category, created_at, id, status")
+        .eq('status', 'online');  // Only fetch online subcategories
       if (error) {
         console.error("Error fetching subcategories:", error);
         throw error;
