@@ -6,6 +6,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { Progress } from "@/components/ui/progress";
 import { EndScreen } from "@/components/exercise/EndScreen";
+import { FeedbackButton } from "@/components/FeedbackButton";
 import { supabase } from "@/integrations/supabase/client";
 
 const Exercises = () => {
@@ -79,6 +80,7 @@ const Exercises = () => {
             ) : null}
           </div>
         </main>
+        <FeedbackButton currentSentence={sentences?.[currentIndex]?.correct_answer} />
       </div>
     </SidebarProvider>
   );
