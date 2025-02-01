@@ -17,7 +17,7 @@ export function ActionButtons({
   correctAnswer 
 }: ActionButtonsProps) {
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex items-center justify-center gap-4">
       <Button
         onClick={onCheck}
         className="bg-[#6B46C1] hover:bg-[#553C9A] text-white px-8"
@@ -25,31 +25,21 @@ export function ActionButtons({
         Check
       </Button>
       
-      {showAnswerButton && (
-        <div className="text-center">
-          <Button
-            onClick={onToggleAnswer}
-            variant="ghost"
-            className="text-[#6B46C1] hover:bg-[#6B46C1]/10"
-          >
-            {showAnswer ? (
-              <>
-                <EyeOff className="h-4 w-4 mr-2" />
-                Hide Answer
-              </>
-            ) : (
-              <>
-                <Eye className="h-4 w-4 mr-2" />
-                Show Answer
-              </>
-            )}
-          </Button>
-          {showAnswer && correctAnswer && (
-            <p className="mt-2 text-[#6B46C1] font-medium">
-              Answer: {correctAnswer}
-            </p>
-          )}
-        </div>
+      {showAnswerButton && !showAnswer && (
+        <Button
+          onClick={onToggleAnswer}
+          variant="ghost"
+          className="text-[#6B46C1] hover:bg-[#6B46C1]/10"
+        >
+          <Eye className="h-4 w-4 mr-2" />
+          Show Answer
+        </Button>
+      )}
+      
+      {showAnswer && correctAnswer && (
+        <span className="text-[#6B46C1] font-medium">
+          {correctAnswer}
+        </span>
       )}
     </div>
   );
