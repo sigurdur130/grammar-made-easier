@@ -16,7 +16,7 @@ export type Database = {
           feedback: string | null
           id: number
           screen: string | null
-          sentence: number | null
+          sentence: string | null
         }
         Insert: {
           created_at?: string
@@ -24,7 +24,7 @@ export type Database = {
           feedback?: string | null
           id?: number
           screen?: string | null
-          sentence?: number | null
+          sentence?: string | null
         }
         Update: {
           created_at?: string
@@ -32,7 +32,7 @@ export type Database = {
           feedback?: string | null
           id?: number
           screen?: string | null
-          sentence?: number | null
+          sentence?: string | null
         }
         Relationships: []
       }
