@@ -54,17 +54,14 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: string }
       console.error("Error submitting feedback:", error);
       toast({
         variant: "destructive",
-        title: (
-          <div>
-            Oh, dang, sorry! Something went wrong. Could you{" "}
-            <a 
-              href="mailto:siggi@icelandicmadeeasier.com" 
-              className="underline hover:no-underline"
-            >
-              email me
-            </a>{" "}
-            about the issue?
-          </div>
+        title: "Oh, dang, sorry! Something went wrong. Could you email me about the issue?",
+        description: (
+          <a 
+            href="mailto:siggi@icelandicmadeeasier.com" 
+            className="underline hover:no-underline"
+          >
+            Email me
+          </a>
         ),
       });
     }

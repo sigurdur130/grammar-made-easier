@@ -21,7 +21,8 @@ const Exercises = () => {
       const { data, error } = await supabase
         .rpc('get_random_rows', { 
           num_rows: 6,
-          subcategory_filter: subcategory
+          subcategory_filter: subcategory,
+          word_category_filter: category
         });
 
       if (error) {

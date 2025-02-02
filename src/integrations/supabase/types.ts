@@ -16,7 +16,7 @@ export type Database = {
           feedback: string | null
           id: number
           screen: string | null
-          sentence: string | null
+          sentence: number | null
         }
         Insert: {
           created_at?: string
@@ -24,7 +24,7 @@ export type Database = {
           feedback?: string | null
           id?: number
           screen?: string | null
-          sentence?: string | null
+          sentence?: number | null
         }
         Update: {
           created_at?: string
@@ -32,7 +32,7 @@ export type Database = {
           feedback?: string | null
           id?: number
           screen?: string | null
-          sentence?: string | null
+          sentence?: number | null
         }
         Relationships: []
       }
@@ -168,37 +168,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_random_rows:
-        | {
-            Args: {
-              num_rows: number
-              subcategory_filter: string
-            }
-            Returns: {
-              english_translation: string
-              icelandic_left: string
-              icelandic_right: string
-              correct_answer: string
-              subcategory: string
-              base_form: string
-            }[]
-          }
-        | {
-            Args: {
-              num_rows: number
-              subcategory_filter: string
-              word_category_filter: string
-            }
-            Returns: {
-              english_translation: string
-              icelandic_left: string
-              icelandic_right: string
-              correct_answer: string
-              subcategory: string
-              base_form: string
-              word_category: string
-            }[]
-          }
+      get_random_rows: {
+        Args: {
+          subcategory_filter: string
+          word_category_filter: string
+          num_rows: number
+        }
+        Returns: {
+          id: number
+          english_translation: string
+          icelandic_left: string
+          icelandic_right: string
+          correct_answer: string
+          subcategory: string
+          base_form: string
+          word_category: string
+        }[]
+      }
     }
     Enums: {
       subcategories_enum:
