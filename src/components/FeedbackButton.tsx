@@ -22,6 +22,7 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: string }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Current sentence prop:", currentSentence);
     console.log("Submitting feedback:", {
       email: email || null,
       screen: getCurrentScreen(),
@@ -79,6 +80,12 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: string }
           <SheetHeader>
             <SheetTitle>Share your feedback</SheetTitle>
           </SheetHeader>
+          {/* Debug info */}
+          <div className="mt-4 mb-2 p-2 bg-gray-100 rounded text-xs">
+            <p>Debug Info:</p>
+            <p>Current Sentence: {currentSentence || "No sentence"}</p>
+            <p>Current Screen: {getCurrentScreen()}</p>
+          </div>
           <form onSubmit={handleSubmit} className="space-y-6 mt-6">
             <div className="space-y-2">
               <Label htmlFor="email">Email (optional)</Label>
