@@ -81,7 +81,7 @@ const Exercises = () => {
             ) : null}
           </div>
         </main>
-        <FeedbackButton currentSentence={sentences?.[currentIndex]?.correct_answer} />
+        <FeedbackButton currentSentence={sentences?.[currentIndex]?.id} />
       </div>
     </SidebarProvider>
   );
