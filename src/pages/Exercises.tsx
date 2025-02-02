@@ -17,7 +17,7 @@ const Exercises = () => {
   const { data: sentences, isLoading, refetch } = useQuery({
     queryKey: ["sentences", category, subcategory],
     queryFn: async () => {
-      console.log("Fetching random sentences for:", category, subcategory);
+      console.log("Fetching random sentences for:", { category, subcategory });
       const { data, error } = await supabase
         .rpc('get_random_rows', { 
           num_rows: 6,
@@ -29,7 +29,7 @@ const Exercises = () => {
         console.error("Error fetching sentences:", error);
         throw error;
       }
-      console.log("Fetched random sentences:", data);
+      console.log("Fetched sentences data:", data);
       return data;
     },
   });
@@ -49,15 +49,18 @@ const Exercises = () => {
     await refetch();
   };
 
-  const progress = sentences ? ((answeredCount) / sentences.length) * 100 : 0;
-  const isComplete = sentences && answeredCount === sentences.length;
-
+  // Debug logging for render state
   console.log("Render state:", { 
     answeredCount, 
     totalSentences: sentences?.length,
-    isComplete,
-    progress 
+    currentIndex,
+    currentSentence: sentences?.[currentIndex],
+    sentenceId: sentences?.[currentIndex]?.id,
+    isLoading
   });
+
+  const progress = sentences ? ((answeredCount) / sentences.length) * 100 : 0;
+  const isComplete = sentences && answeredCount === sentences.length;
 
   return (
     <SidebarProvider>
