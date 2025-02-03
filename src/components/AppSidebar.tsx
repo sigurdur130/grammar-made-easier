@@ -9,22 +9,6 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const [openCategory, setOpenCategory] = useState<string | null>(null);
 
-  const { data: categories, isLoading: categoriesLoading } = useQuery({
-    queryKey: ["wordCategories"],
-    queryFn: async () => {
-      console.log("Fetching word categories...");
-      const { data, error } = await supabase
-        .from("word_categories")
-        .select("word_category, created_at");
-      if (error) {
-        console.error("Error fetching categories:", error);
-        throw error;
-      }
-      console.log("Fetched categories:", data);
-      return data;
-    },
-  });
-
   const { data: subcategories, isLoading: subcategoriesLoading } = useQuery({
     queryKey: ["subcategories"],
     queryFn: async () => {
@@ -32,7 +16,7 @@ export function AppSidebar() {
       const { data, error } = await supabase
         .from("subcategories")
         .select("subcategory, word_category, created_at, status, difficulty")
-        .eq('status', 'online');  // Only fetch online subcategories
+        .eq('status', 'online');
       if (error) {
         console.error("Error fetching subcategories:", error);
         throw error;
@@ -40,6 +24,31 @@ export function AppSidebar() {
       console.log("Fetched subcategories:", data);
       return data;
     },
+  });
+
+  // Get unique categories that have online subcategories
+  const { data: categories, isLoading: categoriesLoading } = useQuery({
+    queryKey: ["wordCategories", subcategories],
+    queryFn: async () => {
+      if (!subcategories) return [];
+      
+      // Get unique word categories from subcategories
+      const uniqueCategories = [...new Set(subcategories.map(sub => sub.word_category))];
+      
+      console.log("Fetching word categories...");
+      const { data, error } = await supabase
+        .from("word_categories")
+        .select("word_category, created_at")
+        .in('word_category', uniqueCategories);
+      
+      if (error) {
+        console.error("Error fetching categories:", error);
+        throw error;
+      }
+      console.log("Fetched categories:", data);
+      return data;
+    },
+    enabled: !!subcategories, // Only run this query when subcategories are loaded
   });
 
   const toggleCategory = (category: string) => {
