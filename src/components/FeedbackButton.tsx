@@ -38,6 +38,7 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
 
       toast({
         title: "Thanks for the feedback! I appreciate it =)",
+        duration: 2000, // 2 seconds
       });
 
       setIsOpen(false);
