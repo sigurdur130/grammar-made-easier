@@ -27,11 +27,11 @@ export function ExerciseContent({
   onKeyPress
 }: ExerciseContentProps) {
   return (
-    <div className="mb-8">
-      <p className="text-[#718096] italic mb-6">
+    <div className="mb-6 md:mb-8">
+      <p className="text-[#718096] italic mb-4 md:mb-6 text-sm md:text-base px-2">
         {sentence.english_translation}
       </p>
-      <div className="flex items-center gap-2 text-lg mb-4">
+      <div className="flex flex-col sm:flex-row items-center gap-2 text-base md:text-lg mb-4">
         <span className="text-[#2D3748]">{sentence.icelandic_left}</span>
         <ExerciseInput
           answer={answer}

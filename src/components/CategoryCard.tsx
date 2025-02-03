@@ -16,11 +16,11 @@ export function CategoryCard({ title, category }: CategoryCardProps) {
 
   return (
     <Card 
-      className="hover:bg-accent cursor-pointer transition-colors"
+      className="hover:bg-accent cursor-pointer transition-colors active:bg-accent/90 touch-manipulation"
       onClick={handleClick}
     >
-      <CardHeader>
-        <CardTitle className="text-lg">{title}</CardTitle>
+      <CardHeader className="p-4 md:p-6">
+        <CardTitle className="text-base md:text-lg line-clamp-2">{title}</CardTitle>
       </CardHeader>
     </Card>
   );
