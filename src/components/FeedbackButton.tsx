@@ -5,7 +5,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { MessageCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,13 +21,6 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Current sentence ID:", currentSentence);
-    console.log("Submitting feedback:", {
-      email: email || null,
-      screen: getCurrentScreen(),
-      feedback,
-      sentence: currentSentence ? String(currentSentence) : null
-    });
 
     try {
       const { error } = await supabase
@@ -52,7 +44,6 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
       setEmail("");
       setFeedback("");
     } catch (error) {
-      console.error("Error submitting feedback:", error);
       toast({
         variant: "destructive",
         title: "Oh, dang, sorry! Something went wrong. Could you email me about the issue?",
@@ -72,20 +63,14 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
     <div className="fixed bottom-6 right-6 z-50">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button size="icon" className="rounded-full h-12 w-12">
-            <MessageCircle className="h-6 w-6" />
+          <Button>
+            Feedback
           </Button>
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Share your feedback</SheetTitle>
           </SheetHeader>
-          {/* Debug info */}
-          <div className="mt-4 mb-2 p-2 bg-gray-100 rounded text-xs">
-            <p>Debug Info:</p>
-            <p>Current Sentence ID: {currentSentence || "No sentence"}</p>
-            <p>Current Screen: {getCurrentScreen()}</p>
-          </div>
           <form onSubmit={handleSubmit} className="space-y-6 mt-6">
             <div className="space-y-2">
               <Label htmlFor="email">Email (optional)</Label>

@@ -66,13 +66,6 @@ export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardP
   return (
     <Card className="w-full max-w-3xl mx-auto bg-[#F8FAFF] border-none shadow-lg">
       <CardContent className="pt-6">
-        {/* Debug info */}
-        <div className="mb-4 p-2 bg-gray-100 rounded text-xs">
-          <p>Debug Info:</p>
-          <p>Current Sentence ID: {sentence.id}</p>
-          <p>Correct Answer: {sentence.correct_answer}</p>
-        </div>
-
         <div className="mb-6">
           <h2 className="text-2xl font-semibold text-[#2D3748]">{subcategory}</h2>
         </div>
