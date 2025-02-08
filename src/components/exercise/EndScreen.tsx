@@ -14,7 +14,7 @@ export function EndScreen({ onRestart }: EndScreenProps) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const duration = 3000;
+    const duration = 1000;
     const animationEnd = Date.now() + duration;
 
     const randomInRange = (min: number, max: number) => {
