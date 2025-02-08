@@ -1,7 +1,10 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import confetti from "canvas-confetti";
+import { useEffect } from "react";
 
 interface EndScreenProps {
   onRestart: () => void;
@@ -9,6 +12,35 @@ interface EndScreenProps {
 
 export function EndScreen({ onRestart }: EndScreenProps) {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+
+    const randomInRange = (min: number, max: number) => {
+      return Math.random() * (max - min) + min;
+    };
+
+    const confettiInterval = setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        clearInterval(confettiInterval);
+        return;
+      }
+
+      confetti({
+        particleCount: 3,
+        angle: randomInRange(55, 125),
+        spread: randomInRange(50, 70),
+        origin: { y: 0.6 },
+        colors: ['#FFD700', '#6B46C1', '#48BB78', '#4299E1'],
+      });
+    }, 50);
+
+    // Cleanup interval
+    return () => clearInterval(confettiInterval);
+  }, []);
 
   return (
     <Card className="w-full max-w-3xl mx-auto bg-[#F8FAFF] border-none shadow-lg">
