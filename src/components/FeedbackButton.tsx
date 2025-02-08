@@ -90,7 +90,7 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
                 required
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Share your thoughts..."
+                placeholder="If your feedback refers to a particular sentence, please include the English translation so I know which sentence we're talking about =)"
                 className="min-h-[150px]"
               />
             </div>
