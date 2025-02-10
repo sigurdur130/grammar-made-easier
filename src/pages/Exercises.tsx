@@ -15,6 +15,7 @@ const Exercises = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [completedIds, setCompletedIds] = useState<number[]>([]);
+  const [isSubcategoryCompleted, setIsSubcategoryCompleted] = useState(false);
 
   const { data: sentences, isLoading, refetch } = useQuery({
     queryKey: ["sentences", category, subcategory, completedIds],
@@ -34,20 +35,11 @@ const Exercises = () => {
       }
 
       // If we get fewer than 6 sentences, it means we've completed all available ones
-      // So we reset the completed IDs and fetch a fresh batch
       if (data && data.length < 6) {
-        console.log("Fewer than 6 sentences returned, resetting completed IDs");
+        console.log("Fewer than 6 sentences returned, setting subcategory as completed");
+        setIsSubcategoryCompleted(true);
         setCompletedIds([]);
-        const { data: freshData, error: freshError } = await supabase
-          .rpc('get_random_rows', { 
-            num_rows: 6,
-            subcategory_filter: subcategory,
-            word_category_filter: category,
-            exclude_ids: []
-          });
-          
-        if (freshError) throw freshError;
-        return freshData;
+        return data; // Return the remaining sentences
       }
 
       return data;
@@ -70,6 +62,9 @@ const Exercises = () => {
   };
 
   const handleRestart = async () => {
+    if (isSubcategoryCompleted) {
+      return; // Don't allow restart if subcategory is completed
+    }
     console.log("Restarting exercises...");
     setCurrentIndex(0);
     setAnsweredCount(0);
@@ -85,6 +80,7 @@ const Exercises = () => {
     currentSentence: sentences?.[currentIndex],
     sentenceId: sentences?.[currentIndex]?.id,
     completedIds,
+    isSubcategoryCompleted,
     isLoading
   });
 
@@ -102,7 +98,10 @@ const Exercises = () => {
               <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
             ) : sentences && sentences.length > 0 ? (
               isComplete ? (
-                <EndScreen onRestart={handleRestart} />
+                <EndScreen 
+                  onRestart={handleRestart}
+                  isSubcategoryCompleted={isSubcategoryCompleted}
+                />
               ) : (
                 <ExerciseCard 
                   sentence={sentences[currentIndex]} 
