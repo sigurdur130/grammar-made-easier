@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -14,34 +13,23 @@ const Exercises = () => {
   const { category, subcategory } = useParams();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
-  const [completedIds, setCompletedIds] = useState<number[]>([]);
-  const [isSubcategoryCompleted, setIsSubcategoryCompleted] = useState(false);
 
   const { data: sentences, isLoading, refetch } = useQuery({
-    queryKey: ["sentences", category, subcategory, completedIds],
+    queryKey: ["sentences", category, subcategory],
     queryFn: async () => {
-      console.log("Fetching sentences with excluded IDs:", completedIds);
+      console.log("Fetching random sentences for:", { category, subcategory });
       const { data, error } = await supabase
         .rpc('get_random_rows', { 
           num_rows: 6,
           subcategory_filter: subcategory,
-          word_category_filter: category,
-          exclude_ids: completedIds
+          word_category_filter: category
         });
 
       if (error) {
         console.error("Error fetching sentences:", error);
         throw error;
       }
-
-      // If we get fewer than 6 sentences, it means we've completed all available ones
-      if (data && data.length < 6) {
-        console.log("Fewer than 6 sentences returned, setting subcategory as completed");
-        setIsSubcategoryCompleted(true);
-        setCompletedIds([]);
-        return data; // Return the remaining sentences
-      }
-
+      console.log("Fetched sentences data:", data);
       return data;
     },
   });
@@ -49,26 +37,15 @@ const Exercises = () => {
   const handleCorrectAnswer = () => {
     console.log("Handling correct answer. Current count:", answeredCount);
     setAnsweredCount(prev => prev + 1);
-    
-    // Add the current sentence ID to completed IDs
-    if (sentences && currentIndex < sentences.length) {
-      const currentId = sentences[currentIndex].id;
-      setCompletedIds(prev => [...prev, currentId]);
-    }
-
     if (sentences && currentIndex < sentences.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
   };
 
   const handleRestart = async () => {
-    if (isSubcategoryCompleted) {
-      return; // Don't allow restart if subcategory is completed
-    }
     console.log("Restarting exercises...");
     setCurrentIndex(0);
     setAnsweredCount(0);
-    setCompletedIds([]); // Reset completed IDs when restarting
     await refetch();
   };
 
@@ -79,8 +56,6 @@ const Exercises = () => {
     currentIndex,
     currentSentence: sentences?.[currentIndex],
     sentenceId: sentences?.[currentIndex]?.id,
-    completedIds,
-    isSubcategoryCompleted,
     isLoading
   });
 
@@ -98,10 +73,7 @@ const Exercises = () => {
               <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
             ) : sentences && sentences.length > 0 ? (
               isComplete ? (
-                <EndScreen 
-                  onRestart={handleRestart}
-                  isSubcategoryCompleted={isSubcategoryCompleted}
-                />
+                <EndScreen onRestart={handleRestart} />
               ) : (
                 <ExerciseCard 
                   sentence={sentences[currentIndex]} 
