@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -13,23 +14,42 @@ const Exercises = () => {
   const { category, subcategory } = useParams();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
+  const [completedIds, setCompletedIds] = useState<number[]>([]);
 
   const { data: sentences, isLoading, refetch } = useQuery({
-    queryKey: ["sentences", category, subcategory],
+    queryKey: ["sentences", category, subcategory, completedIds],
     queryFn: async () => {
-      console.log("Fetching random sentences for:", { category, subcategory });
+      console.log("Fetching sentences with excluded IDs:", completedIds);
       const { data, error } = await supabase
         .rpc('get_random_rows', { 
           num_rows: 6,
           subcategory_filter: subcategory,
-          word_category_filter: category
+          word_category_filter: category,
+          exclude_ids: completedIds
         });
 
       if (error) {
         console.error("Error fetching sentences:", error);
         throw error;
       }
-      console.log("Fetched sentences data:", data);
+
+      // If we get fewer than 6 sentences, it means we've completed all available ones
+      // So we reset the completed IDs and fetch a fresh batch
+      if (data && data.length < 6) {
+        console.log("Fewer than 6 sentences returned, resetting completed IDs");
+        setCompletedIds([]);
+        const { data: freshData, error: freshError } = await supabase
+          .rpc('get_random_rows', { 
+            num_rows: 6,
+            subcategory_filter: subcategory,
+            word_category_filter: category,
+            exclude_ids: []
+          });
+          
+        if (freshError) throw freshError;
+        return freshData;
+      }
+
       return data;
     },
   });
@@ -37,6 +57,13 @@ const Exercises = () => {
   const handleCorrectAnswer = () => {
     console.log("Handling correct answer. Current count:", answeredCount);
     setAnsweredCount(prev => prev + 1);
+    
+    // Add the current sentence ID to completed IDs
+    if (sentences && currentIndex < sentences.length) {
+      const currentId = sentences[currentIndex].id;
+      setCompletedIds(prev => [...prev, currentId]);
+    }
+
     if (sentences && currentIndex < sentences.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
@@ -46,6 +73,7 @@ const Exercises = () => {
     console.log("Restarting exercises...");
     setCurrentIndex(0);
     setAnsweredCount(0);
+    setCompletedIds([]); // Reset completed IDs when restarting
     await refetch();
   };
 
@@ -56,6 +84,7 @@ const Exercises = () => {
     currentIndex,
     currentSentence: sentences?.[currentIndex],
     sentenceId: sentences?.[currentIndex]?.id,
+    completedIds,
     isLoading
   });
 
