@@ -173,6 +173,8 @@ export type Database = {
           subcategory_filter: string
           word_category_filter: string
           num_rows: number
+          mastered_ids?: number[]
+          retry_ids?: number[]
         }
         Returns: {
           id: number
