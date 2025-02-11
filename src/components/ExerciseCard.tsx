@@ -1,4 +1,3 @@
-
 import { useState, useEffect, KeyboardEvent } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExerciseContent } from "./exercise/ExerciseContent";
@@ -15,11 +14,10 @@ interface ExerciseCardProps {
     base_form: string | null;
   };
   onCorrect?: () => void;
-  onIncorrect?: () => void;
   subcategory: string;
 }
 
-export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: ExerciseCardProps) {
+export function ExerciseCard({ sentence, onCorrect, subcategory }: ExerciseCardProps) {
   const [answer, setAnswer] = useState("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
@@ -42,9 +40,6 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
     if (correct && onCorrect) {
       onCorrect();
     } else {
-      if (!hasIncorrectAttempt && onIncorrect) {
-        onIncorrect();
-      }
       setHasIncorrectAttempt(true);
       setShake(true);
       setTimeout(() => setShake(false), 500);
