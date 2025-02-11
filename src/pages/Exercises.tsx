@@ -28,9 +28,10 @@ const Exercises = () => {
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retryItems, setRetryItems] = useState<RetryItem[]>([]);
   const [currentRetryIndex, setCurrentRetryIndex] = useState(0);
+  const [currentSentences, setCurrentSentences] = useState<RetryItem[]>([]);
 
-  const { data: sentences, isLoading, refetch } = useQuery({
-    queryKey: ["sentences", category, subcategory, masteredIds, retryItems],
+  const { refetch } = useQuery({
+    queryKey: ["sentences", category, subcategory, masteredIds], // Removed retryItems from queryKey
     queryFn: async () => {
       console.log("Fetching sentences with:", { 
         category, 
@@ -43,7 +44,9 @@ const Exercises = () => {
       
       if (numRandomNeeded <= 0) {
         // If we have enough retry items, just return the first 6
-        return retryItems.slice(0, 6);
+        const selectedRetryItems = retryItems.slice(0, 6);
+        setCurrentSentences(selectedRetryItems);
+        return selectedRetryItems;
       }
 
       // Fetch new random sentences, excluding mastered and retry ones
@@ -67,26 +70,31 @@ const Exercises = () => {
         ...(randomSentences || [])
       ].slice(0, 6);
 
-      console.log("Combined sentences:", combinedSentences);
+      setCurrentSentences(combinedSentences);
       return combinedSentences;
     },
+    enabled: true,
   });
 
   const handleCorrectAnswer = () => {
-    if (!sentences) return;
+    if (!currentSentences) return;
     
-    const currentSentence = sentences[currentIndex];
+    const currentSentence = currentSentences[currentIndex];
     if (!currentSentence) return;
 
     console.log("Handling correct answer for sentence:", currentSentence.id);
     
-    // If this was a first-try correct answer, add to mastered
-    if (!retryItems.some(item => item.id === currentSentence.id)) {
+    // If this was a retry item and it was answered correctly, remove it from retryItems
+    if (retryItems.some(item => item.id === currentSentence.id)) {
+      setRetryItems(prev => prev.filter(item => item.id !== currentSentence.id));
+      setMasteredIds(prev => [...prev, currentSentence.id]);
+    } else {
+      // If this was a first-try correct answer, add to mastered
       setMasteredIds(prev => [...prev, currentSentence.id]);
     }
     
     setAnsweredCount(prev => prev + 1);
-    if (currentIndex < sentences.length - 1) {
+    if (currentIndex < currentSentences.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
   };
@@ -110,16 +118,15 @@ const Exercises = () => {
   // Debug logging for render state
   console.log("Render state:", { 
     answeredCount, 
-    totalSentences: sentences?.length,
+    totalSentences: currentSentences?.length,
     currentIndex,
     masteredIds,
     retryItems,
-    currentSentence: sentences?.[currentIndex],
-    isLoading
+    currentSentence: currentSentences?.[currentIndex],
   });
 
-  const progress = sentences ? ((answeredCount) / sentences.length) * 100 : 0;
-  const isComplete = sentences && answeredCount === sentences.length;
+  const progress = currentSentences ? ((answeredCount) / currentSentences.length) * 100 : 0;
+  const isComplete = currentSentences && answeredCount === currentSentences.length;
 
   return (
     <SidebarProvider>
@@ -128,23 +135,21 @@ const Exercises = () => {
         <main className="flex-1 p-6">
           <div className="max-w-3xl mx-auto">
             <Progress value={progress} className="mb-6" />
-            {isLoading ? (
+            {!currentSentences || currentSentences.length === 0 ? (
               <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
-            ) : sentences && sentences.length > 0 ? (
-              isComplete ? (
-                <EndScreen onRestart={handleRestart} />
-              ) : (
-                <ExerciseCard 
-                  sentence={sentences[currentIndex]} 
-                  onCorrect={handleCorrectAnswer}
-                  onIncorrect={() => handleIncorrectAnswer(sentences[currentIndex])}
-                  subcategory={subcategory || ''}
-                />
-              )
-            ) : null}
+            ) : isComplete ? (
+              <EndScreen onRestart={handleRestart} />
+            ) : (
+              <ExerciseCard 
+                sentence={currentSentences[currentIndex]} 
+                onCorrect={handleCorrectAnswer}
+                onIncorrect={() => handleIncorrectAnswer(currentSentences[currentIndex])}
+                subcategory={subcategory || ''}
+              />
+            )}
           </div>
         </main>
-        <FeedbackButton currentSentence={sentences?.[currentIndex]?.id} />
+        <FeedbackButton currentSentence={currentSentences?.[currentIndex]?.id} />
       </div>
     </SidebarProvider>
   );
