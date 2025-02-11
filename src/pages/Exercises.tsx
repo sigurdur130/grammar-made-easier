@@ -30,7 +30,7 @@ const Exercises = () => {
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
 
   const { data: sentences, isLoading, refetch } = useQuery({
-    queryKey: ["sentences", category, subcategory, masteredIds],
+    queryKey: ["sentences", category, subcategory],
     queryFn: async () => {
       console.log("Fetching sentences with:", { 
         category, 
