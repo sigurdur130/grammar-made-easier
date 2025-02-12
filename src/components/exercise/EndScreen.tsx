@@ -60,7 +60,7 @@ export function EndScreen({ onRestart, firstTryCorrect, totalExercises }: EndScr
         particleCount: 3,
         angle: randomInRange(55, 125),
         spread: randomInRange(50, 70),
-        origin: { y: 0.6 },
+        origin: { y: 0.1 },
         colors: ['#FFD700', '#6B46C1', '#48BB78', '#4299E1'],
       });
     }, 50);
