@@ -1,11 +1,5 @@
-
-import { forwardRef, useImperativeHandle, useRef } from "react";
 import { Check, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-
-export interface ExerciseInputHandle {
-  focus: () => void;
-}
 
 interface ExerciseInputProps {
   answer: string;
@@ -17,7 +11,7 @@ interface ExerciseInputProps {
   shake?: boolean;
 }
 
-export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>(({
+export function ExerciseInput({
   answer,
   isCorrect,
   isTyping,
@@ -25,19 +19,10 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
   onChange,
   onKeyPress,
   shake,
-}, ref) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useImperativeHandle(ref, () => ({
-    focus: () => {
-      inputRef.current?.focus();
-    }
-  }));
-
+}: ExerciseInputProps) {
   return (
     <div className="relative w-full sm:w-64">
       <Input
-        ref={inputRef}
         value={answer}
         onChange={onChange}
         onKeyPress={onKeyPress}
@@ -60,6 +45,4 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
       )}
     </div>
   );
-});
-
-ExerciseInput.displayName = "ExerciseInput";
+}
