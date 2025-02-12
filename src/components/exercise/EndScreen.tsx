@@ -1,10 +1,9 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface EndScreenProps {
   onRestart: () => void;
@@ -12,8 +11,12 @@ interface EndScreenProps {
 
 export function EndScreen({ onRestart }: EndScreenProps) {
   const navigate = useNavigate();
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
+    // Auto-focus the "Keep practicing" button when component mounts
+    buttonRef.current?.focus();
+
     const duration = 500;
     const animationEnd = Date.now() + duration;
 
@@ -53,6 +56,7 @@ export function EndScreen({ onRestart }: EndScreenProps) {
           <p className="text-sm md:text-base text-[#718096] mb-4 md:mb-6">You've completed all exercises in this set.</p>
           <div className="flex flex-col sm:flex-row justify-center gap-3">
             <Button 
+              ref={buttonRef}
               onClick={onRestart}
               className="bg-[#6B46C1] hover:bg-[#553C9A] w-full sm:w-auto"
             >
