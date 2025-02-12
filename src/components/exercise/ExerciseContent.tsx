@@ -1,6 +1,4 @@
-
-import { forwardRef } from "react";
-import { ExerciseInput, ExerciseInputHandle } from "./ExerciseInput";
+import { ExerciseInput } from "./ExerciseInput";
 
 interface ExerciseContentProps {
   sentence: {
@@ -18,7 +16,7 @@ interface ExerciseContentProps {
   onKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-export const ExerciseContent = forwardRef<ExerciseInputHandle, ExerciseContentProps>(({
+export function ExerciseContent({
   sentence,
   answer,
   isCorrect,
@@ -27,7 +25,7 @@ export const ExerciseContent = forwardRef<ExerciseInputHandle, ExerciseContentPr
   showAnswer,
   onInputChange,
   onKeyPress
-}, ref) => {
+}: ExerciseContentProps) {
   return (
     <div className="mb-6 md:mb-8">
       <p className="text-[#718096] italic mb-4 md:mb-6 text-sm md:text-base px-2">
@@ -36,7 +34,6 @@ export const ExerciseContent = forwardRef<ExerciseInputHandle, ExerciseContentPr
       <div className="flex flex-col sm:flex-row items-center gap-2 text-base md:text-lg mb-4">
         <span className="text-[#2D3748]">{sentence.icelandic_left}</span>
         <ExerciseInput
-          ref={ref}
           answer={answer}
           isCorrect={isCorrect}
           isTyping={isTyping}
@@ -49,6 +46,4 @@ export const ExerciseContent = forwardRef<ExerciseInputHandle, ExerciseContentPr
       </div>
     </div>
   );
-});
-
-ExerciseContent.displayName = "ExerciseContent";
+}
