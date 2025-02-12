@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -25,6 +24,7 @@ const Exercises = () => {
   const { category, subcategory } = useParams();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
+  const [firstTryCorrect, setFirstTryCorrect] = useState(0);
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
@@ -79,8 +79,9 @@ const Exercises = () => {
       totalSentences: sentences?.length
     });
 
-    // If this was a first-try correct answer, add to mastered
+    // If this was a first-try correct answer
     if (!hasIncorrectAttempt) {
+      setFirstTryCorrect(prev => prev + 1);
       setMasteredIds(prev => [...prev, currentSentence.id]);
       
       // If this was a retry sentence that's now mastered, remove it from retry list
@@ -114,20 +115,10 @@ const Exercises = () => {
     console.log("Restarting exercises...");
     setCurrentIndex(0);
     setAnsweredCount(0);
+    setFirstTryCorrect(0);
     setHasIncorrectAttempt(false);
     await refetch();
   };
-
-  // Debug logging for render state
-  console.log("Render state:", { 
-    answeredCount, 
-    totalSentences: sentences?.length,
-    currentIndex,
-    masteredIds,
-    retrySentences: retrySentences.map(s => s.id),
-    currentSentence: sentences?.[currentIndex],
-    isLoading
-  });
 
   const progress = sentences ? ((answeredCount) / sentences.length) * 100 : 0;
   const isComplete = sentences && answeredCount === sentences.length;
@@ -143,7 +134,11 @@ const Exercises = () => {
               <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
             ) : sentences && sentences.length > 0 ? (
               isComplete ? (
-                <EndScreen onRestart={handleRestart} />
+                <EndScreen 
+                  onRestart={handleRestart} 
+                  firstTryCorrect={firstTryCorrect}
+                  totalExercises={sentences.length}
+                />
               ) : (
                 <ExerciseCard 
                   sentence={sentences[currentIndex]} 

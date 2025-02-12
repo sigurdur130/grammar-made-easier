@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
@@ -7,9 +8,32 @@ import { useEffect, useRef } from "react";
 
 interface EndScreenProps {
   onRestart: () => void;
+  firstTryCorrect: number;
+  totalExercises: number;
 }
 
-export function EndScreen({ onRestart }: EndScreenProps) {
+const getScoreMessage = (firstTryCorrect: number, total: number): string => {
+  switch (firstTryCorrect) {
+    case 0:
+      return "Ouch, 0/6 right on the first try. That's got to hurt. Maybe hit the books and try again?";
+    case 1:
+      return "1/6 right on the first try. Hey, Rome wasn't built in a day! Keep going!";
+    case 2:
+      return "2/6 right on the first try. You're getting there! Every journey starts with a single step.";
+    case 3:
+      return "You got 3/6 right on the first try. Keep at it: practice makes perfect!";
+    case 4:
+      return "4/6 right on the first try. Now we're cooking! You're really getting the hang of this!";
+    case 5:
+      return "5/6 right on the first try. So close to perfection! One more push and you've got this!";
+    case 6:
+      return "Wow, 6/6 right on the first try! A score as perfect as your face!";
+    default:
+      return "Practice makes perfect!";
+  }
+};
+
+export function EndScreen({ onRestart, firstTryCorrect, totalExercises }: EndScreenProps) {
   const navigate = useNavigate();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -53,7 +77,12 @@ export function EndScreen({ onRestart }: EndScreenProps) {
         </div>
         <div className="animate-fade-in">
           <h2 className="text-xl md:text-2xl font-semibold text-[#2D3748] mb-3 md:mb-4">Great job!</h2>
-          <p className="text-sm md:text-base text-[#718096] mb-4 md:mb-6">You've completed all exercises in this set.</p>
+          <p className="text-sm md:text-base text-[#718096] mb-2">
+            {getScoreMessage(firstTryCorrect, totalExercises)}
+          </p>
+          <p className="text-sm md:text-base text-[#718096] mb-4 md:mb-6">
+            You've completed all exercises in this set.
+          </p>
           <div className="flex flex-col sm:flex-row justify-center gap-3">
             <Button 
               ref={buttonRef}
