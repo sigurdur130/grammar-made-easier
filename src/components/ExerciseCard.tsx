@@ -1,9 +1,10 @@
 
-import { useState, useEffect, KeyboardEvent } from "react";
+import { useState, useEffect, KeyboardEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExerciseContent } from "./exercise/ExerciseContent";
 import { CharacterButtons } from "./exercise/CharacterButtons";
 import { ActionButtons } from "./exercise/ActionButtons";
+import type { ExerciseInputHandle } from "./exercise/ExerciseInput";
 
 interface ExerciseCardProps {
   sentence: {
@@ -26,6 +27,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   const [showAnswer, setShowAnswer] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [shake, setShake] = useState(false);
+  const inputRef = useRef<ExerciseInputHandle>(null);
 
   useEffect(() => {
     setAnswer("");
@@ -34,6 +36,10 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
     setShowAnswer(false);
     setIsTyping(false);
     setShake(false);
+    // Focus input when sentence changes
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   }, [sentence]);
 
   const handleCheck = () => {
@@ -48,6 +54,10 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
       if (onIncorrect) {
         onIncorrect();
       }
+      // Focus input after incorrect attempt
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
     }
   };
 
@@ -66,6 +76,8 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   const insertCharacter = (char: string) => {
     setAnswer(prev => prev + char);
     setIsTyping(true);
+    // Focus input after inserting character
+    inputRef.current?.focus();
   };
 
   return (
@@ -76,6 +88,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
         </div>
 
         <ExerciseContent
+          ref={inputRef}
           sentence={sentence}
           answer={answer}
           isCorrect={isCorrect}
