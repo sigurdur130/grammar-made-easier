@@ -80,9 +80,6 @@ export function EndScreen({ onRestart, firstTryCorrect, totalExercises }: EndScr
           <p className="text-sm md:text-base text-[#718096] mb-2">
             {getScoreMessage(firstTryCorrect, totalExercises)}
           </p>
-          <p className="text-sm md:text-base text-[#718096] mb-4 md:mb-6">
-            You've completed all exercises in this set.
-          </p>
           <div className="flex flex-col sm:flex-row justify-center gap-3">
             <Button 
               ref={buttonRef}
