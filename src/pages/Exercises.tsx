@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -64,6 +65,20 @@ const Exercises = () => {
       // Combine retry sentences with new random sentences
       const combinedSentences = [...retrySentences, ...newSentences];
       console.log("Combined sentences:", combinedSentences);
+
+      // If we got fewer sentences than requested and there are no retry sentences,
+      // notify that we're out of new sentences
+      if (newSentences.length < neededRandomSentences && retrySentences.length === 0) {
+        try {
+          await supabase.functions.invoke('notify-category-completed', {
+            body: { category, subcategory }
+          });
+          console.log("Notification sent for completed category");
+        } catch (error) {
+          console.error("Error sending completion notification:", error);
+        }
+      }
+
       return combinedSentences;
     },
   });
@@ -117,11 +132,16 @@ const Exercises = () => {
     setAnsweredCount(0);
     setFirstTryCorrect(0);
     setHasIncorrectAttempt(false);
+    // Clear masteredIds when restarting from the "out of sentences" state
+    if (sentences && sentences.length < 6) {
+      setMasteredIds([]);
+    }
     await refetch();
   };
 
   const progress = sentences ? ((answeredCount) / sentences.length) * 100 : 0;
   const isComplete = sentences && answeredCount === sentences.length;
+  const isOutOfSentences = sentences && sentences.length < 6;
 
   return (
     <SidebarProvider>
@@ -138,6 +158,7 @@ const Exercises = () => {
                   onRestart={handleRestart} 
                   firstTryCorrect={firstTryCorrect}
                   totalExercises={sentences.length}
+                  isOutOfSentences={isOutOfSentences}
                 />
               ) : (
                 <ExerciseCard 

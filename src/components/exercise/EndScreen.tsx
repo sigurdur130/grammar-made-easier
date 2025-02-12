@@ -10,6 +10,7 @@ interface EndScreenProps {
   onRestart: () => void;
   firstTryCorrect: number;
   totalExercises: number;
+  isOutOfSentences?: boolean;
 }
 
 const getScoreMessage = (firstTryCorrect: number, total: number): string => {
@@ -33,7 +34,7 @@ const getScoreMessage = (firstTryCorrect: number, total: number): string => {
   }
 };
 
-export function EndScreen({ onRestart, firstTryCorrect, totalExercises }: EndScreenProps) {
+export function EndScreen({ onRestart, firstTryCorrect, totalExercises, isOutOfSentences }: EndScreenProps) {
   const navigate = useNavigate();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -76,9 +77,13 @@ export function EndScreen({ onRestart, firstTryCorrect, totalExercises }: EndScr
           <Trophy className="w-12 h-12 md:w-16 md:h-16 text-yellow-500" />
         </div>
         <div className="animate-fade-in">
-          <h2 className="text-xl md:text-2xl font-semibold text-[#2D3748] mb-3 md:mb-4">Great job!</h2>
-          <p className="text-sm md:text-base text-[#718096] mb-2">
-            {getScoreMessage(firstTryCorrect, totalExercises)}
+          <h2 className="text-xl md:text-2xl font-semibold text-[#2D3748] mb-3 md:mb-4">
+            {isOutOfSentences ? "You're on a roll! 🚀" : "Great job!"}
+          </h2>
+          <p className="text-sm md:text-base text-[#718096] mb-4">
+            {isOutOfSentences 
+              ? "Wow! You've mastered all the available sentences in this category. Want to start fresh and practice them again?"
+              : getScoreMessage(firstTryCorrect, totalExercises)}
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-3">
             <Button 
@@ -86,7 +91,7 @@ export function EndScreen({ onRestart, firstTryCorrect, totalExercises }: EndScr
               onClick={onRestart}
               className="bg-[#6B46C1] hover:bg-[#553C9A] w-full sm:w-auto"
             >
-              Keep practicing
+              {isOutOfSentences ? "Start fresh" : "Keep practicing"}
             </Button>
             <Button 
               onClick={() => navigate('/')}
