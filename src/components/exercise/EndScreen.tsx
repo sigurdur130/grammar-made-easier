@@ -1,18 +1,15 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import { useEffect, useRef } from "react";
-
 interface EndScreenProps {
   onRestart: () => void;
   firstTryCorrect: number;
   totalExercises: number;
   isOutOfSentences?: boolean;
 }
-
 const getScoreMessage = (firstTryCorrect: number, total: number): string => {
   switch (firstTryCorrect) {
     case 0:
@@ -33,45 +30,43 @@ const getScoreMessage = (firstTryCorrect: number, total: number): string => {
       return "Practice makes perfect!";
   }
 };
-
-export function EndScreen({ onRestart, firstTryCorrect, totalExercises, isOutOfSentences }: EndScreenProps) {
+export function EndScreen({
+  onRestart,
+  firstTryCorrect,
+  totalExercises,
+  isOutOfSentences
+}: EndScreenProps) {
   const navigate = useNavigate();
   const buttonRef = useRef<HTMLButtonElement>(null);
-
   useEffect(() => {
     // Auto-focus the "Keep practicing" button when component mounts
     buttonRef.current?.focus();
-
     const duration = 500;
     const animationEnd = Date.now() + duration;
-
     const randomInRange = (min: number, max: number) => {
       return Math.random() * (max - min) + min;
     };
-
     const confettiInterval = setInterval(() => {
       const timeLeft = animationEnd - Date.now();
-
       if (timeLeft <= 0) {
         clearInterval(confettiInterval);
         return;
       }
-
       confetti({
         particleCount: 3,
         angle: randomInRange(55, 125),
         spread: randomInRange(50, 70),
-        origin: { y: 0.5 },
-        colors: ['#FFD700', '#6B46C1', '#48BB78', '#4299E1'],
+        origin: {
+          y: 0.5
+        },
+        colors: ['#FFD700', '#6B46C1', '#48BB78', '#4299E1']
       });
     }, 50);
 
     // Cleanup interval
     return () => clearInterval(confettiInterval);
   }, []);
-
-  return (
-    <Card className="w-full max-w-3xl mx-auto bg-[#F8FAFF] border-none shadow-lg">
+  return <Card className="w-full max-w-3xl mx-auto bg-[#F8FAFF] border-none shadow-lg">
       <CardContent className="p-4 md:p-6 text-center">
         <div className="flex justify-center mb-4 md:mb-6">
           <Trophy className="w-12 h-12 md:w-16 md:h-16 text-yellow-500" />
@@ -80,29 +75,18 @@ export function EndScreen({ onRestart, firstTryCorrect, totalExercises, isOutOfS
           <h2 className="text-xl md:text-2xl font-semibold text-[#2D3748] mb-3 md:mb-4">
             {isOutOfSentences ? "You're on a roll! 🚀" : "Great job!"}
           </h2>
-          <p className="text-sm md:text-base text-[#718096] mb-4">
-            {isOutOfSentences 
-              ? "Wow! You've mastered all the available sentences in this category. Want to start fresh and practice them again?"
-              : getScoreMessage(firstTryCorrect, totalExercises)}
+          <p className="text-sm md:text-base text-[#718096] mb-4 my-[16px]">
+            {isOutOfSentences ? "Wow! You've mastered all the available sentences in this category. Want to start fresh and practice them again?" : getScoreMessage(firstTryCorrect, totalExercises)}
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-3">
-            <Button 
-              ref={buttonRef}
-              onClick={onRestart}
-              className="bg-[#6B46C1] hover:bg-[#553C9A] w-full sm:w-auto"
-            >
+            <Button ref={buttonRef} onClick={onRestart} className="bg-[#6B46C1] hover:bg-[#553C9A] w-full sm:w-auto">
               {isOutOfSentences ? "Start fresh" : "Keep practicing"}
             </Button>
-            <Button 
-              onClick={() => navigate('/')}
-              variant="outline"
-              className="w-full sm:w-auto"
-            >
+            <Button onClick={() => navigate('/')} variant="outline" className="w-full sm:w-auto">
               Practice something else
             </Button>
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 }
