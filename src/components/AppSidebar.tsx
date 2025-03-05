@@ -1,9 +1,13 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
+import { Menu } from "lucide-react";
 import { LoadingSkeleton } from "./sidebar/LoadingSkeleton";
 import { CategoryList } from "./sidebar/CategoryList";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
   const navigate = useNavigate();
@@ -59,17 +63,41 @@ export function AppSidebar() {
     navigate(`/exercises/${category}/${subcategory}`);
   };
 
+  // Mobile sidebar toggle
+  const MobileSidebarToggle = () => (
+    <div className="fixed bottom-4 right-4 z-50 md:hidden">
+      <Button
+        variant="default"
+        size="icon"
+        className="rounded-full shadow-lg"
+        asChild
+      >
+        <SidebarTrigger>
+          <Menu className="h-5 w-5" />
+        </SidebarTrigger>
+      </Button>
+    </div>
+  );
+
   if (categoriesLoading || subcategoriesLoading) {
-    return <LoadingSkeleton />;
+    return (
+      <>
+        <LoadingSkeleton />
+        <MobileSidebarToggle />
+      </>
+    );
   }
 
   return (
-    <CategoryList
-      categories={categories || []}
-      subcategories={subcategories || []}
-      openCategory={openCategory}
-      onToggleCategory={toggleCategory}
-      onSubcategoryClick={handleSubcategoryClick}
-    />
+    <>
+      <CategoryList
+        categories={categories || []}
+        subcategories={subcategories || []}
+        openCategory={openCategory}
+        onToggleCategory={toggleCategory}
+        onSubcategoryClick={handleSubcategoryClick}
+      />
+      <MobileSidebarToggle />
+    </>
   );
 }
