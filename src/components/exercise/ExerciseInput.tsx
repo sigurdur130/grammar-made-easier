@@ -34,8 +34,12 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
     }
   }));
 
+  // Calculate width based on baseForm length, with a minimum width
+  // Add a small buffer (+2ch) for icons and padding
+  const minWidth = baseForm ? `${Math.max(baseForm.length + 2, 16)}ch` : "16ch";
+
   return (
-    <div className="relative w-full sm:w-64">
+    <div className="relative w-full sm:w-auto" style={{ minWidth }}>
       <Input
         ref={inputRef}
         value={answer}
