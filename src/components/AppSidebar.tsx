@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,11 +5,12 @@ import { useState } from "react";
 import { Menu } from "lucide-react";
 import { LoadingSkeleton } from "./sidebar/LoadingSkeleton";
 import { CategoryList } from "./sidebar/CategoryList";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 
 export function AppSidebar() {
   const navigate = useNavigate();
+  const { setOpenMobile, isMobile } = useSidebar();
   const [openCategory, setOpenCategory] = useState<string | null>(null);
 
   const { data: subcategories, isLoading: subcategoriesLoading } = useQuery({
@@ -30,13 +30,11 @@ export function AppSidebar() {
     },
   });
 
-  // Get unique categories that have online subcategories
   const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ["wordCategories", subcategories],
     queryFn: async () => {
       if (!subcategories) return [];
       
-      // Get unique word categories from subcategories
       const uniqueCategories = [...new Set(subcategories.map(sub => sub.word_category))];
       
       console.log("Fetching word categories...");
@@ -52,7 +50,7 @@ export function AppSidebar() {
       console.log("Fetched categories:", data);
       return data;
     },
-    enabled: !!subcategories, // Only run this query when subcategories are loaded
+    enabled: !!subcategories,
   });
 
   const toggleCategory = (category: string) => {
@@ -61,9 +59,11 @@ export function AppSidebar() {
 
   const handleSubcategoryClick = (category: string, subcategory: string) => {
     navigate(`/exercises/${category}/${subcategory}`);
+    if (isMobile) {
+      setOpenMobile(false);
+    }
   };
 
-  // Mobile sidebar toggle - repositioned to top left
   const MobileSidebarToggle = () => (
     <div className="fixed top-4 left-4 z-50 md:hidden">
       <Button
