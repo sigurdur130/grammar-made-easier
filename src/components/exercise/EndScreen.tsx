@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
@@ -69,7 +70,8 @@ export function EndScreen({
     return () => clearInterval(confettiInterval);
   }, []);
 
-  return <Card className="w-full max-w-3xl mx-auto border-none shadow-lg">
+  return (
+    <Card className="w-full max-w-3xl mx-auto shadow-lg dark:shadow-md dark:bg-muted bg-background">
       <CardContent className="p-4 md:p-6 text-center">
         <div className="flex justify-center mb-4 md:mb-6">
           <Trophy className="w-12 h-12 md:w-16 md:h-16 text-yellow-500" />
@@ -85,11 +87,16 @@ export function EndScreen({
             <Button ref={buttonRef} onClick={onRestart} className="bg-primary hover:bg-primary/90 w-full sm:w-auto">
               {isOutOfSentences ? "Start fresh" : "Keep practicing"}
             </Button>
-            <Button onClick={() => navigate('/')} variant="outline" className="w-full sm:w-auto">
+            <Button 
+              onClick={() => navigate('/')} 
+              variant="outline" 
+              className="w-full sm:w-auto dark:bg-muted/70 dark:border-muted-foreground/20 dark:hover:bg-accent"
+            >
               Practice something else
             </Button>
           </div>
         </div>
       </CardContent>
-    </Card>;
+    </Card>
+  );
 }

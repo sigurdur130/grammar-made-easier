@@ -30,11 +30,11 @@ export const ExerciseContent = forwardRef<ExerciseInputHandle, ExerciseContentPr
 }, ref) => {
   return (
     <div className="mb-6 md:mb-8">
-      <p className="text-[#718096] italic mb-4 md:mb-6 text-sm md:text-base px-2">
+      <p className="text-muted-foreground italic mb-4 md:mb-6 text-sm md:text-base px-2">
         {sentence.english_translation}
       </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-base md:text-lg mb-4">
-        <span className="text-[#2D3748]">{sentence.icelandic_left}</span>
+        <span className="text-card-foreground font-medium">{sentence.icelandic_left}</span>
         <ExerciseInput
           ref={ref}
           answer={answer}
@@ -45,7 +45,7 @@ export const ExerciseContent = forwardRef<ExerciseInputHandle, ExerciseContentPr
           onKeyPress={onKeyPress}
           shake={shake}
         />
-        <span className="text-[#2D3748]">{sentence.icelandic_right}</span>
+        <span className="text-card-foreground font-medium">{sentence.icelandic_right}</span>
       </div>
     </div>
   );

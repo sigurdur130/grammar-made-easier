@@ -1,3 +1,4 @@
+
 import { useState, useEffect, KeyboardEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExerciseContent } from "./exercise/ExerciseContent";
@@ -77,7 +78,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto border-none shadow-lg">
+    <Card className="w-full max-w-3xl mx-auto shadow-lg dark:shadow-md dark:bg-muted bg-background">
       <CardContent className="p-4 md:pt-6 md:px-6">
         <div className="mb-4 md:mb-6">
           <h2 className="text-xl md:text-2xl font-semibold text-card-foreground">{subcategory}</h2>
