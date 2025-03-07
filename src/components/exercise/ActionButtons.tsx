@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -20,7 +21,7 @@ export function ActionButtons({
     <div className="flex items-center justify-center gap-4">
       <Button
         onClick={onCheck}
-        className="bg-[#6B46C1] hover:bg-[#553C9A] text-white px-8"
+        className="px-8"
       >
         Check
       </Button>
@@ -29,7 +30,7 @@ export function ActionButtons({
         <Button
           onClick={onToggleAnswer}
           variant="ghost"
-          className="text-[#6B46C1] hover:bg-[#6B46C1]/10"
+          className="text-primary hover:bg-primary/10"
         >
           <Eye className="h-4 w-4 mr-2" />
           Show Answer
@@ -37,7 +38,7 @@ export function ActionButtons({
       )}
       
       {showAnswer && correctAnswer && (
-        <span className="text-[#6B46C1] font-medium">
+        <span className="text-primary font-medium">
           {correctAnswer}
         </span>
       )}

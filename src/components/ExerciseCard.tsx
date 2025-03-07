@@ -1,4 +1,3 @@
-
 import { useState, useEffect, KeyboardEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExerciseContent } from "./exercise/ExerciseContent";
@@ -36,7 +35,6 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
     setShowAnswer(false);
     setIsTyping(false);
     setShake(false);
-    // Focus input when sentence changes
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
@@ -54,7 +52,6 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
       if (onIncorrect) {
         onIncorrect();
       }
-      // Focus input after incorrect attempt
       setTimeout(() => {
         inputRef.current?.focus();
       }, 0);
@@ -76,15 +73,14 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   const insertCharacter = (char: string) => {
     setAnswer(prev => prev + char);
     setIsTyping(true);
-    // Focus input after inserting character
     inputRef.current?.focus();
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto bg-[#F8FAFF] border-none shadow-lg">
+    <Card className="w-full max-w-3xl mx-auto border-none shadow-lg">
       <CardContent className="p-4 md:pt-6 md:px-6">
         <div className="mb-4 md:mb-6">
-          <h2 className="text-xl md:text-2xl font-semibold text-[#2D3748]">{subcategory}</h2>
+          <h2 className="text-xl md:text-2xl font-semibold text-card-foreground">{subcategory}</h2>
         </div>
 
         <ExerciseContent
