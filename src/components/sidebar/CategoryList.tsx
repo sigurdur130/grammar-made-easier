@@ -1,3 +1,4 @@
+
 import {
   Sidebar,
   SidebarContent,
@@ -8,6 +9,7 @@ import {
 import { CategoryItem } from "./CategoryItem";
 import { Database } from "@/integrations/supabase/types";
 import { Link } from "react-router-dom";
+import { ThemeToggle } from "./ThemeToggle";
 
 type CategoryListProps = {
   categories: Array<Database["public"]["Tables"]["word_categories"]["Row"]>;
@@ -32,6 +34,7 @@ export function CategoryList({
             No categories available
           </div>
         </SidebarContent>
+        <ThemeToggle />
       </Sidebar>
     );
   }
@@ -62,6 +65,7 @@ export function CategoryList({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <ThemeToggle />
     </Sidebar>
   );
 }
