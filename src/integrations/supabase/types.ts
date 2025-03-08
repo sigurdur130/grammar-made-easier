@@ -120,6 +120,7 @@ export type Database = {
         Row: {
           created_at: string
           difficulty: string | null
+          further_reading: string | null
           status: string | null
           subcategory: string
           word_category: string
@@ -127,6 +128,7 @@ export type Database = {
         Insert: {
           created_at?: string
           difficulty?: string | null
+          further_reading?: string | null
           status?: string | null
           subcategory: string
           word_category: string
@@ -134,6 +136,7 @@ export type Database = {
         Update: {
           created_at?: string
           difficulty?: string | null
+          further_reading?: string | null
           status?: string | null
           subcategory?: string
           word_category?: string

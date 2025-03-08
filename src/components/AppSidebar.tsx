@@ -1,12 +1,12 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
-import { Menu } from "lucide-react";
 import { LoadingSkeleton } from "./sidebar/LoadingSkeleton";
 import { CategoryList } from "./sidebar/CategoryList";
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
+import { useSidebar } from "@/components/ui/sidebar";
+import { MobileNavbar } from "./MobileNavbar";
 
 export function AppSidebar() {
   const navigate = useNavigate();
@@ -64,26 +64,11 @@ export function AppSidebar() {
     }
   };
 
-  const MobileSidebarToggle = () => (
-    <div className="fixed top-4 left-4 z-50 md:hidden">
-      <Button
-        variant="default"
-        size="icon"
-        className="rounded-full shadow-lg"
-        asChild
-      >
-        <SidebarTrigger>
-          <Menu className="h-5 w-5" />
-        </SidebarTrigger>
-      </Button>
-    </div>
-  );
-
   if (categoriesLoading || subcategoriesLoading) {
     return (
       <>
         <LoadingSkeleton />
-        <MobileSidebarToggle />
+        <MobileNavbar />
       </>
     );
   }
@@ -97,7 +82,7 @@ export function AppSidebar() {
         onToggleCategory={toggleCategory}
         onSubcategoryClick={handleSubcategoryClick}
       />
-      <MobileSidebarToggle />
+      <MobileNavbar />
     </>
   );
 }
