@@ -8,6 +8,7 @@ import { ExerciseCard } from "@/components/ExerciseCard";
 import { Progress } from "@/components/ui/progress";
 import { EndScreen } from "@/components/exercise/EndScreen";
 import { FeedbackButton } from "@/components/FeedbackButton";
+import { FurtherReading } from "@/components/exercise/FurtherReading";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Sentence {
@@ -21,6 +22,10 @@ interface Sentence {
   word_category: string | null;
 }
 
+interface SubcategoryInfo {
+  further_reading: string | null;
+}
+
 const Exercises = () => {
   const { category, subcategory } = useParams();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -29,6 +34,25 @@ const Exercises = () => {
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
+
+  // Fetch subcategory info including further_reading
+  const { data: subcategoryInfo } = useQuery({
+    queryKey: ["subcategoryInfo", subcategory],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("subcategories")
+        .select("further_reading")
+        .eq("subcategory", subcategory)
+        .single();
+      
+      if (error) {
+        console.error("Error fetching subcategory info:", error);
+        return { further_reading: null } as SubcategoryInfo;
+      }
+      
+      return data as SubcategoryInfo;
+    },
+  });
 
   const { data: sentences, isLoading, refetch } = useQuery({
     queryKey: ["sentences", category, subcategory],
@@ -161,12 +185,17 @@ const Exercises = () => {
                   isOutOfSentences={isOutOfSentences}
                 />
               ) : (
-                <ExerciseCard 
-                  sentence={sentences[currentIndex]} 
-                  onCorrect={handleCorrectAnswer}
-                  onIncorrect={handleIncorrectAnswer}
-                  subcategory={subcategory || ''}
-                />
+                <>
+                  <ExerciseCard 
+                    sentence={sentences[currentIndex]} 
+                    onCorrect={handleCorrectAnswer}
+                    onIncorrect={handleIncorrectAnswer}
+                    subcategory={subcategory || ''}
+                  />
+                  {!isComplete && subcategoryInfo && (
+                    <FurtherReading content={subcategoryInfo.further_reading} />
+                  )}
+                </>
               )
             ) : null}
           </div>
