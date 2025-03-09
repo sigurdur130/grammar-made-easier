@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Book, ChevronDown, ChevronUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import ReactMarkdown from "react-markdown";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface FurtherReadingProps {
@@ -33,7 +32,10 @@ export function FurtherReading({ content }: FurtherReadingProps) {
         <CollapsibleContent className="mt-2">
           <Card>
             <CardContent className="p-4 prose dark:prose-invert prose-sm max-w-none prose-headings:mt-4 prose-headings:mb-2">
-              <ReactMarkdown>{content}</ReactMarkdown>
+              <div 
+                dangerouslySetInnerHTML={{ __html: content }} 
+                className="html-content"
+              />
             </CardContent>
           </Card>
         </CollapsibleContent>
