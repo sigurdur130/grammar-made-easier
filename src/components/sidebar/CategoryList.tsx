@@ -17,7 +17,14 @@ import { Button } from "@/components/ui/button";
 
 type CategoryListProps = {
   categories: Array<Database["public"]["Tables"]["word_categories"]["Row"]>;
-  subcategories: Array<Database["public"]["Tables"]["subcategories"]["Row"]>;
+  subcategories: Array<{
+    subcategory: string;
+    word_category: string;
+    created_at: string;
+    status: string;
+    difficulty: string;
+    further_reading: string | null;  // Changed to match the Subcategory type
+  }>;
   openCategory: string | null;
   onToggleCategory: (category: string) => void;
   onSubcategoryClick: (category: string, subcategory: string) => void;

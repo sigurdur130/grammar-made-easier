@@ -7,6 +7,7 @@ import { LoadingSkeleton } from "./sidebar/LoadingSkeleton";
 import { CategoryList } from "./sidebar/CategoryList";
 import { useSidebar } from "@/components/ui/sidebar";
 import { MobileNavbar } from "./MobileNavbar";
+import { Database } from "@/integrations/supabase/types";
 
 // Define the correct type for subcategories
 type Subcategory = {
@@ -15,7 +16,7 @@ type Subcategory = {
   created_at: string;
   status: string;
   difficulty: string;
-  further_reading?: string;
+  further_reading: string | null;  // Changed from optional to nullable to match expected type
 };
 
 export function AppSidebar() {
