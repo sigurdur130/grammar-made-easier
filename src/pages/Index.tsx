@@ -48,7 +48,7 @@ const Index = () => {
             <div className="space-y-6 md:space-y-8">
               {Object.entries(groupedSubcategories).map(([category, subs]) => (
                 <div key={category} className="space-y-3 md:space-y-4">
-                  <h2 className="text-xl md:text-2xl font-semibold text-left pl-2 sticky top-14 md:top-0 bg-background/95 backdrop-blur py-2 z-10">
+                  <h2 className="text-xl md:text-2xl font-semibold text-left pl-2 sticky top-12 md:top-0 bg-background/95 backdrop-blur py-2 z-10">
                     {category}
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 px-2">
