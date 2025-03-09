@@ -11,6 +11,7 @@ import { CategoryItem } from "./CategoryItem";
 import { Database } from "@/integrations/supabase/types";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
+import { LearnWithTeacher } from "./LearnWithTeacher";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -40,6 +41,7 @@ export function CategoryList({
           </div>
         </SidebarContent>
         <ThemeToggle />
+        <LearnWithTeacher />
       </Sidebar>
     );
   }
@@ -84,6 +86,7 @@ export function CategoryList({
         </SidebarGroup>
       </SidebarContent>
       <ThemeToggle />
+      <LearnWithTeacher />
     </Sidebar>
   );
 }

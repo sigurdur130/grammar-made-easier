@@ -8,6 +8,16 @@ import { CategoryList } from "./sidebar/CategoryList";
 import { useSidebar } from "@/components/ui/sidebar";
 import { MobileNavbar } from "./MobileNavbar";
 
+// Define the correct type for subcategories
+type Subcategory = {
+  subcategory: string;
+  word_category: string;
+  created_at: string;
+  status: string;
+  difficulty: string;
+  further_reading?: string;
+};
+
 export function AppSidebar() {
   const navigate = useNavigate();
   const { setOpenMobile, isMobile } = useSidebar();
@@ -26,7 +36,7 @@ export function AppSidebar() {
         throw error;
       }
       console.log("Fetched subcategories:", data);
-      return data;
+      return data as Subcategory[];
     },
   });
 
