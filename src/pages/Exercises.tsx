@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -35,22 +34,23 @@ const Exercises = () => {
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
 
-  // Fetch subcategory info including further_reading
   const { data: subcategoryInfo } = useQuery({
-    queryKey: ["subcategoryInfo", subcategory],
+    queryKey: ["subcategoryInfo", subcategory, category],
     queryFn: async () => {
+      console.log("Fetching subcategory info for:", { subcategory, category });
       const { data, error } = await supabase
         .from("subcategories")
         .select("further_reading")
         .eq("subcategory", subcategory)
-        .single();
+        .eq("word_category", category)
+        .maybeSingle();
       
       if (error) {
         console.error("Error fetching subcategory info:", error);
         return { further_reading: null } as SubcategoryInfo;
       }
       
-      return data as SubcategoryInfo;
+      return (data || { further_reading: null }) as SubcategoryInfo;
     },
   });
 
@@ -65,10 +65,8 @@ const Exercises = () => {
         retrySentencesCount: retrySentences.length 
       });
 
-      // Calculate how many new random sentences we need
       const neededRandomSentences = 6 - retrySentences.length;
 
-      // Get new random sentences if needed
       let newSentences: Sentence[] = [];
       if (neededRandomSentences > 0) {
         const { data, error } = await supabase.rpc('get_random_rows', {
@@ -86,12 +84,9 @@ const Exercises = () => {
         newSentences = data || [];
       }
 
-      // Combine retry sentences with new random sentences
       const combinedSentences = [...retrySentences, ...newSentences];
       console.log("Combined sentences:", combinedSentences);
 
-      // If we got fewer sentences than requested and there are no retry sentences,
-      // notify that we're out of new sentences
       if (newSentences.length < neededRandomSentences && retrySentences.length === 0) {
         try {
           await supabase.functions.invoke('notify-category-completed', {
@@ -118,12 +113,10 @@ const Exercises = () => {
       totalSentences: sentences?.length
     });
 
-    // If this was a first-try correct answer
     if (!hasIncorrectAttempt) {
       setFirstTryCorrect(prev => prev + 1);
       setMasteredIds(prev => [...prev, currentSentence.id]);
       
-      // If this was a retry sentence that's now mastered, remove it from retry list
       if (retrySentences.some(s => s.id === currentSentence.id)) {
         setRetrySentences(prev => prev.filter(s => s.id !== currentSentence.id));
       }
@@ -132,7 +125,7 @@ const Exercises = () => {
     setAnsweredCount(prev => prev + 1);
     if (sentences && currentIndex < sentences.length - 1) {
       setCurrentIndex(currentIndex + 1);
-      setHasIncorrectAttempt(false); // Reset for next sentence
+      setHasIncorrectAttempt(false);
     }
   };
 
@@ -140,8 +133,6 @@ const Exercises = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
 
-    // Only add to retry sentences if this is the first incorrect attempt
-    // and it's not already in the retry list
     if (!hasIncorrectAttempt && !retrySentences.some(s => s.id === currentSentence.id)) {
       console.log("Adding sentence to retry list:", currentSentence.id);
       setRetrySentences(prev => [...prev, currentSentence]);
@@ -156,7 +147,6 @@ const Exercises = () => {
     setAnsweredCount(0);
     setFirstTryCorrect(0);
     setHasIncorrectAttempt(false);
-    // Clear masteredIds when restarting from the "out of sentences" state
     if (sentences && sentences.length < 6) {
       setMasteredIds([]);
     }
