@@ -17,7 +17,7 @@ export function LearnWithTeacher() {
           target="_blank" 
           rel="noopener noreferrer"
         >
-          <span>Learn with a Teacher</span>
+          <span>Learn with us</span>
           <GraduationCap className="h-5 w-5" />
         </a>
       </Button>
