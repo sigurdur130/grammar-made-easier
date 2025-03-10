@@ -1,3 +1,4 @@
+
 import { useState, useEffect, KeyboardEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExerciseContent } from "./exercise/ExerciseContent";
@@ -116,15 +117,29 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
           showAnswer={showAnswer}
         />
 
+        {/* Mobile layout: Check button above character buttons */}
+        <div className="md:hidden mb-4">
+          <ActionButtons
+            onCheck={handleCheck}
+            showAnswerButton={hasIncorrectAttempt}
+            showAnswer={showAnswer}
+            onToggleAnswer={() => setShowAnswer(!showAnswer)}
+            correctAnswer={sentence.correct_answer}
+          />
+        </div>
+
         <CharacterButtons onCharacterClick={insertCharacter} />
 
-        <ActionButtons
-          onCheck={handleCheck}
-          showAnswerButton={hasIncorrectAttempt}
-          showAnswer={showAnswer}
-          onToggleAnswer={() => setShowAnswer(!showAnswer)}
-          correctAnswer={sentence.correct_answer}
-        />
+        {/* Desktop layout: Check button below character buttons */}
+        <div className="hidden md:block">
+          <ActionButtons
+            onCheck={handleCheck}
+            showAnswerButton={hasIncorrectAttempt}
+            showAnswer={showAnswer}
+            onToggleAnswer={() => setShowAnswer(!showAnswer)}
+            correctAnswer={sentence.correct_answer}
+          />
+        </div>
       </CardContent>
     </Card>
   );
