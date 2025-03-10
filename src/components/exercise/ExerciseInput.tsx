@@ -1,9 +1,8 @@
-
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { Check, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-export interface ExerciseInputHandle {
+export interface ExerciseInputHandle extends HTMLInputElement {
   focus: () => void;
 }
 
