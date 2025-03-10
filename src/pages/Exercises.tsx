@@ -165,7 +165,7 @@ const Exercises = () => {
           <div className="max-w-3xl mx-auto">
             <Progress value={progress} className="mb-6" />
             {isLoading ? (
-              <div className="h-[400px] mt-14 bg-muted animate-pulse rounded-lg" />
+              <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
             ) : sentences && sentences.length > 0 ? (
               isComplete ? (
                 <EndScreen 
