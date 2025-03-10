@@ -161,9 +161,11 @@ const Exercises = () => {
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 pt-[calc(theme(spacing.6)_+_theme(spacing.12))] md:pt-6">
           <div className="max-w-3xl mx-auto">
-            <Progress value={progress} className="mb-6" />
+            <div className="sticky top-12 md:top-0 bg-background/95 backdrop-blur-sm z-10 pb-2 -mt-2 pt-2">
+              <Progress value={progress} className="mb-6" />
+            </div>
             {isLoading ? (
               <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
             ) : sentences && sentences.length > 0 ? (
