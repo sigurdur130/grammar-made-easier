@@ -1,3 +1,4 @@
+
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { Check, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -27,11 +28,7 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
 }, ref) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useImperativeHandle(ref, () => ({
-    focus: () => {
-      inputRef.current?.focus();
-    }
-  }));
+  useImperativeHandle(ref, () => inputRef.current as ExerciseInputHandle, []);
 
   // Calculate width based on baseForm length, with a minimum width
   // Add a small buffer (+2ch) for icons and padding
