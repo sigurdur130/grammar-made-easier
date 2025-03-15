@@ -43,7 +43,7 @@ export function CategoryList({
     return (
       <Sidebar>
         <SidebarContent>
-          <div className="p-4 text-base text-muted-foreground">
+          <div className="p-4 text-xl text-muted-foreground">
             No categories available
           </div>
         </SidebarContent>
