@@ -11,7 +11,7 @@ export function FloatingCheckmark({ className, style }: FloatingCheckmarkProps) 
   return (
     <div 
       className={cn(
-        "absolute z-50 animate-[floatUp_0.5s_ease-out_forwards] pointer-events-none",
+        "absolute z-50 animate-[floatUp_3.5s_ease-out_forwards] pointer-events-none",
         className
       )}
       style={style}
