@@ -55,18 +55,16 @@ export function CategoryList({
   }
 
   return (
-    <Sidebar>
+    <Sidebar className="min-w-[250px]">
       <SidebarContent>
         <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2">
-            <Link 
-              to="/" 
-              className="text-lg font-semibold text-sidebar-primary hover:text-sidebar-primary/80 transition-colors flex items-center gap-2"
-            >
-              <span>Grammar made easi(er)</span>
-              <img src="/logo.png" alt="Logo" className="h-6 w-6" />
-            </Link>
-          </div>
+          <Link 
+            to="/" 
+            className="text-lg font-semibold text-sidebar-primary hover:text-sidebar-primary/80 transition-colors flex items-center gap-2 whitespace-nowrap"
+          >
+            <span>Grammar made easi(er)</span>
+            <img src="/logo.png" alt="Logo" className="h-6 w-6" />
+          </Link>
           {isMobile && (
             <Button 
               variant="ghost" 

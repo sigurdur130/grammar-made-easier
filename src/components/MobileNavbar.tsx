@@ -10,8 +10,8 @@ export function MobileNavbar() {
       <div className="container h-full flex items-center justify-between px-4">
         <div className="flex-1">
           <Link to="/" className="flex items-center gap-2">
-            <span className="text-lg font-semibold">Grammar made easi(er)</span>
             <img src="/logo.png" alt="Logo" className="h-6 w-6" />
+            <span className="text-lg font-semibold">Grammar made easi(er)</span>
           </Link>
         </div>
         <Button
