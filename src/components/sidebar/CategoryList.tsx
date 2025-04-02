@@ -4,6 +4,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   useSidebar,
 } from "@/components/ui/sidebar";
@@ -23,7 +24,7 @@ type CategoryListProps = {
     created_at: string;
     status: string;
     difficulty: string;
-    further_reading: string | null;  // Changed to match the Subcategory type
+    further_reading: string | null;
   }>;
   openCategory: string | null;
   onToggleCategory: (category: string) => void;
@@ -57,12 +58,15 @@ export function CategoryList({
     <Sidebar>
       <SidebarContent>
         <div className="flex items-center justify-between px-4 py-3">
-          <Link 
-            to="/" 
-            className="text-lg font-semibold text-sidebar-primary hover:text-sidebar-primary/80 transition-colors"
-          >
-            Grammar made easi(er)
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link 
+              to="/" 
+              className="text-lg font-semibold text-sidebar-primary hover:text-sidebar-primary/80 transition-colors flex items-center gap-2"
+            >
+              <span>Grammar made easi(er)</span>
+              <img src="/logo.png" alt="Logo" className="h-6 w-6" />
+            </Link>
+          </div>
           {isMobile && (
             <Button 
               variant="ghost" 
