@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -9,6 +9,7 @@ import { EndScreen } from "@/components/exercise/EndScreen";
 import { FeedbackButton } from "@/components/FeedbackButton";
 import { FurtherReading } from "@/components/exercise/FurtherReading";
 import { supabase } from "@/integrations/supabase/client";
+
 interface Sentence {
   id: number;
   english_translation: string | null;
@@ -19,20 +20,34 @@ interface Sentence {
   base_form: string | null;
   word_category: string | null;
 }
+
 interface SubcategoryInfo {
   further_reading: string | null;
 }
+
 const Exercises = () => {
   const {
     category,
     subcategory
   } = useParams();
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [firstTryCorrect, setFirstTryCorrect] = useState(0);
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
+
+  // Reset all state when category or subcategory changes
+  useEffect(() => {
+    setCurrentIndex(0);
+    setAnsweredCount(0);
+    setFirstTryCorrect(0);
+    setMasteredIds([]);
+    setRetrySentences([]);
+    setHasIncorrectAttempt(false);
+  }, [category, subcategory]);
+
   const {
     data: subcategoryInfo
   } = useQuery({
@@ -57,6 +72,7 @@ const Exercises = () => {
       }) as SubcategoryInfo;
     }
   });
+
   const {
     data: sentences,
     isLoading,
@@ -108,6 +124,7 @@ const Exercises = () => {
       return combinedSentences;
     }
   });
+
   const handleCorrectAnswer = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
@@ -130,6 +147,7 @@ const Exercises = () => {
       setHasIncorrectAttempt(false);
     }
   };
+
   const handleIncorrectAnswer = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
@@ -139,6 +157,7 @@ const Exercises = () => {
     }
     setHasIncorrectAttempt(true);
   };
+
   const handleRestart = async () => {
     console.log("Restarting exercises...");
     setCurrentIndex(0);
@@ -150,9 +169,11 @@ const Exercises = () => {
     }
     await refetch();
   };
+  
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
   const isComplete = sentences && answeredCount === sentences.length;
   const isOutOfSentences = sentences && sentences.length < 6;
+  
   return <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
@@ -171,4 +192,5 @@ const Exercises = () => {
       </div>
     </SidebarProvider>;
 };
+
 export default Exercises;
