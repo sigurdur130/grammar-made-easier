@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const location = useLocation();
 
   const getCurrentScreen = () => {
@@ -19,22 +21,56 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
     return location.pathname;
   };
 
+  const sendEmailNotification = async (
+    feedbackData: {
+      email: string | null;
+      feedback: string;
+      screen: string;
+      sentence: string | null;
+    }
+  ) => {
+    try {
+      const { error } = await supabase.functions.invoke("send-feedback-notification", {
+        body: feedbackData,
+      });
+      
+      if (error) {
+        console.error("Error sending email notification:", error);
+      }
+    } catch (error) {
+      console.error("Error invoking send-feedback-notification function:", error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
+      const screen = getCurrentScreen();
+      const sentenceId = currentSentence ? String(currentSentence) : null;
+      
+      // Save to database
       const { error } = await supabase
         .from("feedback")
         .insert([
           {
             email: email || null,
-            screen: getCurrentScreen(),
+            screen,
             feedback,
-            sentence: currentSentence ? String(currentSentence) : null
+            sentence: sentenceId
           }
         ]);
 
       if (error) throw error;
+
+      // Send email notification
+      await sendEmailNotification({
+        email: email || null,
+        feedback,
+        screen,
+        sentence: sentenceId
+      });
 
       toast({
         title: "Thanks for the feedback! I appreciate it =)",
@@ -57,6 +93,8 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
           </a>
         ),
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -94,8 +132,8 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
                 className="min-h-[150px]"
               />
             </div>
-            <Button type="submit" className="w-full">
-              Submit Feedback
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit Feedback"}
             </Button>
           </form>
         </SheetContent>

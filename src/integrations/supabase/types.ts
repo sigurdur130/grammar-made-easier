@@ -12,6 +12,7 @@ export type Database = {
       feedback: {
         Row: {
           created_at: string
+          done: boolean | null
           email: string | null
           feedback: string | null
           id: number
@@ -20,6 +21,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          done?: boolean | null
           email?: string | null
           feedback?: string | null
           id?: number
@@ -28,6 +30,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          done?: boolean | null
           email?: string | null
           feedback?: string | null
           id?: number
