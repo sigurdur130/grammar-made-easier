@@ -16,6 +16,7 @@ interface ExerciseContentProps {
   showAnswer: boolean;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onClear: () => void;
 }
 
 export const ExerciseContent = forwardRef<ExerciseInputHandle, ExerciseContentProps>(({
@@ -26,7 +27,8 @@ export const ExerciseContent = forwardRef<ExerciseInputHandle, ExerciseContentPr
   shake,
   showAnswer,
   onInputChange,
-  onKeyPress
+  onKeyPress,
+  onClear
 }, ref) => {
   return (
     <div className="mb-6 md:mb-8">
@@ -43,6 +45,7 @@ export const ExerciseContent = forwardRef<ExerciseInputHandle, ExerciseContentPr
           baseForm={sentence.base_form}
           onChange={onInputChange}
           onKeyPress={onKeyPress}
+          onClear={onClear}
           shake={shake}
         />
         <span className="text-card-foreground">{sentence.icelandic_right}</span>

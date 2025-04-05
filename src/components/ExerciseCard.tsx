@@ -82,6 +82,11 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
     setIsTyping(value.length > 0);
   };
 
+  const handleClearInput = () => {
+    setAnswer("");
+    setIsTyping(false);
+  };
+
   const insertCharacter = (char: string) => {
     setAnswer(prev => prev + char);
     setIsTyping(true);
@@ -115,6 +120,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
           onInputChange={handleInputChange}
           onKeyPress={handleKeyPress}
           showAnswer={showAnswer}
+          onClear={handleClearInput}
         />
 
         {/* Mobile layout: Check button above character buttons */}

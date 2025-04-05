@@ -14,6 +14,7 @@ interface ExerciseInputProps {
   baseForm: string | null;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onClear?: () => void;
   shake?: boolean;
 }
 
@@ -24,6 +25,7 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
   baseForm,
   onChange,
   onKeyPress,
+  onClear,
   shake,
 }, ref) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,6 +35,16 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
   // Calculate width based on baseForm length, with a minimum width
   // Add a small buffer (+2ch) for icons and padding
   const minWidth = baseForm ? `${Math.max(baseForm.length + 2, 16)}ch` : "16ch";
+
+  const handleClear = () => {
+    if (onClear) {
+      onClear();
+      // Focus the input after clearing
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    }
+  };
 
   return (
     <div className="relative w-full sm:w-auto" style={{ minWidth }}>
@@ -56,7 +68,11 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
         <Check className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500 dark:text-green-400" />
       )}
       {isCorrect === false && (
-        <X className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-red-500 dark:text-red-400" />
+        <X 
+          className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-red-500 dark:text-red-400 cursor-pointer active:scale-90 transition-transform" 
+          onClick={handleClear}
+          aria-label="Clear answer"
+        />
       )}
     </div>
   );
