@@ -105,7 +105,7 @@ const Index = () => {
                     key={difficulty} 
                     className={`space-y-6 p-4 md:p-6 rounded-lg border ${borderClass} ${bgClass}`}
                   >
-                    <div className="flex items-center bg-background/80 backdrop-blur py-2 px-3 rounded-md sticky top-12 md:top-0 z-10">
+                    <div className="flex items-center py-2 px-3 rounded-md sticky top-12 md:top-0 z-10 backdrop-blur-sm">
                       {icon}
                       <h2 className="text-xl md:text-2xl font-bold text-left">
                         {difficulty}
@@ -115,7 +115,7 @@ const Index = () => {
                     <div className="space-y-8">
                       {Object.entries(groupedByDifficulty[difficulty]).map(([wordCategory, subs]) => (
                         <div key={`${difficulty}-${wordCategory}`} className="space-y-3 md:space-y-4">
-                          <h3 className="text-lg md:text-xl font-semibold text-left pl-2 sticky top-24 md:top-12 bg-background/95 backdrop-blur py-2 z-5">
+                          <h3 className="text-lg md:text-xl font-semibold text-left pl-2 sticky top-24 md:top-12 py-2 z-5 backdrop-blur-sm">
                             {wordCategory}
                           </h3>
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 px-2">
