@@ -115,7 +115,7 @@ const Index = () => {
                     <div className="space-y-8">
                       {Object.entries(groupedByDifficulty[difficulty]).map(([wordCategory, subs]) => (
                         <div key={`${difficulty}-${wordCategory}`} className="space-y-3 md:space-y-4">
-                          <h3 className="text-lg md:text-xl font-semibold text-left pl-2 sticky top-24 md:top-12 backdrop-blur py-2 z-5 -mt-0.5 md:mt-0">
+                          <h3 className="text-lg md:text-xl font-semibold text-left pl-2 sticky top-24 md:top-12 backdrop-blur py-2 z-5">
                             {wordCategory}
                           </h3>
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 px-2">
