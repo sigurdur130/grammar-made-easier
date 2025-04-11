@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sprout, Plant, TreeDeciduous, Seedling } from "lucide-react";
+import { Sprout, Leaf, TreeDeciduous, Flower } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface CategoryCardProps {
@@ -21,11 +21,11 @@ export function CategoryCard({ title, category, difficulty }: CategoryCardProps)
   const getDifficultyIcon = () => {
     switch (difficulty?.toLowerCase()) {
       case "beginner":
-        return <Seedling className="h-4 w-4 text-green-500" />;
+        return <Leaf className="h-4 w-4 text-green-500" />;
       case "low intermediate":
         return <Sprout className="h-4 w-4 text-blue-500" />;
       case "high intermediate":
-        return <Plant className="h-4 w-4 text-orange-500" />;
+        return <Flower className="h-4 w-4 text-orange-500" />;
       case "advanced":
         return <TreeDeciduous className="h-4 w-4 text-purple-500" />;
       default:
