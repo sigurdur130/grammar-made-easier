@@ -57,6 +57,7 @@ const Index = () => {
                         key={sub.subcategory}
                         title={sub.subcategory || ''}
                         category={sub.word_category || ''}
+                        difficulty={sub.difficulty}
                       />
                     ))}
                   </div>
