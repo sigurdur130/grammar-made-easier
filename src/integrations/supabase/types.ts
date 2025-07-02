@@ -174,6 +174,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_filtered_random_rows: {
+        Args: {
+          subcategory_filter: string
+          word_category_filter: string
+          num_rows: number
+          mastered_ids?: number[]
+          retry_ids?: number[]
+          case_filters?: string[]
+          number_filters?: string[]
+          definiteness_filters?: string[]
+        }
+        Returns: {
+          id: number
+          english_translation: string
+          icelandic_left: string
+          icelandic_right: string
+          correct_answer: string
+          subcategory: string
+          base_form: string
+          word_category: string
+        }[]
+      }
       get_random_rows: {
         Args: {
           subcategory_filter: string

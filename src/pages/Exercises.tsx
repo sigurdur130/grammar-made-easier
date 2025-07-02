@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { EndScreen } from "@/components/exercise/EndScreen";
 import { FeedbackButton } from "@/components/FeedbackButton";
 import { FurtherReading } from "@/components/exercise/FurtherReading";
+import { CasesFilter } from "@/components/exercise/CasesFilter";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Sentence {
@@ -25,6 +27,12 @@ interface SubcategoryInfo {
   further_reading: string | null;
 }
 
+interface CasesFilters {
+  caseFilters: string[];
+  numberFilters: string[];
+  definitenessFilters: string[];
+}
+
 const Exercises = () => {
   const {
     category,
@@ -37,6 +45,11 @@ const Exercises = () => {
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
+  const [casesFilters, setCasesFilters] = useState<CasesFilters>({
+    caseFilters: ["Accusative"],
+    numberFilters: ["Singular"],
+    definitenessFilters: ["Indefinite"]
+  });
 
   // Reset all state when category or subcategory changes
   useEffect(() => {
@@ -46,6 +59,14 @@ const Exercises = () => {
     setMasteredIds([]);
     setRetrySentences([]);
     setHasIncorrectAttempt(false);
+    // Reset filters to defaults for Cases subcategory
+    if (subcategory === "Cases") {
+      setCasesFilters({
+        caseFilters: ["Accusative"],
+        numberFilters: ["Singular"],
+        definitenessFilters: ["Indefinite"]
+      });
+    }
   }, [category, subcategory]);
 
   const {
@@ -78,33 +99,56 @@ const Exercises = () => {
     isLoading,
     refetch
   } = useQuery({
-    queryKey: ["sentences", category, subcategory],
+    queryKey: ["sentences", category, subcategory, masteredIds, retrySentences.map(s => s.id), casesFilters],
     queryFn: async () => {
       console.log("Fetching sentences with:", {
         category,
         subcategory,
         masteredIds,
         retryIds: retrySentences.map(s => s.id),
-        retrySentencesCount: retrySentences.length
+        retrySentencesCount: retrySentences.length,
+        casesFilters: subcategory === "Cases" ? casesFilters : null
       });
       const neededRandomSentences = 6 - retrySentences.length;
       let newSentences: Sentence[] = [];
       if (neededRandomSentences > 0) {
-        const {
-          data,
-          error
-        } = await supabase.rpc('get_random_rows', {
-          num_rows: neededRandomSentences,
-          subcategory_filter: subcategory,
-          word_category_filter: category,
-          mastered_ids: masteredIds,
-          retry_ids: retrySentences.map(s => s.id)
-        });
-        if (error) {
-          console.error("Error fetching sentences:", error);
-          throw error;
+        // Use filtered function for Cases subcategory, regular function for others
+        if (subcategory === "Cases") {
+          const {
+            data,
+            error
+          } = await supabase.rpc('get_filtered_random_rows', {
+            num_rows: neededRandomSentences,
+            subcategory_filter: subcategory,
+            word_category_filter: category,
+            mastered_ids: masteredIds,
+            retry_ids: retrySentences.map(s => s.id),
+            case_filters: casesFilters.caseFilters,
+            number_filters: casesFilters.numberFilters,
+            definiteness_filters: casesFilters.definitenessFilters
+          });
+          if (error) {
+            console.error("Error fetching filtered sentences:", error);
+            throw error;
+          }
+          newSentences = data || [];
+        } else {
+          const {
+            data,
+            error
+          } = await supabase.rpc('get_random_rows', {
+            num_rows: neededRandomSentences,
+            subcategory_filter: subcategory,
+            word_category_filter: category,
+            mastered_ids: masteredIds,
+            retry_ids: retrySentences.map(s => s.id)
+          });
+          if (error) {
+            console.error("Error fetching sentences:", error);
+            throw error;
+          }
+          newSentences = data || [];
         }
-        newSentences = data || [];
       }
       const combinedSentences = [...retrySentences, ...newSentences];
       console.log("Combined sentences:", combinedSentences);
@@ -167,7 +211,23 @@ const Exercises = () => {
     if (sentences && sentences.length < 6) {
       setMasteredIds([]);
     }
+    // Reset filters to defaults for Cases subcategory
+    if (subcategory === "Cases") {
+      setCasesFilters({
+        caseFilters: ["Accusative"],
+        numberFilters: ["Singular"],
+        definitenessFilters: ["Indefinite"]
+      });
+      // Also reset via the global function if available
+      if ((window as any).resetCasesFilters) {
+        (window as any).resetCasesFilters();
+      }
+    }
     await refetch();
+  };
+
+  const handleFiltersChange = (filters: CasesFilters) => {
+    setCasesFilters(filters);
   };
   
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
@@ -184,6 +244,9 @@ const Exercises = () => {
             </div>
             {isLoading ? <div className="h-[400px] bg-muted animate-pulse rounded-lg" /> : sentences && sentences.length > 0 ? isComplete ? <EndScreen onRestart={handleRestart} firstTryCorrect={firstTryCorrect} totalExercises={sentences.length} isOutOfSentences={isOutOfSentences} /> : <>
                   <ExerciseCard sentence={sentences[currentIndex]} onCorrect={handleCorrectAnswer} onIncorrect={handleIncorrectAnswer} subcategory={subcategory || ''} />
+                  {subcategory === "Cases" && (
+                    <CasesFilter onFiltersChange={handleFiltersChange} />
+                  )}
                   {!isComplete && subcategoryInfo && <FurtherReading content={subcategoryInfo.further_reading} />}
                 </> : null}
           </div>
