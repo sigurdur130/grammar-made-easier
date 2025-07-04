@@ -87,7 +87,7 @@ export function CasesFilter({
   return (
     <Card className="w-full max-w-3xl mx-auto mb-6 mt-6">
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
           {/* Case Filter */}
           <div className="space-y-3">
             <h4 className="font-medium text-sm">Case</h4>
