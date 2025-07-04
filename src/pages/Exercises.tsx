@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -20,6 +21,7 @@ interface Sentence {
   subcategory: string | null;
   base_form: string | null;
   word_category: string | null;
+  case?: string | null;
 }
 
 interface SubcategoryInfo {
@@ -222,6 +224,13 @@ const Exercises = () => {
   const isComplete = sentences && answeredCount === sentences.length;
   const isOutOfSentences = sentences && sentences.length < 6;
   const shouldShowHint = subcategory === "Cases" && casesFilters.caseFilters.length > 1;
+  
+  console.log("Exercises debug:", {
+    subcategory,
+    caseFiltersLength: casesFilters.caseFilters.length,
+    shouldShowHint,
+    currentSentence: sentences?.[currentIndex]
+  });
   
   return <SidebarProvider>
       <div className="flex min-h-screen w-full">

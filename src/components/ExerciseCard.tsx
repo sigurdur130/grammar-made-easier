@@ -1,4 +1,3 @@
-
 import { useState, useEffect, KeyboardEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,6 +38,13 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory, sh
   const inputRef = useRef<ExerciseInputHandle>(null);
 
   useEffect(() => {
+    console.log("ExerciseCard debug:", {
+      showHint,
+      sentenceCase: sentence.case,
+      shouldShowButton: showHint && sentence.case,
+      subcategory
+    });
+    
     setAnswer("");
     setIsCorrect(null);
     setHasIncorrectAttempt(false);
@@ -49,7 +55,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory, sh
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
-  }, [sentence]);
+  }, [sentence, showHint]);
 
   const handleCheck = () => {
     const correct = answer.toLowerCase().trim() === sentence.correct_answer?.toLowerCase().trim();
