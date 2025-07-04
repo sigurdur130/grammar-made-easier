@@ -210,14 +210,7 @@ const Exercises = () => {
     if (sentences && sentences.length < 6) {
       setMasteredIds([]);
     }
-    // Reset filters to defaults for Cases subcategory
-    if (subcategory === "Cases") {
-      setCasesFilters({
-        caseFilters: ["Accusative"],
-        numberFilters: ["Singular"],
-        definitenessFilters: ["Indefinite"]
-      });
-    }
+    // Remove the filter reset - let user's selections persist
     await refetch();
   };
 
