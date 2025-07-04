@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -218,17 +217,13 @@ const Exercises = () => {
         numberFilters: ["Singular"],
         definitenessFilters: ["Indefinite"]
       });
-      // Also reset via the global function if available
-      if ((window as any).resetCasesFilters) {
-        (window as any).resetCasesFilters();
-      }
     }
     await refetch();
   };
 
-  const handleFiltersChange = (filters: CasesFilters) => {
+  const handleFiltersChange = useCallback((filters: CasesFilters) => {
     setCasesFilters(filters);
-  };
+  }, []);
   
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
   const isComplete = sentences && answeredCount === sentences.length;
@@ -245,7 +240,12 @@ const Exercises = () => {
             {isLoading ? <div className="h-[400px] bg-muted animate-pulse rounded-lg" /> : sentences && sentences.length > 0 ? isComplete ? <EndScreen onRestart={handleRestart} firstTryCorrect={firstTryCorrect} totalExercises={sentences.length} isOutOfSentences={isOutOfSentences} /> : <>
                   <ExerciseCard sentence={sentences[currentIndex]} onCorrect={handleCorrectAnswer} onIncorrect={handleIncorrectAnswer} subcategory={subcategory || ''} />
                   {subcategory === "Cases" && (
-                    <CasesFilter onFiltersChange={handleFiltersChange} />
+                    <CasesFilter 
+                      caseFilters={casesFilters.caseFilters}
+                      numberFilters={casesFilters.numberFilters}
+                      definitenessFilters={casesFilters.definitenessFilters}
+                      onFiltersChange={handleFiltersChange}
+                    />
                   )}
                   {!isComplete && subcategoryInfo && <FurtherReading content={subcategoryInfo.further_reading} />}
                 </> : null}

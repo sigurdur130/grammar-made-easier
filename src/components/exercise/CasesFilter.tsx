@@ -1,10 +1,12 @@
 
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
 interface CasesFilterProps {
+  caseFilters: string[];
+  numberFilters: string[];
+  definitenessFilters: string[];
   onFiltersChange: (filters: {
     caseFilters: string[];
     numberFilters: string[];
@@ -16,69 +18,71 @@ const CASE_OPTIONS = ["Accusative", "Dative", "Genitive"];
 const NUMBER_OPTIONS = ["Singular", "Plural"];
 const DEFINITENESS_OPTIONS = ["Indefinite", "Definite"];
 
-export function CasesFilter({ onFiltersChange }: CasesFilterProps) {
-  const [caseFilters, setCaseFilters] = useState<string[]>(["Accusative"]);
-  const [numberFilters, setNumberFilters] = useState<string[]>(["Singular"]);
-  const [definitenessFilters, setDefinitenessFilters] = useState<string[]>(["Indefinite"]);
-
-  useEffect(() => {
+export function CasesFilter({ 
+  caseFilters, 
+  numberFilters, 
+  definitenessFilters, 
+  onFiltersChange 
+}: CasesFilterProps) {
+  const handleCaseChange = (option: string, checked: boolean) => {
+    let newCaseFilters: string[];
+    if (checked) {
+      newCaseFilters = [...caseFilters, option];
+    } else {
+      newCaseFilters = caseFilters.filter(f => f !== option);
+      // Prevent deselecting all options
+      if (newCaseFilters.length === 0) {
+        newCaseFilters = caseFilters;
+        return;
+      }
+    }
+    
     onFiltersChange({
-      caseFilters,
+      caseFilters: newCaseFilters,
       numberFilters,
       definitenessFilters,
     });
-  }, [caseFilters, numberFilters, definitenessFilters, onFiltersChange]);
-
-  const handleCaseChange = (option: string, checked: boolean) => {
-    if (checked) {
-      setCaseFilters(prev => [...prev, option]);
-    } else {
-      setCaseFilters(prev => {
-        const newFilters = prev.filter(f => f !== option);
-        // Prevent deselecting all options
-        return newFilters.length === 0 ? prev : newFilters;
-      });
-    }
   };
 
   const handleNumberChange = (option: string, checked: boolean) => {
+    let newNumberFilters: string[];
     if (checked) {
-      setNumberFilters(prev => [...prev, option]);
+      newNumberFilters = [...numberFilters, option];
     } else {
-      setNumberFilters(prev => {
-        const newFilters = prev.filter(f => f !== option);
-        // Prevent deselecting all options
-        return newFilters.length === 0 ? prev : newFilters;
-      });
+      newNumberFilters = numberFilters.filter(f => f !== option);
+      // Prevent deselecting all options
+      if (newNumberFilters.length === 0) {
+        newNumberFilters = numberFilters;
+        return;
+      }
     }
+    
+    onFiltersChange({
+      caseFilters,
+      numberFilters: newNumberFilters,
+      definitenessFilters,
+    });
   };
 
   const handleDefinitenessChange = (option: string, checked: boolean) => {
+    let newDefinitenessFilters: string[];
     if (checked) {
-      setDefinitenessFilters(prev => [...prev, option]);
+      newDefinitenessFilters = [...definitenessFilters, option];
     } else {
-      setDefinitenessFilters(prev => {
-        const newFilters = prev.filter(f => f !== option);
-        // Prevent deselecting all options
-        return newFilters.length === 0 ? prev : newFilters;
-      });
+      newDefinitenessFilters = definitenessFilters.filter(f => f !== option);
+      // Prevent deselecting all options
+      if (newDefinitenessFilters.length === 0) {
+        newDefinitenessFilters = definitenessFilters;
+        return;
+      }
     }
+    
+    onFiltersChange({
+      caseFilters,
+      numberFilters,
+      definitenessFilters: newDefinitenessFilters,
+    });
   };
-
-  // Reset to defaults function
-  const resetFilters = () => {
-    setCaseFilters(["Accusative"]);
-    setNumberFilters(["Singular"]);
-    setDefinitenessFilters(["Indefinite"]);
-  };
-
-  // Expose reset function to parent
-  useEffect(() => {
-    (window as any).resetCasesFilters = resetFilters;
-    return () => {
-      delete (window as any).resetCasesFilters;
-    };
-  }, []);
 
   return (
     <Card className="w-full max-w-3xl mx-auto mb-6">
