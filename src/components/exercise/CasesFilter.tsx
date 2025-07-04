@@ -85,10 +85,7 @@ export function CasesFilter({
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto mb-6">
-      <CardHeader>
-        <CardTitle className="text-lg">Filter Exercises</CardTitle>
-      </CardHeader>
+    <Card className="w-full max-w-3xl mx-auto mb-6 mt-6">
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Case Filter */}
