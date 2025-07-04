@@ -1,10 +1,13 @@
 
 import { useState, useEffect, KeyboardEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ExerciseContent } from "./exercise/ExerciseContent";
 import { CharacterButtons } from "./exercise/CharacterButtons";
 import { ActionButtons } from "./exercise/ActionButtons";
 import { FloatingCheckmark } from "./exercise/FloatingCheckmark";
+import { HelpCircle } from "lucide-react";
 import type { ExerciseInputHandle } from "./exercise/ExerciseInput";
 
 interface ExerciseCardProps {
@@ -15,13 +18,15 @@ interface ExerciseCardProps {
     english_translation: string | null;
     correct_answer: string | null;
     base_form: string | null;
+    case?: string | null;
   };
   onCorrect?: () => void;
   onIncorrect?: () => void;
   subcategory: string;
+  showHint?: boolean;
 }
 
-export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: ExerciseCardProps) {
+export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory, showHint = false }: ExerciseCardProps) {
   const [answer, setAnswer] = useState("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
@@ -30,6 +35,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   const [shake, setShake] = useState(false);
   const [showCheckmark, setShowCheckmark] = useState(false);
   const [checkmarkPosition, setCheckmarkPosition] = useState({ x: 0, y: 0 });
+  const [showHintTooltip, setShowHintTooltip] = useState(false);
   const inputRef = useRef<ExerciseInputHandle>(null);
 
   useEffect(() => {
@@ -39,6 +45,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
     setShowAnswer(false);
     setIsTyping(false);
     setShake(false);
+    setShowHintTooltip(false);
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
@@ -93,6 +100,11 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
     inputRef.current?.focus();
   };
 
+  const handleHintClick = () => {
+    setShowHintTooltip(true);
+    setTimeout(() => setShowHintTooltip(false), 3000);
+  };
+
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-lg dark:shadow-md dark:bg-muted bg-background">
       <CardContent className="p-4 md:pt-6 md:px-6">
@@ -106,8 +118,27 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
           />
         )}
         
-        <div className="mb-4 md:mb-6">
+        <div className="mb-4 md:mb-6 flex items-center justify-between">
           <h2 className="text-xl md:text-2xl font-semibold text-card-foreground">{subcategory}</h2>
+          {showHint && sentence.case && (
+            <TooltipProvider>
+              <Tooltip open={showHintTooltip}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleHintClick}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Case: {sentence.case}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
 
         <ExerciseContent

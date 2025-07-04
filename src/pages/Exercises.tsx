@@ -221,6 +221,7 @@ const Exercises = () => {
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
   const isComplete = sentences && answeredCount === sentences.length;
   const isOutOfSentences = sentences && sentences.length < 6;
+  const shouldShowHint = subcategory === "Cases" && casesFilters.caseFilters.length > 1;
   
   return <SidebarProvider>
       <div className="flex min-h-screen w-full">
@@ -231,7 +232,13 @@ const Exercises = () => {
               <Progress value={progress} className="mb-3" />
             </div>
             {isLoading ? <div className="h-[400px] bg-muted animate-pulse rounded-lg" /> : sentences && sentences.length > 0 ? isComplete ? <EndScreen onRestart={handleRestart} firstTryCorrect={firstTryCorrect} totalExercises={sentences.length} isOutOfSentences={isOutOfSentences} /> : <>
-                  <ExerciseCard sentence={sentences[currentIndex]} onCorrect={handleCorrectAnswer} onIncorrect={handleIncorrectAnswer} subcategory={subcategory || ''} />
+                  <ExerciseCard 
+                    sentence={sentences[currentIndex]} 
+                    onCorrect={handleCorrectAnswer} 
+                    onIncorrect={handleIncorrectAnswer} 
+                    subcategory={subcategory || ''} 
+                    showHint={shouldShowHint}
+                  />
                   {subcategory === "Cases" && (
                     <CasesFilter 
                       caseFilters={casesFilters.caseFilters}
