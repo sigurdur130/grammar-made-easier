@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -21,7 +20,6 @@ interface Sentence {
   subcategory: string | null;
   base_form: string | null;
   word_category: string | null;
-  case?: string | null;
 }
 
 interface SubcategoryInfo {
@@ -223,14 +221,6 @@ const Exercises = () => {
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
   const isComplete = sentences && answeredCount === sentences.length;
   const isOutOfSentences = sentences && sentences.length < 6;
-  const shouldShowHint = subcategory === "Cases" && casesFilters.caseFilters.length > 1;
-  
-  console.log("Exercises debug:", {
-    subcategory,
-    caseFiltersLength: casesFilters.caseFilters.length,
-    shouldShowHint,
-    currentSentence: sentences?.[currentIndex]
-  });
   
   return <SidebarProvider>
       <div className="flex min-h-screen w-full">
@@ -241,13 +231,7 @@ const Exercises = () => {
               <Progress value={progress} className="mb-3" />
             </div>
             {isLoading ? <div className="h-[400px] bg-muted animate-pulse rounded-lg" /> : sentences && sentences.length > 0 ? isComplete ? <EndScreen onRestart={handleRestart} firstTryCorrect={firstTryCorrect} totalExercises={sentences.length} isOutOfSentences={isOutOfSentences} /> : <>
-                  <ExerciseCard 
-                    sentence={sentences[currentIndex]} 
-                    onCorrect={handleCorrectAnswer} 
-                    onIncorrect={handleIncorrectAnswer} 
-                    subcategory={subcategory || ''} 
-                    showHint={shouldShowHint}
-                  />
+                  <ExerciseCard sentence={sentences[currentIndex]} onCorrect={handleCorrectAnswer} onIncorrect={handleIncorrectAnswer} subcategory={subcategory || ''} />
                   {subcategory === "Cases" && (
                     <CasesFilter 
                       caseFilters={casesFilters.caseFilters}
