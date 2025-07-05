@@ -20,6 +20,7 @@ interface Sentence {
   subcategory: string | null;
   base_form: string | null;
   word_category: string | null;
+  case?: string | null;
 }
 
 interface SubcategoryInfo {
