@@ -1,6 +1,9 @@
 
 import { useState, useEffect, KeyboardEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { HelpCircle } from "lucide-react";
 import { ExerciseContent } from "./exercise/ExerciseContent";
 import { CharacterButtons } from "./exercise/CharacterButtons";
 import { ActionButtons } from "./exercise/ActionButtons";
@@ -15,6 +18,7 @@ interface ExerciseCardProps {
     english_translation: string | null;
     correct_answer: string | null;
     base_form: string | null;
+    case?: string | null;
   };
   onCorrect?: () => void;
   onIncorrect?: () => void;
@@ -30,6 +34,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   const [shake, setShake] = useState(false);
   const [showCheckmark, setShowCheckmark] = useState(false);
   const [checkmarkPosition, setCheckmarkPosition] = useState({ x: 0, y: 0 });
+  const [showHint, setShowHint] = useState(false);
   const inputRef = useRef<ExerciseInputHandle>(null);
 
   useEffect(() => {
@@ -39,6 +44,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
     setShowAnswer(false);
     setIsTyping(false);
     setShake(false);
+    setShowHint(false);
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
@@ -93,6 +99,11 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
     inputRef.current?.focus();
   };
 
+  const handleHintClick = () => {
+    setShowHint(true);
+    setTimeout(() => setShowHint(false), 3000);
+  };
+
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-lg dark:shadow-md dark:bg-muted bg-background">
       <CardContent className="p-4 md:pt-6 md:px-6">
@@ -106,8 +117,26 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
           />
         )}
         
-        <div className="mb-4 md:mb-6">
+        <div className="mb-4 md:mb-6 flex justify-between items-center">
           <h2 className="text-xl md:text-2xl font-semibold text-card-foreground">{subcategory}</h2>
+          
+          <TooltipProvider>
+            <Tooltip open={showHint}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleHintClick}
+                  className="h-8 w-8"
+                >
+                  <HelpCircle className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Case: {sentence.case || 'Unknown'}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         <ExerciseContent
