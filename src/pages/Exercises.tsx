@@ -21,6 +21,8 @@ interface Sentence {
   base_form: string | null;
   word_category: string | null;
   case?: string | null;
+  number?: string | null;
+  definiteness?: string | null;
 }
 
 interface SubcategoryInfo {
@@ -112,43 +114,26 @@ const Exercises = () => {
       const neededRandomSentences = 6 - retrySentences.length;
       let newSentences: Sentence[] = [];
       if (neededRandomSentences > 0) {
-        // Use filtered function for Cases subcategory, regular function for others
-        if (subcategory === "Cases") {
-          const {
-            data,
-            error
-          } = await supabase.rpc('get_filtered_random_rows', {
-            num_rows: neededRandomSentences,
-            subcategory_filter: subcategory,
-            word_category_filter: category,
-            mastered_ids: masteredIds,
-            retry_ids: retrySentences.map(s => s.id),
-            case_filters: casesFilters.caseFilters,
-            number_filters: casesFilters.numberFilters,
-            definiteness_filters: casesFilters.definitenessFilters
-          });
-          if (error) {
-            console.error("Error fetching filtered sentences:", error);
-            throw error;
-          }
-          newSentences = data || [];
-        } else {
-          const {
-            data,
-            error
-          } = await supabase.rpc('get_random_rows', {
-            num_rows: neededRandomSentences,
-            subcategory_filter: subcategory,
-            word_category_filter: category,
-            mastered_ids: masteredIds,
-            retry_ids: retrySentences.map(s => s.id)
-          });
-          if (error) {
-            console.error("Error fetching sentences:", error);
-            throw error;
-          }
-          newSentences = data || [];
+        // Use enhanced get_random_rows function for all subcategories
+        const {
+          data,
+          error
+        } = await supabase.rpc('get_random_rows', {
+          num_rows: neededRandomSentences,
+          subcategory_filter: subcategory,
+          word_category_filter: category,
+          mastered_ids: masteredIds,
+          retry_ids: retrySentences.map(s => s.id),
+          // Only pass filter parameters for Cases subcategory
+          cases: subcategory === "Cases" ? casesFilters.caseFilters : null,
+          numbers: subcategory === "Cases" ? casesFilters.numberFilters : null,
+          definiteness: subcategory === "Cases" ? casesFilters.definitenessFilters : null
+        });
+        if (error) {
+          console.error("Error fetching sentences:", error);
+          throw error;
         }
+        newSentences = data || [];
       }
       const combinedSentences = [...retrySentences, ...newSentences];
       console.log("Combined sentences:", combinedSentences);
