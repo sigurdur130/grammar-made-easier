@@ -120,23 +120,25 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
         <div className="mb-4 md:mb-6 flex justify-between items-center">
           <h2 className="text-xl md:text-2xl font-semibold text-card-foreground">{subcategory}</h2>
           
-          <TooltipProvider>
-            <Tooltip open={showHint}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleHintClick}
-                  className="h-8 w-8"
-                >
-                  <HelpCircle className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Case: {sentence.case || 'Unknown'}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          {subcategory === "Cases" && (
+            <TooltipProvider>
+              <Tooltip open={showHint}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleHintClick}
+                    className="h-8 w-8"
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Case: {sentence.case || 'Unknown'}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
 
         <ExerciseContent
