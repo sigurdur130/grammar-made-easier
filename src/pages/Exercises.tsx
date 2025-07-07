@@ -125,9 +125,9 @@ const Exercises = () => {
           mastered_ids: masteredIds,
           retry_ids: retrySentences.map(s => s.id),
           // Only pass filter parameters for Cases subcategory
-          cases: subcategory === "Cases" ? casesFilters.caseFilters : null,
-          numbers: subcategory === "Cases" ? casesFilters.numberFilters : null,
-          definiteness: subcategory === "Cases" ? casesFilters.definitenessFilters : null
+          cases_filter: subcategory === "Cases" ? casesFilters.caseFilters : null,
+          numbers_filter: subcategory === "Cases" ? casesFilters.numberFilters : null,
+          definiteness_filter: subcategory === "Cases" ? casesFilters.definitenessFilters : null
         });
         if (error) {
           console.error("Error fetching sentences:", error);
