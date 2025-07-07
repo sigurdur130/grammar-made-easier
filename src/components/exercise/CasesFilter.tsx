@@ -1,7 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface CasesFilterProps {
   caseFilters: string[];
@@ -24,63 +23,42 @@ export function CasesFilter({
   definitenessFilters, 
   onFiltersChange 
 }: CasesFilterProps) {
-  const handleCaseChange = (option: string, checked: boolean) => {
-    let newCaseFilters: string[];
-    if (checked) {
-      newCaseFilters = [...caseFilters, option];
-    } else {
-      newCaseFilters = caseFilters.filter(f => f !== option);
-      // Prevent deselecting all options
-      if (newCaseFilters.length === 0) {
-        newCaseFilters = caseFilters;
-        return;
-      }
+  const handleCaseChange = (values: string[]) => {
+    // Prevent deselecting all options
+    if (values.length === 0) {
+      return;
     }
     
     onFiltersChange({
-      caseFilters: newCaseFilters,
+      caseFilters: values,
       numberFilters,
       definitenessFilters,
     });
   };
 
-  const handleNumberChange = (option: string, checked: boolean) => {
-    let newNumberFilters: string[];
-    if (checked) {
-      newNumberFilters = [...numberFilters, option];
-    } else {
-      newNumberFilters = numberFilters.filter(f => f !== option);
-      // Prevent deselecting all options
-      if (newNumberFilters.length === 0) {
-        newNumberFilters = numberFilters;
-        return;
-      }
+  const handleNumberChange = (values: string[]) => {
+    // Prevent deselecting all options
+    if (values.length === 0) {
+      return;
     }
     
     onFiltersChange({
       caseFilters,
-      numberFilters: newNumberFilters,
+      numberFilters: values,
       definitenessFilters,
     });
   };
 
-  const handleDefinitenessChange = (option: string, checked: boolean) => {
-    let newDefinitenessFilters: string[];
-    if (checked) {
-      newDefinitenessFilters = [...definitenessFilters, option];
-    } else {
-      newDefinitenessFilters = definitenessFilters.filter(f => f !== option);
-      // Prevent deselecting all options
-      if (newDefinitenessFilters.length === 0) {
-        newDefinitenessFilters = definitenessFilters;
-        return;
-      }
+  const handleDefinitenessChange = (values: string[]) => {
+    // Prevent deselecting all options
+    if (values.length === 0) {
+      return;
     }
     
     onFiltersChange({
       caseFilters,
       numberFilters,
-      definitenessFilters: newDefinitenessFilters,
+      definitenessFilters: values,
     });
   };
 
@@ -91,73 +69,64 @@ export function CasesFilter({
           {/* Case Filter */}
           <div className="space-y-3">
             <h4 className="font-medium text-sm">Case</h4>
-            <div className="space-y-2">
+            <ToggleGroup 
+              type="multiple" 
+              value={caseFilters} 
+              onValueChange={handleCaseChange}
+              className="flex flex-col gap-2"
+            >
               {CASE_OPTIONS.map((option) => (
-                <div key={option} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`case-${option}`}
-                    checked={caseFilters.includes(option)}
-                    onCheckedChange={(checked) => 
-                      handleCaseChange(option, checked as boolean)
-                    }
-                  />
-                  <Label 
-                    htmlFor={`case-${option}`} 
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    {option}
-                  </Label>
-                </div>
+                <ToggleGroupItem 
+                  key={option} 
+                  value={option}
+                  className="justify-start rounded-full px-4 py-2 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  {option}
+                </ToggleGroupItem>
               ))}
-            </div>
+            </ToggleGroup>
           </div>
 
           {/* Number Filter */}
           <div className="space-y-3">
             <h4 className="font-medium text-sm">Number</h4>
-            <div className="space-y-2">
+            <ToggleGroup 
+              type="multiple" 
+              value={numberFilters} 
+              onValueChange={handleNumberChange}
+              className="flex flex-col gap-2"
+            >
               {NUMBER_OPTIONS.map((option) => (
-                <div key={option} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`number-${option}`}
-                    checked={numberFilters.includes(option)}
-                    onCheckedChange={(checked) => 
-                      handleNumberChange(option, checked as boolean)
-                    }
-                  />
-                  <Label 
-                    htmlFor={`number-${option}`} 
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    {option}
-                  </Label>
-                </div>
+                <ToggleGroupItem 
+                  key={option} 
+                  value={option}
+                  className="justify-start rounded-full px-4 py-2 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  {option}
+                </ToggleGroupItem>
               ))}
-            </div>
+            </ToggleGroup>
           </div>
 
           {/* Definiteness Filter */}
           <div className="space-y-3">
             <h4 className="font-medium text-sm">Definiteness</h4>
-            <div className="space-y-2">
+            <ToggleGroup 
+              type="multiple" 
+              value={definitenessFilters} 
+              onValueChange={handleDefinitenessChange}
+              className="flex flex-col gap-2"
+            >
               {DEFINITENESS_OPTIONS.map((option) => (
-                <div key={option} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`definiteness-${option}`}
-                    checked={definitenessFilters.includes(option)}
-                    onCheckedChange={(checked) => 
-                      handleDefinitenessChange(option, checked as boolean)
-                    }
-                  />
-                  <Label 
-                    htmlFor={`definiteness-${option}`} 
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    {option}
-                  </Label>
-                </div>
+                <ToggleGroupItem 
+                  key={option} 
+                  value={option}
+                  className="justify-start rounded-full px-4 py-2 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  {option}
+                </ToggleGroupItem>
               ))}
-            </div>
+            </ToggleGroup>
           </div>
         </div>
       </CardContent>
