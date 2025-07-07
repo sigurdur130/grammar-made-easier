@@ -79,7 +79,7 @@ export function CasesFilter({
                 <ToggleGroupItem 
                   key={option} 
                   value={option}
-                  className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-slate data-[state=on]:text-accent-foreground"
+                  className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-slate-400 data-[state=on]:text-accent-foreground"
                 >
                   {option}
                 </ToggleGroupItem>
@@ -100,7 +100,7 @@ export function CasesFilter({
                 <ToggleGroupItem 
                   key={option} 
                   value={option}
-                  className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-slate-600 data-[state=on]:text-accent-foreground"
+                  className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-slate-300 data-[state=on]:text-accent-foreground"
                 >
                   {option}
                 </ToggleGroupItem>
@@ -121,7 +121,7 @@ export function CasesFilter({
                 <ToggleGroupItem 
                   key={option} 
                   value={option}
-                  className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-slate-700 data-[state=on]:text-accent-foreground"
+                  className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-slate-200 data-[state=on]:text-accent-foreground"
                 >
                   {option}
                 </ToggleGroupItem>
