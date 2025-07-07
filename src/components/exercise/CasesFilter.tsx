@@ -68,7 +68,7 @@ export function CasesFilter({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
           {/* Case Filter */}
           <div className="space-y-3">
-            <h4 className="font-medium text-sm">Case</h4>
+            <h4 className="font-medium text-sm text-center">Case</h4>
             <ToggleGroup 
               type="multiple" 
               value={caseFilters} 
@@ -79,7 +79,7 @@ export function CasesFilter({
                 <ToggleGroupItem 
                   key={option} 
                   value={option}
-                  className="justify-start rounded-full px-4 py-2 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
                 >
                   {option}
                 </ToggleGroupItem>
@@ -89,7 +89,7 @@ export function CasesFilter({
 
           {/* Number Filter */}
           <div className="space-y-3">
-            <h4 className="font-medium text-sm">Number</h4>
+            <h4 className="font-medium text-sm text-center">Number</h4>
             <ToggleGroup 
               type="multiple" 
               value={numberFilters} 
@@ -100,7 +100,7 @@ export function CasesFilter({
                 <ToggleGroupItem 
                   key={option} 
                   value={option}
-                  className="justify-start rounded-full px-4 py-2 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
                 >
                   {option}
                 </ToggleGroupItem>
@@ -110,7 +110,7 @@ export function CasesFilter({
 
           {/* Definiteness Filter */}
           <div className="space-y-3">
-            <h4 className="font-medium text-sm">Definiteness</h4>
+            <h4 className="font-medium text-sm text-center">Definiteness</h4>
             <ToggleGroup 
               type="multiple" 
               value={definitenessFilters} 
@@ -121,7 +121,7 @@ export function CasesFilter({
                 <ToggleGroupItem 
                   key={option} 
                   value={option}
-                  className="justify-start rounded-full px-4 py-2 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
                 >
                   {option}
                 </ToggleGroupItem>
