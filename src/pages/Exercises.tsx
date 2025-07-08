@@ -227,12 +227,8 @@ const Exercises = () => {
     
     if (filtersChanged) {
       setHasPendingFilterChanges(true);
-      // If filters change mid-exercise, immediately apply them and reset the current exercise
-      if (subcategory === "Cases" && sentences && sentences.length > 0) {
-        applyPendingFilters(filters);
-      }
     }
-  }, [appliedFilters, subcategory, sentences]);
+  }, [appliedFilters]);
 
   const applyPendingFilters = useCallback((newFilters?: CasesFilters) => {
     const filtersToApply = newFilters || casesFilters;
