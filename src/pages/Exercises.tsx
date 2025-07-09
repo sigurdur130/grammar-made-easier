@@ -238,6 +238,8 @@ const Exercises = () => {
     setCurrentIndex(0);
     setAnsweredCount(0);
     setHasIncorrectAttempt(false);
+    // Clear retry sentences to avoid filter conflicts
+    setRetrySentences([]);
   }, [casesFilters]);
   
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
