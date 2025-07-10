@@ -167,18 +167,14 @@ const Exercises = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
     
-    // Apply pending filters if we have any when Check is pressed
-    if (hasPendingFilterChanges && subcategory === "Cases") {
-      applyPendingFilters();
-      return; // Let the query refetch with new filters
-    }
-    
     console.log("Handling correct answer:", {
       sentenceId: currentSentence.id,
       hasIncorrectAttempt,
       currentIndex,
       totalSentences: sentences?.length
     });
+    
+    // Always process the current answer first
     if (!hasIncorrectAttempt) {
       setFirstTryCorrect(prev => prev + 1);
       setMasteredIds(prev => [...prev, currentSentence.id]);
@@ -186,11 +182,21 @@ const Exercises = () => {
         setRetrySentences(prev => prev.filter(s => s.id !== currentSentence.id));
       }
     }
+    
+    // Always increment answered count
     setAnsweredCount(prev => prev + 1);
-    if (sentences && currentIndex < sentences.length - 1) {
+    
+    // After processing the answer, decide next action
+    if (hasPendingFilterChanges && subcategory === "Cases") {
+      // Apply pending filters and fetch new sentences
+      applyPendingFilters();
+    } else if (sentences && currentIndex < sentences.length - 1) {
+      // Move to next sentence in current batch
       setCurrentIndex(currentIndex + 1);
-      setHasIncorrectAttempt(false);
     }
+    
+    // Reset incorrect attempt state for next sentence
+    setHasIncorrectAttempt(false);
   };
 
   const handleIncorrectAnswer = () => {
