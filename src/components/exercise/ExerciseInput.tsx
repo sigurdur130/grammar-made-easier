@@ -3,15 +3,13 @@ import { forwardRef, useImperativeHandle, useRef } from "react";
 import { Check, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-type FeedbackState = 'none' | 'correct' | 'incorrect';
-
 export interface ExerciseInputHandle extends HTMLInputElement {
   focus: () => void;
 }
 
 interface ExerciseInputProps {
   answer: string;
-  feedbackState: FeedbackState;
+  isCorrect: boolean | null;
   isTyping: boolean;
   baseForm: string | null;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -22,7 +20,7 @@ interface ExerciseInputProps {
 
 export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>(({
   answer,
-  feedbackState,
+  isCorrect,
   isTyping,
   baseForm,
   onChange,
@@ -56,9 +54,9 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
         onChange={onChange}
         onKeyPress={onKeyPress}
         className={`w-full text-center border-t-0 border-x-0 rounded-none focus:ring-0 focus:outline-none ${
-          feedbackState === 'correct'
+          isCorrect === true
             ? "border-green-500 bg-green-50 dark:bg-green-950/30 dark:text-green-300"
-            : feedbackState === 'incorrect'
+            : isCorrect === false
             ? "border-red-200 bg-red-50 dark:bg-red-950/30 dark:text-red-300"
             : "border-b-2 border-[#CBD5E0] hover:border-[#6B46C1] focus:border-[#6B46C1] dark:border-muted-foreground/40 dark:hover:border-primary dark:focus:border-primary dark:bg-muted/50 dark:text-card-foreground"
         } placeholder:text-muted-foreground/60 text-base md:text-lg p-2 ${
@@ -66,10 +64,10 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
         }`}
         placeholder={!isTyping ? baseForm || "" : ""}
       />
-      {feedbackState === 'correct' && (
+      {isCorrect === true && (
         <Check className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500 dark:text-green-400" />
       )}
-      {feedbackState === 'incorrect' && (
+      {isCorrect === false && (
         <X 
           className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-red-500 dark:text-red-400 cursor-pointer active:scale-90 transition-transform" 
           onClick={handleClear}

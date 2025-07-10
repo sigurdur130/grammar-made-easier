@@ -1,14 +1,11 @@
+
 import { useState, useEffect, KeyboardEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle } from "lucide-react";
 import { ExerciseContent } from "./exercise/ExerciseContent";
 import { CharacterButtons } from "./exercise/CharacterButtons";
 import { ActionButtons } from "./exercise/ActionButtons";
+import { FloatingCheckmark } from "./exercise/FloatingCheckmark";
 import type { ExerciseInputHandle } from "./exercise/ExerciseInput";
-
-type FeedbackState = 'none' | 'correct' | 'incorrect';
 
 interface ExerciseCardProps {
   sentence: {
@@ -18,31 +15,30 @@ interface ExerciseCardProps {
     english_translation: string | null;
     correct_answer: string | null;
     base_form: string | null;
-    case?: string | null;
   };
-  onCorrect?: (x: number, y: number) => void;
+  onCorrect?: () => void;
   onIncorrect?: () => void;
   subcategory: string;
 }
 
 export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: ExerciseCardProps) {
   const [answer, setAnswer] = useState("");
-  const [feedbackState, setFeedbackState] = useState<FeedbackState>('none');
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [shake, setShake] = useState(false);
-  const [showHint, setShowHint] = useState(false);
+  const [showCheckmark, setShowCheckmark] = useState(false);
+  const [checkmarkPosition, setCheckmarkPosition] = useState({ x: 0, y: 0 });
   const inputRef = useRef<ExerciseInputHandle>(null);
 
   useEffect(() => {
     setAnswer("");
-    setFeedbackState('none');
+    setIsCorrect(null);
     setHasIncorrectAttempt(false);
     setShowAnswer(false);
     setIsTyping(false);
     setShake(false);
-    setShowHint(false);
     setTimeout(() => {
       inputRef.current?.focus();
     }, 0);
@@ -50,19 +46,20 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
 
   const handleCheck = () => {
     const correct = answer.toLowerCase().trim() === sentence.correct_answer?.toLowerCase().trim();
+    setIsCorrect(correct);
     
     if (correct) {
-      setFeedbackState('correct');
-      
-      // Calculate position for floating checkmark
       const inputElement = inputRef.current?.getBoundingClientRect();
-      if (inputElement && onCorrect) {
-        const x = inputElement.right - 40;
-        const y = inputElement.top - 5;
-        onCorrect(x, y);
+      if (inputElement) {
+        setCheckmarkPosition({
+          x: inputElement.right - 40,
+          y: inputElement.top - 5,
+        });
       }
+      setShowCheckmark(true);
+      setTimeout(() => setShowCheckmark(false), 500);
+      if (onCorrect) onCorrect();
     } else {
-      setFeedbackState('incorrect');
       setHasIncorrectAttempt(true);
       setShake(true);
       setTimeout(() => setShake(false), 500);
@@ -96,43 +93,28 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
     inputRef.current?.focus();
   };
 
-  const handleHintClick = () => {
-    setShowHint(true);
-    setTimeout(() => setShowHint(false), 3000);
-  };
-
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-lg dark:shadow-md dark:bg-muted bg-background">
       <CardContent className="p-4 md:pt-6 md:px-6">
-        <div className="mb-4 md:mb-6 flex justify-between items-center">
+        {showCheckmark && (
+          <FloatingCheckmark 
+            className="fixed"
+            style={{ 
+              left: `${checkmarkPosition.x}px`,
+              top: `${checkmarkPosition.y}px`
+            }} 
+          />
+        )}
+        
+        <div className="mb-4 md:mb-6">
           <h2 className="text-xl md:text-2xl font-semibold text-card-foreground">{subcategory}</h2>
-          
-          {subcategory === "Cases" && (
-            <TooltipProvider>
-              <Tooltip open={showHint}>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleHintClick}
-                    className="h-8 w-8"
-                  >
-                    <HelpCircle className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Case: {sentence.case || 'Unknown'}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
         </div>
 
         <ExerciseContent
           ref={inputRef}
           sentence={sentence}
           answer={answer}
-          feedbackState={feedbackState}
+          isCorrect={isCorrect}
           isTyping={isTyping}
           shake={shake}
           onInputChange={handleInputChange}
