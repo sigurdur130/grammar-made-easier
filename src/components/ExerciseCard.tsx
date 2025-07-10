@@ -1,4 +1,3 @@
-
 import { useState, useEffect, KeyboardEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,8 +6,9 @@ import { HelpCircle } from "lucide-react";
 import { ExerciseContent } from "./exercise/ExerciseContent";
 import { CharacterButtons } from "./exercise/CharacterButtons";
 import { ActionButtons } from "./exercise/ActionButtons";
-import { FloatingCheckmark } from "./exercise/FloatingCheckmark";
 import type { ExerciseInputHandle } from "./exercise/ExerciseInput";
+
+type FeedbackState = 'none' | 'correct' | 'incorrect';
 
 interface ExerciseCardProps {
   sentence: {
@@ -20,26 +20,24 @@ interface ExerciseCardProps {
     base_form: string | null;
     case?: string | null;
   };
-  onCorrect?: () => void;
+  onCorrect?: (x: number, y: number) => void;
   onIncorrect?: () => void;
   subcategory: string;
 }
 
 export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: ExerciseCardProps) {
   const [answer, setAnswer] = useState("");
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [feedbackState, setFeedbackState] = useState<FeedbackState>('none');
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [shake, setShake] = useState(false);
-  const [showCheckmark, setShowCheckmark] = useState(false);
-  const [checkmarkPosition, setCheckmarkPosition] = useState({ x: 0, y: 0 });
   const [showHint, setShowHint] = useState(false);
   const inputRef = useRef<ExerciseInputHandle>(null);
 
   useEffect(() => {
     setAnswer("");
-    setIsCorrect(null);
+    setFeedbackState('none');
     setHasIncorrectAttempt(false);
     setShowAnswer(false);
     setIsTyping(false);
@@ -52,20 +50,19 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
 
   const handleCheck = () => {
     const correct = answer.toLowerCase().trim() === sentence.correct_answer?.toLowerCase().trim();
-    setIsCorrect(correct);
     
     if (correct) {
+      setFeedbackState('correct');
+      
+      // Calculate position for floating checkmark
       const inputElement = inputRef.current?.getBoundingClientRect();
-      if (inputElement) {
-        setCheckmarkPosition({
-          x: inputElement.right - 40,
-          y: inputElement.top - 5,
-        });
+      if (inputElement && onCorrect) {
+        const x = inputElement.right - 40;
+        const y = inputElement.top - 5;
+        onCorrect(x, y);
       }
-      setShowCheckmark(true);
-      setTimeout(() => setShowCheckmark(false), 500);
-      if (onCorrect) onCorrect();
     } else {
+      setFeedbackState('incorrect');
       setHasIncorrectAttempt(true);
       setShake(true);
       setTimeout(() => setShake(false), 500);
@@ -107,16 +104,6 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-lg dark:shadow-md dark:bg-muted bg-background">
       <CardContent className="p-4 md:pt-6 md:px-6">
-        {showCheckmark && (
-          <FloatingCheckmark 
-            className="fixed"
-            style={{ 
-              left: `${checkmarkPosition.x}px`,
-              top: `${checkmarkPosition.y}px`
-            }} 
-          />
-        )}
-        
         <div className="mb-4 md:mb-6 flex justify-between items-center">
           <h2 className="text-xl md:text-2xl font-semibold text-card-foreground">{subcategory}</h2>
           
@@ -145,7 +132,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
           ref={inputRef}
           sentence={sentence}
           answer={answer}
-          isCorrect={isCorrect}
+          feedbackState={feedbackState}
           isTyping={isTyping}
           shake={shake}
           onInputChange={handleInputChange}

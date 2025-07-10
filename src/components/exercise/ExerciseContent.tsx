@@ -2,6 +2,8 @@
 import { forwardRef } from "react";
 import { ExerciseInput, ExerciseInputHandle } from "./ExerciseInput";
 
+type FeedbackState = 'none' | 'correct' | 'incorrect';
+
 interface ExerciseContentProps {
   sentence: {
     icelandic_left: string | null;
@@ -10,7 +12,7 @@ interface ExerciseContentProps {
     base_form: string | null;
   };
   answer: string;
-  isCorrect: boolean | null;
+  feedbackState: FeedbackState;
   isTyping: boolean;
   shake: boolean;
   showAnswer: boolean;
@@ -22,7 +24,7 @@ interface ExerciseContentProps {
 export const ExerciseContent = forwardRef<ExerciseInputHandle, ExerciseContentProps>(({
   sentence,
   answer,
-  isCorrect,
+  feedbackState,
   isTyping,
   shake,
   showAnswer,
@@ -40,7 +42,7 @@ export const ExerciseContent = forwardRef<ExerciseInputHandle, ExerciseContentPr
         <ExerciseInput
           ref={ref}
           answer={answer}
-          isCorrect={isCorrect}
+          feedbackState={feedbackState}
           isTyping={isTyping}
           baseForm={sentence.base_form}
           onChange={onInputChange}

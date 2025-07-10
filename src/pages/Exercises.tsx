@@ -9,6 +9,7 @@ import { EndScreen } from "@/components/exercise/EndScreen";
 import { FeedbackButton } from "@/components/FeedbackButton";
 import { FurtherReading } from "@/components/exercise/FurtherReading";
 import { CasesFilter } from "@/components/exercise/CasesFilter";
+import { FloatingCheckmark } from "@/components/exercise/FloatingCheckmark";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Sentence {
@@ -47,6 +48,8 @@ const Exercises = () => {
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
+  const [showFloatingCheckmark, setShowFloatingCheckmark] = useState(false);
+  const [floatingCheckmarkPosition, setFloatingCheckmarkPosition] = useState({ x: 0, y: 0 });
   const [casesFilters, setCasesFilters] = useState<CasesFilters>({
     caseFilters: ["Accusative"],
     numberFilters: ["Singular"],
@@ -61,6 +64,7 @@ const Exercises = () => {
     setMasteredIds([]);
     setRetrySentences([]);
     setHasIncorrectAttempt(false);
+    setShowFloatingCheckmark(false);
     // Reset filters to defaults for Cases subcategory
     if (subcategory === "Cases") {
       setCasesFilters({
@@ -70,6 +74,11 @@ const Exercises = () => {
       });
     }
   }, [category, subcategory]);
+
+  // Reset hasIncorrectAttempt when currentIndex changes
+  useEffect(() => {
+    setHasIncorrectAttempt(false);
+  }, [currentIndex]);
 
   const {
     data: subcategoryInfo
@@ -154,15 +163,26 @@ const Exercises = () => {
     }
   });
 
-  const handleCorrectAnswer = () => {
+  const handleCorrectAnswer = (x: number, y: number) => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
+    
     console.log("Handling correct answer:", {
       sentenceId: currentSentence.id,
       hasIncorrectAttempt,
       currentIndex,
       totalSentences: sentences?.length
     });
+    
+    // Show floating checkmark at the provided position
+    setFloatingCheckmarkPosition({ x, y });
+    setShowFloatingCheckmark(true);
+    
+    // Hide checkmark after animation duration
+    setTimeout(() => {
+      setShowFloatingCheckmark(false);
+    }, 500);
+    
     if (!hasIncorrectAttempt) {
       setFirstTryCorrect(prev => prev + 1);
       setMasteredIds(prev => [...prev, currentSentence.id]);
@@ -170,10 +190,11 @@ const Exercises = () => {
         setRetrySentences(prev => prev.filter(s => s.id !== currentSentence.id));
       }
     }
+    
     setAnsweredCount(prev => prev + 1);
+    
     if (sentences && currentIndex < sentences.length - 1) {
       setCurrentIndex(currentIndex + 1);
-      setHasIncorrectAttempt(false);
     }
   };
 
@@ -193,6 +214,7 @@ const Exercises = () => {
     setAnsweredCount(0);
     setFirstTryCorrect(0);
     setHasIncorrectAttempt(false);
+    setShowFloatingCheckmark(false);
     if (sentences && sentences.length < 6) {
       setMasteredIds([]);
     }
@@ -212,6 +234,15 @@ const Exercises = () => {
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <main className="flex-1 p-6 pt-[calc(theme(spacing.6)_+_theme(spacing.12))] md:pt-6">
+          {showFloatingCheckmark && (
+            <FloatingCheckmark 
+              className="fixed"
+              style={{ 
+                left: `${floatingCheckmarkPosition.x}px`,
+                top: `${floatingCheckmarkPosition.y}px`
+              }} 
+            />
+          )}
           <div className="max-w-3xl mx-auto">
             <div className="top-12 md:top-0 bg-background/95 backdrop-blur-sm z-10 pb-2 -mt-2 pt-2 ">
               <Progress value={progress} className="mb-3" />
