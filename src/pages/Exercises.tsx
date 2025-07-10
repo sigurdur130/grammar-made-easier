@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { EndScreen } from "@/components/exercise/EndScreen";
 import { FeedbackButton } from "@/components/FeedbackButton";
 import { FurtherReading } from "@/components/exercise/FurtherReading";
+import { CasesFilter } from "@/components/exercise/CasesFilter";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Sentence {
@@ -25,6 +26,12 @@ interface SubcategoryInfo {
   further_reading: string | null;
 }
 
+interface CasesFilters {
+  caseFilters: string[];
+  numberFilters: string[];
+  definitenessFilters: string[];
+}
+
 const Exercises = () => {
   const {
     category,
@@ -37,6 +44,11 @@ const Exercises = () => {
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
+  const [casesFilters, setCasesFilters] = useState<CasesFilters>({
+    caseFilters: ["Accusative"],
+    numberFilters: ["Singular"],
+    definitenessFilters: ["Indefinite"]
+  });
 
   // Reset all state when category or subcategory changes
   useEffect(() => {
@@ -46,6 +58,14 @@ const Exercises = () => {
     setMasteredIds([]);
     setRetrySentences([]);
     setHasIncorrectAttempt(false);
+    // Reset filters to defaults for Cases subcategory
+    if (subcategory === "Cases") {
+      setCasesFilters({
+        caseFilters: ["Accusative"],
+        numberFilters: ["Singular"],
+        definitenessFilters: ["Indefinite"]
+      });
+    }
   }, [category, subcategory]);
 
   const {
@@ -170,6 +190,10 @@ const Exercises = () => {
     await refetch();
   };
   
+  const handleFiltersChange = (filters: CasesFilters) => {
+    setCasesFilters(filters);
+  };
+  
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
   const isComplete = sentences && answeredCount === sentences.length;
   const isOutOfSentences = sentences && sentences.length < 6;
@@ -184,6 +208,14 @@ const Exercises = () => {
             </div>
             {isLoading ? <div className="h-[400px] bg-muted animate-pulse rounded-lg" /> : sentences && sentences.length > 0 ? isComplete ? <EndScreen onRestart={handleRestart} firstTryCorrect={firstTryCorrect} totalExercises={sentences.length} isOutOfSentences={isOutOfSentences} /> : <>
                   <ExerciseCard sentence={sentences[currentIndex]} onCorrect={handleCorrectAnswer} onIncorrect={handleIncorrectAnswer} subcategory={subcategory || ''} />
+                  {subcategory === "Cases" && (
+                    <CasesFilter 
+                      caseFilters={casesFilters.caseFilters}
+                      numberFilters={casesFilters.numberFilters}
+                      definitenessFilters={casesFilters.definitenessFilters}
+                      onFiltersChange={handleFiltersChange}
+                    />
+                  )}
                   {!isComplete && subcategoryInfo && <FurtherReading content={subcategoryInfo.further_reading} />}
                 </> : null}
           </div>
