@@ -17,6 +17,9 @@ interface Sentence {
   icelandic_left: string | null;
   icelandic_right: string | null;
   correct_answer: string | null;
+  case: string | null;
+  number: string | null;
+  definiteness: string | null;
   subcategory: string | null;
   base_form: string | null;
   word_category: string | null;
@@ -117,8 +120,11 @@ const Exercises = () => {
           num_rows: neededRandomSentences,
           subcategory_filter: subcategory,
           word_category_filter: category,
-          mastered_ids: masteredIds,
-          retry_ids: retrySentences.map(s => s.id)
+          mastered_ids: masteredIds, // Pass empty array if no mastered IDs
+          retry_ids: retrySentences.map(s => s.id), // Pass empty array if no retry IDs
+          cases_filter: casesFilters.caseFilters,
+          numbers_filter: casesFilters.numberFilters,
+          definiteness_filter: casesFilters.definitenessFilters,
         });
         if (error) {
           console.error("Error fetching sentences:", error);
