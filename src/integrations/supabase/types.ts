@@ -181,9 +181,6 @@ export type Database = {
           num_rows: number
           mastered_ids?: number[]
           retry_ids?: number[]
-          cases_filter?: string[]
-          numbers_filter?: string[]
-          definiteness_filter?: string[]
         }
         Returns: {
           id: number
@@ -191,9 +188,6 @@ export type Database = {
           icelandic_left: string
           icelandic_right: string
           correct_answer: string
-          case: string
-          number: string
-          definiteness: string
           subcategory: string
           base_form: string
           word_category: string
