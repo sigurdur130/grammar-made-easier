@@ -49,6 +49,7 @@ const Exercises = () => {
     numberFilters: ["Singular"],
     definitenessFilters: ["Indefinite"]
   });
+  const [filtersChanged, setFiltersChanged] = useState(false);
 
   // Reset all state when category or subcategory changes
   useEffect(() => {
@@ -58,6 +59,7 @@ const Exercises = () => {
     setMasteredIds([]);
     setRetrySentences([]);
     setHasIncorrectAttempt(false);
+    setFiltersChanged(false);
     // Reset filters to defaults for Cases subcategory
     if (subcategory === "Cases") {
       setCasesFilters({
@@ -118,7 +120,10 @@ const Exercises = () => {
           subcategory_filter: subcategory,
           word_category_filter: category,
           mastered_ids: masteredIds,
-          retry_ids: retrySentences.map(s => s.id)
+          retry_ids: retrySentences.map(s => s.id),
+          cases_filter: casesFilters.caseFilters,
+          numbers_filter: casesFilters.numberFilters,
+          definiteness_filter: casesFilters.definitenessFilters
         });
         if (error) {
           console.error("Error fetching sentences:", error);
@@ -148,23 +153,30 @@ const Exercises = () => {
   const handleCorrectAnswer = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
-    console.log("Handling correct answer:", {
-      sentenceId: currentSentence.id,
-      hasIncorrectAttempt,
-      currentIndex,
-      totalSentences: sentences?.length
-    });
-    if (!hasIncorrectAttempt) {
-      setFirstTryCorrect(prev => prev + 1);
-      setMasteredIds(prev => [...prev, currentSentence.id]);
-      if (retrySentences.some(s => s.id === currentSentence.id)) {
-        setRetrySentences(prev => prev.filter(s => s.id !== currentSentence.id));
+    
+    if (filtersChanged) {
+      // Filters have changed, so refetch a new batch
+      setCurrentIndex(0);
+      setAnsweredCount(0);
+      setFirstTryCorrect(0);
+      setMasteredIds([]);
+      setRetrySentences([]);
+      setFiltersChanged(false);
+      refetch();
+    } else {
+      // No filter changes, proceed normally
+      if (!hasIncorrectAttempt) {
+        setFirstTryCorrect(prev => prev + 1);
+        setMasteredIds(prev => [...prev, currentSentence.id]);
+        if (retrySentences.some(s => s.id === currentSentence.id)) {
+          setRetrySentences(prev => prev.filter(s => s.id !== currentSentence.id));
+        }
       }
-    }
-    setAnsweredCount(prev => prev + 1);
-    if (sentences && currentIndex < sentences.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setHasIncorrectAttempt(false);
+      setAnsweredCount(prev => prev + 1);
+      if (sentences && currentIndex < sentences.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+        setHasIncorrectAttempt(false);
+      }
     }
   };
 
@@ -179,11 +191,11 @@ const Exercises = () => {
   };
 
   const handleRestart = async () => {
-    console.log("Restarting exercises...");
     setCurrentIndex(0);
     setAnsweredCount(0);
     setFirstTryCorrect(0);
     setHasIncorrectAttempt(false);
+    setFiltersChanged(false);
     if (sentences && sentences.length < 6) {
       setMasteredIds([]);
     }
@@ -192,6 +204,7 @@ const Exercises = () => {
   
   const handleFiltersChange = (filters: CasesFilters) => {
     setCasesFilters(filters);
+    setFiltersChanged(true);
   };
   
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
