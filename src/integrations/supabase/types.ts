@@ -173,33 +173,27 @@ export type Database = {
     Views: {
       [_ in never]: never
     }
-Functions: {
-  get_random_rows: {
-    Args: {
-      subcategory_filter: string
-      word_category_filter: string
-      num_rows: number
-      mastered_ids?: number[]
-      retry_ids?: number[]
-      cases_filter?: string[]
-      numbers_filter?: string[]
-      definiteness_filter?: string[]
+    Functions: {
+      get_random_rows: {
+        Args: {
+          subcategory_filter: string
+          word_category_filter: string
+          num_rows: number
+          mastered_ids?: number[]
+          retry_ids?: number[]
+        }
+        Returns: {
+          id: number
+          english_translation: string
+          icelandic_left: string
+          icelandic_right: string
+          correct_answer: string
+          subcategory: string
+          base_form: string
+          word_category: string
+        }[]
+      }
     }
-    Returns: {
-      id: number
-      english_translation: string
-      icelandic_left: string
-      icelandic_right: string
-      correct_answer: string
-      subcategory: string
-      base_form: string
-      word_category: string
-      case: string
-      number: string
-      definiteness: string
-    }[]
-  }
-}
     Enums: {
       subcategories_enum:
         | "Gender recognition"
