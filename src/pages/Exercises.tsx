@@ -44,11 +44,7 @@ const Exercises = () => {
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
-  const [casesFilters, setCasesFilters] = useState<CasesFilters>({
-    caseFilters: ["Accusative"],
-    numberFilters: ["Singular"],
-    definitenessFilters: ["Indefinite"]
-  });
+  const [casesFilters, setCasesFilters] = useState<CasesFilters | null>(null);
 
   // Reset all state when category or subcategory changes
   useEffect(() => {
@@ -58,13 +54,15 @@ const Exercises = () => {
     setMasteredIds([]);
     setRetrySentences([]);
     setHasIncorrectAttempt(false);
-    // Reset filters to defaults for Cases subcategory
+    // Set filters to defaults only for Cases subcategory
     if (subcategory === "Cases") {
       setCasesFilters({
         caseFilters: ["Accusative"],
         numberFilters: ["Singular"],
         definitenessFilters: ["Indefinite"]
       });
+    } else {
+      setCasesFilters(null);
     }
   }, [category, subcategory]);
 
@@ -208,11 +206,11 @@ const Exercises = () => {
             </div>
             {isLoading ? <div className="h-[400px] bg-muted animate-pulse rounded-lg" /> : sentences && sentences.length > 0 ? isComplete ? <EndScreen onRestart={handleRestart} firstTryCorrect={firstTryCorrect} totalExercises={sentences.length} isOutOfSentences={isOutOfSentences} /> : <>
                   <ExerciseCard sentence={sentences[currentIndex]} onCorrect={handleCorrectAnswer} onIncorrect={handleIncorrectAnswer} subcategory={subcategory || ''} />
-                  {subcategory === "Cases" && (
+                  {subcategory === "Cases" && casesFilters && (
                     <CasesFilter 
-                      caseFilters={casesFilters.caseFilters}
-                      numberFilters={casesFilters.numberFilters}
-                      definitenessFilters={casesFilters.definitenessFilters}
+                      caseFilters={casesFilters?.caseFilters || []}
+                      numberFilters={casesFilters?.numberFilters || []}
+                      definitenessFilters={casesFilters?.definitenessFilters || []}
                       onFiltersChange={handleFiltersChange}
                     />
                   )}
