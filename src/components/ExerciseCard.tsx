@@ -16,12 +16,11 @@ interface ExerciseCardProps {
     correct_answer: string | null;
     base_form: string | null;
   };
-  onCorrect?: () => void;
-  onIncorrect?: () => void;
+  onCheck?: () => void;
   subcategory: string;
 }
 
-export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: ExerciseCardProps) {
+export function ExerciseCard({ sentence, onCheck, subcategory }: ExerciseCardProps) {
   const [answer, setAnswer] = useState("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
@@ -45,29 +44,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   }, [sentence]);
 
   const handleCheck = () => {
-    const correct = answer.toLowerCase().trim() === sentence.correct_answer?.toLowerCase().trim();
-    setIsCorrect(correct);
-    
-    if (correct) {
-      const inputElement = inputRef.current?.getBoundingClientRect();
-      if (inputElement) {
-        setCheckmarkPosition({
-          x: inputElement.right - 40,
-          y: inputElement.top - 5,
-        });
-      }
-      setShowCheckmark(true);
-      setTimeout(() => setShowCheckmark(false), 500);
-      if (onCorrect) onCorrect();
-    } else {
-      setHasIncorrectAttempt(true);
-      setShake(true);
-      setTimeout(() => setShake(false), 500);
-      if (onIncorrect) onIncorrect();
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 0);
-    }
+    if (onCheck) onCheck();
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
