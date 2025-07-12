@@ -47,6 +47,11 @@ const Exercises = () => {
   const [casesFilters, setCasesFilters] = useState<CasesFilters | null>(null);
   const [pendingFilterChanges, setPendingFilterChanges] = useState(false);
   const [activeCasesFilters, setActiveCasesFilters] = useState<CasesFilters | null>(null);
+  
+  // States for managing feedback in ExerciseCard
+  const [currentAnswer, setCurrentAnswer] = useState("");
+  const [currentIsCorrect, setCurrentIsCorrect] = useState<boolean | null>(null);
+  const [currentShake, setCurrentShake] = useState(false);
 
   // Reset all state when category or subcategory changes
   useEffect(() => {
@@ -57,6 +62,9 @@ const Exercises = () => {
     setRetrySentences([]);
     setHasIncorrectAttempt(false);
     setPendingFilterChanges(false);
+    setCurrentAnswer("");
+    setCurrentIsCorrect(null);
+    setCurrentShake(false);
     // Set filters to defaults only for Cases subcategory
     if (subcategory === "Cases") {
       const defaultFilters = {
@@ -175,20 +183,20 @@ const Exercises = () => {
         return;
       } else {
         // Incorrect answer with pending changes - proceed with normal incorrect logic
-        handleIncorrectAnswer();
+        handleIncorrectAnswer(answer);
         return;
       }
     }
     
     // Normal answer checking logic when no pending filter changes
     if (isCorrect) {
-      handleCorrectAnswer();
+      handleCorrectAnswer(answer);
     } else {
-      handleIncorrectAnswer();
+      handleIncorrectAnswer(answer);
     }
   };
 
-  const handleCorrectAnswer = () => {
+  const handleCorrectAnswer = (answer: string) => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
     console.log("Handling correct answer:", {
@@ -205,13 +213,24 @@ const Exercises = () => {
       }
     }
     setAnsweredCount(prev => prev + 1);
+    
+    // Show correct feedback briefly before moving to next sentence
+    setCurrentAnswer(answer);
+    setCurrentIsCorrect(true);
+    setCurrentShake(false);
+    
+    setTimeout(() => {
     if (sentences && currentIndex < sentences.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setHasIncorrectAttempt(false);
+        // Reset feedback state for next sentence
+        setCurrentAnswer("");
+        setCurrentIsCorrect(null);
     }
+    }, 1000); // Show feedback for 1 second
   };
 
-  const handleIncorrectAnswer = () => {
+  const handleIncorrectAnswer = (answer: string) => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
     if (!hasIncorrectAttempt && !retrySentences.some(s => s.id === currentSentence.id)) {
@@ -219,6 +238,16 @@ const Exercises = () => {
       setRetrySentences(prev => [...prev, currentSentence]);
     }
     setHasIncorrectAttempt(true);
+    
+    // Show incorrect feedback
+    setCurrentAnswer(answer);
+    setCurrentIsCorrect(false);
+    setCurrentShake(true);
+    
+    // Reset shake after animation
+    setTimeout(() => {
+      setCurrentShake(false);
+    }, 500);
   };
 
   const handleRestart = async () => {
