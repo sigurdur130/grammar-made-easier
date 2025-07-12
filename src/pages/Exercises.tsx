@@ -283,7 +283,14 @@ const Exercises = () => {
                   <ExerciseCard 
                     sentence={sentences[currentIndex]}
                     onCheck={handleCheck}
-                    subcategory={subcategory || ''} 
+                    subcategory={subcategory || ''}
+                    currentAnswer={currentAnswer}
+                    currentIsCorrect={currentIsCorrect}
+                    currentShake={currentShake}
+                    onClearAnswer={() => {
+                      setCurrentAnswer("");
+                      setCurrentIsCorrect(null);
+                    }}
                   />
                   {subcategory === "Cases" && casesFilters && (
                     <CasesFilter 

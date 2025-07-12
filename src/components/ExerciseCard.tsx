@@ -91,14 +91,14 @@ export function ExerciseCard({ sentence, onCheck, subcategory }: ExerciseCardPro
         <ExerciseContent
           ref={inputRef}
           sentence={sentence}
-          answer={answer}
-          isCorrect={isCorrect}
+          answer={currentAnswer || answer}
+          isCorrect={currentIsCorrect}
           isTyping={isTyping}
-          shake={shake}
+          shake={currentShake}
           onInputChange={handleInputChange}
           onKeyPress={handleKeyPress}
-          showAnswer={showAnswer}
           onClear={handleClearInput}
+          showAnswer={showAnswer}
         />
 
         {/* Mobile layout: Check button above character buttons */}
