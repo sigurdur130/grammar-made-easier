@@ -153,7 +153,7 @@ const Exercises = () => {
     }
   });
 
-  const handleCheck = () => {
+  const handleCheck = (answer: string) => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
     

@@ -17,6 +17,7 @@ interface ExerciseCardProps {
     base_form: string | null;
   };
   onCheck?: () => void;
+  onCheck?: (answer: string) => void;
   subcategory: string;
 }
 
@@ -44,7 +45,7 @@ export function ExerciseCard({ sentence, onCheck, subcategory }: ExerciseCardPro
   }, [sentence]);
 
   const handleCheck = () => {
-    if (onCheck) onCheck();
+    if (onCheck) onCheck(answer);
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
