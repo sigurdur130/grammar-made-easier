@@ -16,12 +16,12 @@ interface ExerciseCardProps {
     correct_answer: string | null;
     base_form: string | null;
   };
-  onCheck?: () => void;
-  onCheck?: (answer: string) => void;
+  onCorrect?: () => void;
+  onIncorrect?: () => void;
   subcategory: string;
 }
 
-export function ExerciseCard({ sentence, onCheck, subcategory }: ExerciseCardProps) {
+export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: ExerciseCardProps) {
   const [answer, setAnswer] = useState("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
@@ -45,7 +45,29 @@ export function ExerciseCard({ sentence, onCheck, subcategory }: ExerciseCardPro
   }, [sentence]);
 
   const handleCheck = () => {
-    if (onCheck) onCheck(answer);
+    const correct = answer.toLowerCase().trim() === sentence.correct_answer?.toLowerCase().trim();
+    setIsCorrect(correct);
+    
+    if (correct) {
+      const inputElement = inputRef.current?.getBoundingClientRect();
+      if (inputElement) {
+        setCheckmarkPosition({
+          x: inputElement.right - 40,
+          y: inputElement.top - 5,
+        });
+      }
+      setShowCheckmark(true);
+      setTimeout(() => setShowCheckmark(false), 500);
+      if (onCorrect) onCorrect();
+    } else {
+      setHasIncorrectAttempt(true);
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+      if (onIncorrect) onIncorrect();
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    }
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -91,14 +113,14 @@ export function ExerciseCard({ sentence, onCheck, subcategory }: ExerciseCardPro
         <ExerciseContent
           ref={inputRef}
           sentence={sentence}
-          answer={currentAnswer || answer}
-          isCorrect={currentIsCorrect}
+          answer={answer}
+          isCorrect={isCorrect}
           isTyping={isTyping}
-          shake={currentShake}
+          shake={shake}
           onInputChange={handleInputChange}
           onKeyPress={handleKeyPress}
-          onClear={handleClearInput}
           showAnswer={showAnswer}
+          onClear={handleClearInput}
         />
 
         {/* Mobile layout: Check button above character buttons */}

@@ -44,14 +44,11 @@ const Exercises = () => {
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
-  const [casesFilters, setCasesFilters] = useState<CasesFilters | null>(null);
-  const [pendingFilterChanges, setPendingFilterChanges] = useState(false);
-  const [activeCasesFilters, setActiveCasesFilters] = useState<CasesFilters | null>(null);
-  
-  // States for managing feedback in ExerciseCard
-  const [currentAnswer, setCurrentAnswer] = useState("");
-  const [currentIsCorrect, setCurrentIsCorrect] = useState<boolean | null>(null);
-  const [currentShake, setCurrentShake] = useState(false);
+  const [casesFilters, setCasesFilters] = useState<CasesFilters>({
+    caseFilters: ["Accusative"],
+    numberFilters: ["Singular"],
+    definitenessFilters: ["Indefinite"]
+  });
 
   // Reset all state when category or subcategory changes
   useEffect(() => {
@@ -61,22 +58,13 @@ const Exercises = () => {
     setMasteredIds([]);
     setRetrySentences([]);
     setHasIncorrectAttempt(false);
-    setPendingFilterChanges(false);
-    setCurrentAnswer("");
-    setCurrentIsCorrect(null);
-    setCurrentShake(false);
-    // Set filters to defaults only for Cases subcategory
+    // Reset filters to defaults for Cases subcategory
     if (subcategory === "Cases") {
-      const defaultFilters = {
+      setCasesFilters({
         caseFilters: ["Accusative"],
         numberFilters: ["Singular"],
         definitenessFilters: ["Indefinite"]
-      };
-      setCasesFilters(defaultFilters);
-      setActiveCasesFilters(defaultFilters);
-    } else {
-      setCasesFilters(null);
-      setActiveCasesFilters(null);
+      });
     }
   }, [category, subcategory]);
 
@@ -110,15 +98,14 @@ const Exercises = () => {
     isLoading,
     refetch
   } = useQuery({
-    queryKey: ["sentences", category, subcategory, activeCasesFilters],
+    queryKey: ["sentences", category, subcategory],
     queryFn: async () => {
       console.log("Fetching sentences with:", {
         category,
         subcategory,
         masteredIds,
         retryIds: retrySentences.map(s => s.id),
-        retrySentencesCount: retrySentences.length,
-        activeCasesFilters
+        retrySentencesCount: retrySentences.length
       });
       const neededRandomSentences = 6 - retrySentences.length;
       let newSentences: Sentence[] = [];
@@ -131,10 +118,7 @@ const Exercises = () => {
           subcategory_filter: subcategory,
           word_category_filter: category,
           mastered_ids: masteredIds,
-          retry_ids: retrySentences.map(s => s.id),
-          cases_filter: activeCasesFilters?.caseFilters || undefined,
-          numbers_filter: activeCasesFilters?.numberFilters || undefined,
-          definiteness_filter: activeCasesFilters?.definitenessFilters || undefined
+          retry_ids: retrySentences.map(s => s.id)
         });
         if (error) {
           console.error("Error fetching sentences:", error);
@@ -161,42 +145,7 @@ const Exercises = () => {
     }
   });
 
-  const handleCheck = (answer: string) => {
-    const currentSentence = sentences?.[currentIndex];
-    if (!currentSentence) return;
-    
-    // Check if the answer is correct
-    const isCorrect = answer.toLowerCase().trim() === currentSentence.correct_answer?.toLowerCase().trim();
-    
-    // Handle pending filter changes
-    if (pendingFilterChanges) {
-      if (isCorrect) {
-        // Apply the new filters and reset exercise state
-        setActiveCasesFilters(casesFilters);
-        setCurrentIndex(0);
-        setAnsweredCount(0);
-        setFirstTryCorrect(0);
-        setMasteredIds([]);
-        setRetrySentences([]);
-        setPendingFilterChanges(false);
-        setHasIncorrectAttempt(false);
-        return;
-      } else {
-        // Incorrect answer with pending changes - proceed with normal incorrect logic
-        handleIncorrectAnswer(answer);
-        return;
-      }
-    }
-    
-    // Normal answer checking logic when no pending filter changes
-    if (isCorrect) {
-      handleCorrectAnswer(answer);
-    } else {
-      handleIncorrectAnswer(answer);
-    }
-  };
-
-  const handleCorrectAnswer = (answer: string) => {
+  const handleCorrectAnswer = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
     console.log("Handling correct answer:", {
@@ -213,24 +162,13 @@ const Exercises = () => {
       }
     }
     setAnsweredCount(prev => prev + 1);
-    
-    // Show correct feedback briefly before moving to next sentence
-    setCurrentAnswer(answer);
-    setCurrentIsCorrect(true);
-    setCurrentShake(false);
-    
-    setTimeout(() => {
     if (sentences && currentIndex < sentences.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setHasIncorrectAttempt(false);
-        // Reset feedback state for next sentence
-        setCurrentAnswer("");
-        setCurrentIsCorrect(null);
     }
-    }, 1000); // Show feedback for 1 second
   };
 
-  const handleIncorrectAnswer = (answer: string) => {
+  const handleIncorrectAnswer = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
     if (!hasIncorrectAttempt && !retrySentences.some(s => s.id === currentSentence.id)) {
@@ -238,16 +176,6 @@ const Exercises = () => {
       setRetrySentences(prev => [...prev, currentSentence]);
     }
     setHasIncorrectAttempt(true);
-    
-    // Show incorrect feedback
-    setCurrentAnswer(answer);
-    setCurrentIsCorrect(false);
-    setCurrentShake(true);
-    
-    // Reset shake after animation
-    setTimeout(() => {
-      setCurrentShake(false);
-    }, 500);
   };
 
   const handleRestart = async () => {
@@ -264,7 +192,6 @@ const Exercises = () => {
   
   const handleFiltersChange = (filters: CasesFilters) => {
     setCasesFilters(filters);
-    setPendingFilterChanges(true);
   };
   
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
@@ -280,23 +207,12 @@ const Exercises = () => {
               <Progress value={progress} className="mb-3" />
             </div>
             {isLoading ? <div className="h-[400px] bg-muted animate-pulse rounded-lg" /> : sentences && sentences.length > 0 ? isComplete ? <EndScreen onRestart={handleRestart} firstTryCorrect={firstTryCorrect} totalExercises={sentences.length} isOutOfSentences={isOutOfSentences} /> : <>
-                  <ExerciseCard 
-                    sentence={sentences[currentIndex]}
-                    onCheck={handleCheck}
-                    subcategory={subcategory || ''}
-                    currentAnswer={currentAnswer}
-                    currentIsCorrect={currentIsCorrect}
-                    currentShake={currentShake}
-                    onClearAnswer={() => {
-                      setCurrentAnswer("");
-                      setCurrentIsCorrect(null);
-                    }}
-                  />
-                  {subcategory === "Cases" && casesFilters && (
+                  <ExerciseCard sentence={sentences[currentIndex]} onCorrect={handleCorrectAnswer} onIncorrect={handleIncorrectAnswer} subcategory={subcategory || ''} />
+                  {subcategory === "Cases" && (
                     <CasesFilter 
-                      caseFilters={casesFilters?.caseFilters || []}
-                      numberFilters={casesFilters?.numberFilters || []}
-                      definitenessFilters={casesFilters?.definitenessFilters || []}
+                      caseFilters={casesFilters.caseFilters}
+                      numberFilters={casesFilters.numberFilters}
+                      definitenessFilters={casesFilters.definitenessFilters}
                       onFiltersChange={handleFiltersChange}
                     />
                   )}
