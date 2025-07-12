@@ -251,7 +251,11 @@ const Exercises = () => {
               <Progress value={progress} className="mb-3" />
             </div>
             {isLoading ? <div className="h-[400px] bg-muted animate-pulse rounded-lg" /> : sentences && sentences.length > 0 ? isComplete ? <EndScreen onRestart={handleRestart} firstTryCorrect={firstTryCorrect} totalExercises={sentences.length} isOutOfSentences={isOutOfSentences} /> : <>
-                  <ExerciseCard sentence={sentences[currentIndex]} onCorrect={handleCorrectAnswer} onIncorrect={handleIncorrectAnswer} subcategory={subcategory || ''} />
+                  <ExerciseCard 
+                    sentence={sentences[currentIndex]}
+                    onCheck={handleCheck}
+                    subcategory={subcategory || ''} 
+                  />
                   {subcategory === "Cases" && casesFilters && (
                     <CasesFilter 
                       caseFilters={casesFilters?.caseFilters || []}
