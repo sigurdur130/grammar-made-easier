@@ -20,6 +20,9 @@ interface Sentence {
   subcategory: string | null;
   base_form: string | null;
   word_category: string | null;
+  case: string | null;
+  number: string | null;
+  definiteness: string | null;
 }
 
 interface SubcategoryInfo {
@@ -31,6 +34,12 @@ interface CasesFilters {
   numberFilters: string[];
   definitenessFilters: string[];
 }
+
+const DEFAULT_CASES_FILTERS: CasesFilters = {
+  caseFilters: ["Accusative"],
+  numberFilters: ["Singular"],
+  definitenessFilters: ["Indefinite"]
+};
 
 const Exercises = () => {
   const {
@@ -44,11 +53,13 @@ const Exercises = () => {
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
-  const [casesFilters, setCasesFilters] = useState<CasesFilters>({
-    caseFilters: ["Accusative"],
-    numberFilters: ["Singular"],
-    definitenessFilters: ["Indefinite"]
-  });
+  const [currentAppliedFilters, setCurrentAppliedFilters] = useState<CasesFilters>(DEFAULT_CASES_FILTERS);
+  const [pendingFilterChanges, setPendingFilterChanges] = useState<CasesFilters>(DEFAULT_CASES_FILTERS);
+
+  // Helper function to check if filters are different
+  const areFiltersDifferent = (filters1: CasesFilters, filters2: CasesFilters) => {
+    return JSON.stringify(filters1) !== JSON.stringify(filters2);
+  };
 
   // Reset all state when category or subcategory changes
   useEffect(() => {
@@ -60,11 +71,8 @@ const Exercises = () => {
     setHasIncorrectAttempt(false);
     // Reset filters to defaults for Cases subcategory
     if (subcategory === "Cases") {
-      setCasesFilters({
-        caseFilters: ["Accusative"],
-        numberFilters: ["Singular"],
-        definitenessFilters: ["Indefinite"]
-      });
+      setCurrentAppliedFilters(DEFAULT_CASES_FILTERS);
+      setPendingFilterChanges(DEFAULT_CASES_FILTERS);
     }
   }, [category, subcategory]);
 
@@ -98,7 +106,7 @@ const Exercises = () => {
     isLoading,
     refetch
   } = useQuery({
-    queryKey: ["sentences", category, subcategory],
+    queryKey: ["sentences", category, subcategory, currentAppliedFilters],
     queryFn: async () => {
       console.log("Fetching sentences with:", {
         category,
@@ -113,7 +121,16 @@ const Exercises = () => {
         const {
           data,
           error
-        } = await supabase.rpc('get_random_rows', {
+        } = await supabase.rpc('get_random_rows', subcategory === "Cases" ? {
+          num_rows: neededRandomSentences,
+          subcategory_filter: subcategory,
+          word_category_filter: category,
+          mastered_ids: masteredIds,
+          retry_ids: retrySentences.map(s => s.id),
+          cases_filter: currentAppliedFilters.caseFilters,
+          numbers_filter: currentAppliedFilters.numberFilters,
+          definiteness_filter: currentAppliedFilters.definitenessFilters
+        } : {
           num_rows: neededRandomSentences,
           subcategory_filter: subcategory,
           word_category_filter: category,
@@ -154,6 +171,22 @@ const Exercises = () => {
       currentIndex,
       totalSentences: sentences?.length
     });
+    
+    // Check if there are pending filter changes for Cases subcategory
+    if (subcategory === "Cases" && areFiltersDifferent(pendingFilterChanges, currentAppliedFilters)) {
+      console.log("Applying pending filter changes:", pendingFilterChanges);
+      // Apply the pending filter changes
+      setCurrentAppliedFilters(pendingFilterChanges);
+      // Reset all exercise state as if starting a new subcategory
+      setCurrentIndex(0);
+      setAnsweredCount(0);
+      setFirstTryCorrect(0);
+      setMasteredIds([]);
+      setRetrySentences([]);
+      setHasIncorrectAttempt(false);
+      return; // Exit early, the useQuery will refetch with new filters
+    }
+    
     if (!hasIncorrectAttempt) {
       setFirstTryCorrect(prev => prev + 1);
       setMasteredIds(prev => [...prev, currentSentence.id]);
@@ -191,7 +224,7 @@ const Exercises = () => {
   };
   
   const handleFiltersChange = (filters: CasesFilters) => {
-    setCasesFilters(filters);
+    setPendingFilterChanges(filters);
   };
   
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
@@ -210,9 +243,9 @@ const Exercises = () => {
                   <ExerciseCard sentence={sentences[currentIndex]} onCorrect={handleCorrectAnswer} onIncorrect={handleIncorrectAnswer} subcategory={subcategory || ''} />
                   {subcategory === "Cases" && (
                     <CasesFilter 
-                      caseFilters={casesFilters.caseFilters}
-                      numberFilters={casesFilters.numberFilters}
-                      definitenessFilters={casesFilters.definitenessFilters}
+                      caseFilters={pendingFilterChanges.caseFilters}
+                      numberFilters={pendingFilterChanges.numberFilters}
+                      definitenessFilters={pendingFilterChanges.definitenessFilters}
                       onFiltersChange={handleFiltersChange}
                     />
                   )}
