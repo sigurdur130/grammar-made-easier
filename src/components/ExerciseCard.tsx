@@ -107,7 +107,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
             <div className="flex items-center gap-2">
               {showCaseHint && sentence.case && (
                 <span className="text-sm text-muted-foreground">
-                  <strong>Case:</strong> {sentence.case}
+                  {sentence.case}
                 </span>
               )}
               <Button
