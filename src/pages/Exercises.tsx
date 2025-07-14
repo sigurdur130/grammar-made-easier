@@ -217,9 +217,7 @@ const Exercises = () => {
     setAnsweredCount(0);
     setFirstTryCorrect(0);
     setHasIncorrectAttempt(false);
-    if (sentences && sentences.length < 6) {
-      setMasteredIds([]);
-    }
+    setMasteredIds([]);
     await refetch();
   };
   
