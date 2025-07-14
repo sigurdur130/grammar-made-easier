@@ -1,6 +1,7 @@
 
 import { useState, useEffect, KeyboardEvent, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ExerciseContent } from "./exercise/ExerciseContent";
 import { CharacterButtons } from "./exercise/CharacterButtons";
 import { ActionButtons } from "./exercise/ActionButtons";
