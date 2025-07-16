@@ -251,12 +251,7 @@ const Exercises = () => {
                 </> : null}
           </div>
         </main>
-        <FeedbackButton 
-          currentSentence={sentences?.[currentIndex]?.id} 
-          category={category}
-          subcategory={subcategory}
-          filters={currentAppliedFilters}
-        />
+        <FeedbackButton currentSentence={sentences?.[currentIndex]?.id} />
       </div>
     </SidebarProvider>;
 };
