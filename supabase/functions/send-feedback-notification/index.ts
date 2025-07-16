@@ -15,6 +15,7 @@ interface FeedbackNotificationRequest {
   feedback: string;
   screen: string;
   sentence: string | null;
+  filtersInfo: string | null;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -24,7 +25,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, feedback, screen, sentence }: FeedbackNotificationRequest = await req.json();
+    const { email, feedback, screen, sentence, filtersInfo }: FeedbackNotificationRequest = await req.json();
     const timestamp = new Date().toISOString();
 
     const emailResponse = await resend.emails.send({
@@ -36,6 +37,7 @@ const handler = async (req: Request): Promise<Response> => {
         <p><strong>Timestamp:</strong> ${timestamp}</p>
         <p><strong>Screen:</strong> ${screen}</p>
         ${sentence ? `<p><strong>Sentence ID:</strong> ${sentence}</p>` : ''}
+        ${filtersInfo ? `<p><strong>Active Filters:</strong> ${filtersInfo}</p>` : ''}
         ${email ? `<p><strong>User Email:</strong> ${email}</p>` : '<p><strong>User Email:</strong> Not provided</p>'}
         <h2>Feedback:</h2>
         <p style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #0088cc;">${feedback}</p>

@@ -9,7 +9,25 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }) => {
+interface CasesFilters {
+  caseFilters: string[];
+  numberFilters: string[];
+  definitenessFilters: string[];
+}
+
+interface FeedbackButtonProps {
+  currentSentence?: number;
+  category?: string;
+  subcategory?: string;
+  filters?: CasesFilters;
+}
+
+export const FeedbackButton = ({ 
+  currentSentence, 
+  category, 
+  subcategory, 
+  filters 
+}: FeedbackButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -27,6 +45,7 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
       feedback: string;
       screen: string;
       sentence: string | null;
+      filtersInfo: string | null;
     }
   ) => {
     try {
@@ -50,6 +69,12 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
       const screen = getCurrentScreen();
       const sentenceId = currentSentence ? String(currentSentence) : null;
       
+      // Format filter information if this is the Cases subcategory for Nouns
+      let filtersInfo: string | null = null;
+      if (category === "Nouns" && subcategory === "Cases" && filters) {
+        filtersInfo = `Cases: ${filters.caseFilters.join(', ')} | Numbers: ${filters.numberFilters.join(', ')} | Definiteness: ${filters.definitenessFilters.join(', ')}`;
+      }
+      
       // Save to database
       const { error } = await supabase
         .from("feedback")
@@ -69,7 +94,8 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
         email: email || null,
         feedback,
         screen,
-        sentence: sentenceId
+        sentence: sentenceId,
+        filtersInfo
       });
 
       toast({
