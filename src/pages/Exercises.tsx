@@ -147,11 +147,20 @@ const Exercises = () => {
       console.log("Combined sentences:", combinedSentences);
       if (newSentences.length < neededRandomSentences && retrySentences.length === 0) {
         try {
+          const notificationBody: any = {
+            category,
+            subcategory
+          };
+          
+          // Include filter information for Cases subcategory
+          if (subcategory === "Cases") {
+            notificationBody.caseFilters = currentAppliedFilters.caseFilters;
+            notificationBody.numberFilters = currentAppliedFilters.numberFilters;
+            notificationBody.definitenessFilters = currentAppliedFilters.definitenessFilters;
+          }
+          
           await supabase.functions.invoke('notify-category-completed', {
-            body: {
-              category,
-              subcategory
-            }
+            body: notificationBody
           });
           console.log("Notification sent for completed category");
         } catch (error) {

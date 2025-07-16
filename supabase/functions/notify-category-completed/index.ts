@@ -13,6 +13,9 @@ const corsHeaders = {
 interface NotificationRequest {
   category: string;
   subcategory: string;
+  caseFilters?: string[];
+  numberFilters?: string[];
+  definitenessFilters?: string[];
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -22,8 +25,27 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { category, subcategory }: NotificationRequest = await req.json();
+    const { 
+      category, 
+      subcategory, 
+      caseFilters, 
+      numberFilters, 
+      definitenessFilters 
+    }: NotificationRequest = await req.json();
     const timestamp = new Date().toISOString();
+
+    // Format filter information for Cases subcategory
+    let filterInfo = '';
+    if (category === 'Nouns' && subcategory === 'Cases' && caseFilters && numberFilters && definitenessFilters) {
+      filterInfo = `
+        <h2>Active Filters:</h2>
+        <ul>
+          <li><strong>Case:</strong> ${caseFilters.join(', ')}</li>
+          <li><strong>Number:</strong> ${numberFilters.join(', ')}</li>
+          <li><strong>Definiteness:</strong> ${definitenessFilters.join(', ')}</li>
+        </ul>
+      `;
+    }
 
     const emailResponse = await resend.emails.send({
       from: "Icelandic Made Easier <onboarding@resend.dev>",
@@ -33,6 +55,7 @@ const handler = async (req: Request): Promise<Response> => {
         <h1>A user has completed all available sentences!</h1>
         <p><strong>Category:</strong> ${category}</p>
         <p><strong>Subcategory:</strong> ${subcategory}</p>
+        ${filterInfo}
         <p><strong>Timestamp:</strong> ${timestamp}</p>
         <p>Time to add more sentences to the database!</p>
       `,
