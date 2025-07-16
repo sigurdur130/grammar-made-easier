@@ -34,9 +34,19 @@ const handler = async (req: Request): Promise<Response> => {
     }: NotificationRequest = await req.json();
     const timestamp = new Date().toISOString();
 
+    // Debug logging
+    console.log("Notification request data:", {
+      category,
+      subcategory,
+      caseFilters,
+      numberFilters,
+      definitenessFilters
+    });
+
     // Format filter information for Cases subcategory
     let filterInfo = '';
-    if (category === 'Nouns' && subcategory === 'Cases' && caseFilters && numberFilters && definitenessFilters) {
+    if (subcategory === 'Cases' && caseFilters && numberFilters && definitenessFilters) {
+      console.log("Adding filter info to email");
       filterInfo = `
         <h2>Active Filters:</h2>
         <ul>
@@ -45,6 +55,13 @@ const handler = async (req: Request): Promise<Response> => {
           <li><strong>Definiteness:</strong> ${definitenessFilters.join(', ')}</li>
         </ul>
       `;
+    } else {
+      console.log("Filter info not added. Conditions:", {
+        isCorrectSubcategory: subcategory === 'Cases',
+        hasCaseFilters: !!caseFilters,
+        hasNumberFilters: !!numberFilters,
+        hasDefinitenessFilters: !!definitenessFilters
+      });
     }
 
     const emailResponse = await resend.emails.send({
