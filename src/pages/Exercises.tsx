@@ -61,7 +61,7 @@ const Exercises = () => {
     return JSON.stringify(filters1) !== JSON.stringify(filters2);
   };
 
-  // Reset all state when category or subcategory changes
+  // Reset all state when category or subcategory changes, then call useQuery to fetch new sentences
   useEffect(() => {
     setCurrentIndex(0);
     setAnsweredCount(0);
@@ -69,13 +69,16 @@ const Exercises = () => {
     setMasteredIds([]);
     setRetrySentences([]);
     setHasIncorrectAttempt(false);
-    
-    // Reset filters to defaults for Cases subcategory
+  
     if (subcategory === "Cases") {
       setCurrentAppliedFilters(DEFAULT_CASES_FILTERS);
       setPendingFilterChanges(DEFAULT_CASES_FILTERS);
     }
+
+    // Delay fetch just enough to let state settle
+    Promise.resolve().then(() => refetch());
   }, [category, subcategory]);
+
 
   const {
     data: subcategoryInfo
@@ -107,7 +110,7 @@ const Exercises = () => {
     isLoading,
     refetch
   } = useQuery({
-    queryKey: ["sentences", category, subcategory, currentAppliedFilters],
+    queryKey: ["sentences", currentAppliedFilters],
     queryFn: async () => {
       console.log("Fetching sentences with:", {
         category,
