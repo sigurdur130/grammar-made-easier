@@ -63,18 +63,22 @@ const Exercises = () => {
 
   // Reset all state when category or subcategory changes, then call the useQuery that fetches new sentences
   useEffect(() => {
-    setCurrentIndex(0);
-    setAnsweredCount(0);
-    setFirstTryCorrect(0);
-    setMasteredIds([]);
-    setRetrySentences([]);
-    setHasIncorrectAttempt(false);
-    // Reset filters to defaults for Cases subcategory
-    if (subcategory === "Cases") {
-      setCurrentAppliedFilters(DEFAULT_CASES_FILTERS);
-      setPendingFilterChanges(DEFAULT_CASES_FILTERS);
-    }
-    await refetch();
+    const resetAndRefetch = async () => {
+      setCurrentIndex(0);
+      setAnsweredCount(0);
+      setFirstTryCorrect(0);
+      setMasteredIds([]);
+      setRetrySentences([]);
+      setHasIncorrectAttempt(false);
+      // Reset filters to defaults for Cases subcategory
+      if (subcategory === "Cases") {
+        setCurrentAppliedFilters(DEFAULT_CASES_FILTERS);
+        setPendingFilterChanges(DEFAULT_CASES_FILTERS);
+      }
+      await refetch();
+    };
+    
+    resetAndRefetch();
   }, [category, subcategory]);
 
   const {
