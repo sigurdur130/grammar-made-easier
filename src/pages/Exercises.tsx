@@ -114,8 +114,8 @@ const Exercises = () => {
         category,
         subcategory,
         masteredIds,
-        retryIds: retrySentences.map(s => s.id),
-        retrySentencesCount: retrySentences.length
+        retryIds: retrySentencesRef.current.map(s => s.id),
+        retrySentencesCount: retrySentencesRef.current.length
       });
 
       if (neededRandomSentences > 0) {
