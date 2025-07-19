@@ -80,6 +80,13 @@ const Exercises = () => {
   } = useQuery({
     queryKey: ["subcategoryInfo", subcategory, category],
     queryFn: async () => {
+      console.log("Fetching sentences with:", {
+        category,
+        subcategory,
+        masteredIds,
+        retryIds: retrySentences.map(s => s.id),
+        retrySentencesCount: retrySentences.length
+      });
       const { data, error } = await supabase
         .from("subcategories")
         .select("further_reading")
@@ -102,6 +109,14 @@ const Exercises = () => {
       const retry = retrySentencesRef.current;
       const neededRandomSentences = 6 - retry.length;
       let newSentences: Sentence[] = [];
+
+      console.log("Fetching sentences with:", {
+        category,
+        subcategory,
+        masteredIds,
+        retryIds: retrySentences.map(s => s.id),
+        retrySentencesCount: retrySentences.length
+      });
 
       if (neededRandomSentences > 0) {
         const { data, error } = await supabase.rpc('get_random_rows', subcategory === "Cases" ? {
