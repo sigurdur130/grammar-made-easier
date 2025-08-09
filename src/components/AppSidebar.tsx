@@ -19,7 +19,7 @@ type Subcategory = {
   further_reading: string | null;  // Changed from optional to nullable to match expected type
 };
 
-export function AppSidebar() {
+export function AppSidebar({ currentSentence }: { currentSentence?: number }) {
   const navigate = useNavigate();
   const { setOpenMobile, isMobile } = useSidebar();
   const [openCategory, setOpenCategory] = useState<string | null>(null);
@@ -92,6 +92,7 @@ export function AppSidebar() {
         openCategory={openCategory}
         onToggleCategory={toggleCategory}
         onSubcategoryClick={handleSubcategoryClick}
+        currentSentence={currentSentence}
       />
       <MobileNavbar />
     </>

@@ -6,7 +6,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { Progress } from "@/components/ui/progress";
 import { EndScreen } from "@/components/exercise/EndScreen";
-import { FeedbackButton } from "@/components/FeedbackButton";
+
 import { FurtherReading } from "@/components/exercise/FurtherReading";
 import { CasesFilter } from "@/components/exercise/CasesFilter";
 import { supabase } from "@/integrations/supabase/client";
@@ -227,7 +227,7 @@ const Exercises = () => {
 
   return <SidebarProvider>
     <div className="flex min-h-screen w-full">
-      <AppSidebar />
+      <AppSidebar currentSentence={sentences?.[currentIndex]?.id} />
       <main className="flex-1 p-6 pt-[calc(theme(spacing.6)_+_theme(spacing.12))] md:pt-6">
         <div className="max-w-3xl mx-auto">
           <div className="top-12 md:top-0 bg-background/95 backdrop-blur-sm z-10 pb-2 -mt-2 pt-2 ">
@@ -267,7 +267,7 @@ const Exercises = () => {
           ) : null}
         </div>
       </main>
-      <FeedbackButton currentSentence={sentences?.[currentIndex]?.id} />
+      
     </div>
   </SidebarProvider>;
 };

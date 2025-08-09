@@ -6,6 +6,7 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { CategoryItem } from "./CategoryItem";
@@ -15,6 +16,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { LearnWithTeacher } from "./LearnWithTeacher";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FeedbackButton } from "@/components/FeedbackButton";
 
 type CategoryListProps = {
   categories: Array<Database["public"]["Tables"]["word_categories"]["Row"]>;
@@ -29,6 +31,7 @@ type CategoryListProps = {
   openCategory: string | null;
   onToggleCategory: (category: string) => void;
   onSubcategoryClick: (category: string, subcategory: string) => void;
+  currentSentence?: number;
 };
 
 export function CategoryList({
@@ -37,6 +40,7 @@ export function CategoryList({
   openCategory,
   onToggleCategory,
   onSubcategoryClick,
+  currentSentence,
 }: CategoryListProps) {
   const { setOpenMobile, isMobile } = useSidebar();
 
@@ -48,6 +52,9 @@ export function CategoryList({
             No categories available
           </div>
         </SidebarContent>
+        <SidebarFooter className="border-t border-sidebar-border">
+          <FeedbackButton variant="inline" currentSentence={currentSentence} />
+        </SidebarFooter>
         <ThemeToggle />
         <LearnWithTeacher />
       </Sidebar>
@@ -94,6 +101,9 @@ export function CategoryList({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="border-t border-sidebar-border">
+        <FeedbackButton variant="inline" currentSentence={currentSentence} />
+      </SidebarFooter>
       <ThemeToggle />
       <LearnWithTeacher />
     </Sidebar>

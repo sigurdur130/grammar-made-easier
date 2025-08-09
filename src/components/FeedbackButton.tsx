@@ -9,7 +9,13 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }) => {
+export const FeedbackButton = ({
+  currentSentence,
+  variant = "floating",
+}: {
+  currentSentence?: number;
+  variant?: "floating" | "inline";
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -99,7 +105,7 @@ export const FeedbackButton = ({ currentSentence }: { currentSentence?: number }
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className={variant === "floating" ? "fixed bottom-6 right-6 z-50" : undefined}>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button>
