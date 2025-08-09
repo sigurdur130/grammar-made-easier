@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { MessageSquare } from "lucide-react";
 
 export const FeedbackButton = ({
   currentSentence,
@@ -108,8 +109,13 @@ export const FeedbackButton = ({
     <div className={variant === "floating" ? "fixed bottom-6 right-6 z-50" : undefined}>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button>
-            Feedback
+          <Button
+            variant={variant === "inline" ? "ghost" : "default"}
+            size={variant === "inline" ? "sm" : "default"}
+            className={variant === "inline" ? "flex w-full justify-between px-3 py-2" : undefined}
+          >
+            <span>Feedback</span>
+            {variant === "inline" && <MessageSquare className="h-5 w-5" />}
           </Button>
         </SheetTrigger>
         <SheetContent>
