@@ -10,6 +10,7 @@ import { EndScreen } from "@/components/exercise/EndScreen";
 import { FurtherReading } from "@/components/exercise/FurtherReading";
 import { CasesFilter } from "@/components/exercise/CasesFilter";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 interface Sentence {
   id: number;
@@ -166,17 +167,6 @@ const Exercises = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
 
-    if (subcategory === "Cases" && areFiltersDifferent(pendingFilterChanges, currentAppliedFilters)) {
-      setCurrentAppliedFilters(pendingFilterChanges);
-      setCurrentIndex(0);
-      setAnsweredCount(0);
-      setFirstTryCorrect(0);
-      setMasteredIds([]);
-      setRetrySentences([]);
-      retrySentencesRef.current = [];
-      setHasIncorrectAttempt(false);
-      return;
-    }
 
     if (!hasIncorrectAttempt) {
       setFirstTryCorrect(prev => prev + 1);
@@ -221,6 +211,20 @@ const Exercises = () => {
     setPendingFilterChanges(filters);
   };
 
+  const hasPendingChanges = areFiltersDifferent(pendingFilterChanges, currentAppliedFilters);
+
+  const applyFilters = () => {
+    setCurrentAppliedFilters(pendingFilterChanges);
+    setCurrentIndex(0);
+    setAnsweredCount(0);
+    setFirstTryCorrect(0);
+    setMasteredIds([]);
+    setRetrySentences([]);
+    retrySentencesRef.current = [];
+    setHasIncorrectAttempt(false);
+    toast({ title: "Filters applied", description: "Fetching new sentences..." });
+  };
+
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
   const isComplete = sentences && answeredCount === sentences.length;
   const isOutOfSentences = sentences && sentences.length < 6;
@@ -257,6 +261,8 @@ const Exercises = () => {
                     numberFilters={pendingFilterChanges.numberFilters}
                     definitenessFilters={pendingFilterChanges.definitenessFilters}
                     onFiltersChange={handleFiltersChange}
+                    hasPendingChanges={hasPendingChanges}
+                    onApply={applyFilters}
                   />
                 )}
                 {!isComplete && subcategoryInfo && (

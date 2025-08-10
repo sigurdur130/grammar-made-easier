@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Button } from "@/components/ui/button";
 
 interface CasesFilterProps {
   caseFilters: string[];
@@ -10,6 +11,8 @@ interface CasesFilterProps {
     numberFilters: string[];
     definitenessFilters: string[];
   }) => void;
+  hasPendingChanges: boolean;
+  onApply: () => void;
 }
 
 const CASE_OPTIONS = ["Accusative", "Dative", "Genitive"];
@@ -20,7 +23,9 @@ export function CasesFilter({
   caseFilters, 
   numberFilters, 
   definitenessFilters, 
-  onFiltersChange 
+  onFiltersChange, 
+  hasPendingChanges,
+  onApply
 }: CasesFilterProps) {
   const handleCaseChange = (values: string[]) => {
     // Prevent deselecting all options
@@ -127,6 +132,14 @@ export function CasesFilter({
               ))}
             </ToggleGroup>
           </div>
+        </div>
+        <div className="flex items-center justify-between px-6 pt-0">
+          <p className={`text-xs text-muted-foreground ${hasPendingChanges ? 'opacity-100' : 'opacity-0'} transition-opacity`}>
+            You have unapplied changes
+          </p>
+          <Button size="sm" disabled={!hasPendingChanges} onClick={onApply}>
+            Apply
+          </Button>
         </div>
       </CardContent>
     </Card>
