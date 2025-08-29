@@ -17,6 +17,20 @@ interface Sentence {
   english_translation: string | null;
   icelandic_left: string | null;
   icelandic_right: string | null;
+  correct_answer: string[] | null;
+  subcategory: string | null;
+  base_form: string | null;
+  word_category: string | null;
+  case: string | null;
+  number: string | null;
+  definiteness: string | null;
+}
+
+interface RawSentence {
+  id: number;
+  english_translation: string | null;
+  icelandic_left: string | null;
+  icelandic_right: string | null;
   correct_answer: string | null;
   subcategory: string | null;
   base_form: string | null;
@@ -138,7 +152,12 @@ const Exercises = () => {
         });
 
         if (error) throw error;
-        newSentences = data || [];
+        // Parse correct_answer from JSON string to array
+        const rawSentences = data || [];
+        newSentences = rawSentences.map((sentence: any) => ({
+          ...sentence,
+          correct_answer: sentence.correct_answer ? JSON.parse(sentence.correct_answer) : null
+        }));
       }
 
       const combinedSentences = [...retry, ...newSentences];
