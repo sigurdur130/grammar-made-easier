@@ -152,12 +152,38 @@ const Exercises = () => {
         });
 
         if (error) throw error;
-        // Parse correct_answer from JSON string to array
+        // Parse correct_answer from JSON string to array with error handling
         const rawSentences = data || [];
-        newSentences = rawSentences.map((sentence: any) => ({
-          ...sentence,
-          correct_answer: sentence.correct_answer ? JSON.parse(sentence.correct_answer) : null
-        }));
+        newSentences = rawSentences.map((sentence: any) => {
+          try {
+            // Handle both string arrays and single strings
+            let correctAnswer = sentence.correct_answer;
+            if (typeof correctAnswer === 'string') {
+              // Try to parse as JSON, fallback to single string array
+              try {
+                correctAnswer = JSON.parse(correctAnswer);
+              } catch {
+                // If JSON parsing fails, treat as single answer
+                correctAnswer = [correctAnswer];
+              }
+            }
+            // Ensure it's always an array
+            if (!Array.isArray(correctAnswer)) {
+              correctAnswer = correctAnswer ? [correctAnswer] : null;
+            }
+            return {
+              ...sentence,
+              correct_answer: correctAnswer
+            };
+          } catch (parseError) {
+            console.error('Error parsing sentence:', parseError, sentence);
+            return {
+              ...sentence,
+              correct_answer: sentence.correct_answer ? [sentence.correct_answer] : null
+            };
+          }
+        });
+        console.log('Processed sentences:', newSentences);
       }
 
       const combinedSentences = [...retry, ...newSentences];
