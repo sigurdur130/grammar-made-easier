@@ -17,20 +17,6 @@ interface Sentence {
   english_translation: string | null;
   icelandic_left: string | null;
   icelandic_right: string | null;
-  correct_answer: string[] | null;
-  subcategory: string | null;
-  base_form: string | null;
-  word_category: string | null;
-  case: string | null;
-  number: string | null;
-  definiteness: string | null;
-}
-
-interface RawSentence {
-  id: number;
-  english_translation: string | null;
-  icelandic_left: string | null;
-  icelandic_right: string | null;
   correct_answer: string | null;
   subcategory: string | null;
   base_form: string | null;
@@ -134,15 +120,6 @@ const Exercises = () => {
       });
 
       if (neededRandomSentences > 0) {
-        console.log('Making RPC call with params:', {
-          subcategory,
-          category,
-          neededRandomSentences,
-          masteredIds,
-          retryIds: retry.map(s => s.id),
-          isCase: subcategory === "Cases"
-        });
-        
         const { data, error } = await supabase.rpc('get_random_rows', subcategory === "Cases" ? {
           num_rows: neededRandomSentences,
           subcategory_filter: subcategory,
@@ -160,49 +137,11 @@ const Exercises = () => {
           retry_ids: retry.map(s => s.id)
         });
 
-        console.log('RPC response:', { data, error, dataLength: data?.length });
-
         if (error) throw error;
-        // Handle correct_answer field - convert to array format
-        const rawSentences = data || [];
-        newSentences = rawSentences.map((sentence: any) => {
-          let correctAnswer = sentence.correct_answer;
-          
-          if (correctAnswer && typeof correctAnswer === 'string') {
-            // Check if it's already a JSON array string like ["answer1", "answer2"]
-            if (correctAnswer.startsWith('[') && correctAnswer.endsWith(']')) {
-              try {
-                correctAnswer = JSON.parse(correctAnswer);
-              } catch {
-                // If JSON parsing fails, treat as single answer
-                correctAnswer = [correctAnswer];
-              }
-            } else {
-              // Single string answer, convert to array
-              correctAnswer = [correctAnswer];
-            }
-          } else if (!correctAnswer) {
-            correctAnswer = null;
-          } else if (!Array.isArray(correctAnswer)) {
-            // Ensure it's always an array
-            correctAnswer = [correctAnswer];
-          }
-          
-          return {
-            ...sentence,
-            correct_answer: correctAnswer
-          };
-        });
-        console.log('Processed sentences sample:', newSentences.slice(0, 2));
+        newSentences = data || [];
       }
 
       const combinedSentences = [...retry, ...newSentences];
-      console.log('Final combined sentences:', {
-        retryCount: retry.length,
-        newCount: newSentences.length,
-        totalCount: combinedSentences.length,
-        sentences: combinedSentences
-      });
 
       if (newSentences.length < neededRandomSentences && retry.length === 0) {
         try {

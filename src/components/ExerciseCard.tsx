@@ -14,7 +14,7 @@ interface ExerciseCardProps {
     icelandic_left: string | null;
     icelandic_right: string | null;
     english_translation: string | null;
-    correct_answer: string[] | null;
+    correct_answer: string | null;
     base_form: string | null;
     case: string | null;
   };
@@ -49,10 +49,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   }, [sentence]);
 
   const handleCheck = () => {
-    const userAnswer = answer.toLowerCase().trim();
-    const correct = sentence.correct_answer?.some(validAnswer => 
-      validAnswer.toLowerCase().trim() === userAnswer
-    ) || false;
+    const correct = answer.toLowerCase().trim() === sentence.correct_answer?.toLowerCase().trim();
     setIsCorrect(correct);
     
     if (correct) {
@@ -163,7 +160,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
             showAnswerButton={hasIncorrectAttempt}
             showAnswer={showAnswer}
             onToggleAnswer={() => setShowAnswer(!showAnswer)}
-            correctAnswer={sentence.correct_answer?.join(" or ") || null}
+            correctAnswer={sentence.correct_answer}
           />
         </div>
 
@@ -176,7 +173,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
             showAnswerButton={hasIncorrectAttempt}
             showAnswer={showAnswer}
             onToggleAnswer={() => setShowAnswer(!showAnswer)}
-            correctAnswer={sentence.correct_answer?.join(" or ") || null}
+            correctAnswer={sentence.correct_answer}
           />
         </div>
       </CardContent>

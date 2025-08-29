@@ -59,6 +59,14 @@ export function CasesFilter({
   };
   return <Card className="w-full max-w-3xl mx-auto mb-6 mt-6">
       <CardContent>
+        <div className="flex items-center justify-end gap-4 px-6 pt-0">
+          <p className={`text-xs text-muted-foreground ${hasPendingChanges ? 'opacity-100' : 'opacity-0'} transition-opacity`}>
+            You have unapplied changes
+          </p>
+          <Button size="sm" disabled={!hasPendingChanges} onClick={onApply}>
+            Apply
+          </Button>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
           {/* Case Filter */}
           <div className="space-y-3">
@@ -89,14 +97,6 @@ export function CasesFilter({
                 </ToggleGroupItem>)}
             </ToggleGroup>
           </div>
-        </div>
-        <div className="flex items-center justify-end gap-4 px-6 pt-0">
-          <p className={`text-xs text-muted-foreground ${hasPendingChanges ? 'opacity-100' : 'opacity-0'} transition-opacity`}>
-            You have unapplied changes
-          </p>
-          <Button size="sm" disabled={!hasPendingChanges} onClick={onApply}>
-            Apply
-          </Button>
         </div>
       </CardContent>
     </Card>;
