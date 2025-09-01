@@ -116,7 +116,7 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
                 size="sm"
                 className="text-xs text-muted-foreground hover:text-foreground"
               >
-                Show case
+                {showCaseHint ? "Hide case" : "Show case"}
               </Button>
             </div>
           </div>
