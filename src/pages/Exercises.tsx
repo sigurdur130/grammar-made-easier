@@ -138,25 +138,10 @@ const Exercises = () => {
         });
 
         if (error) throw error;
-        newSentences = (data || []).map(sentence => {
-          console.log('Raw sentence.correct_answer:', sentence.correct_answer, 'Type:', typeof sentence.correct_answer);
-          let parsedAnswer: string[] = [];
-          try {
-            if (typeof sentence.correct_answer === 'string') {
-              parsedAnswer = JSON.parse(sentence.correct_answer);
-            } else if (Array.isArray(sentence.correct_answer)) {
-              parsedAnswer = sentence.correct_answer;
-            }
-          } catch (e) {
-            console.error('Error parsing correct_answer:', sentence.correct_answer, e);
-            parsedAnswer = [];
-          }
-          console.log('Parsed correct_answer:', parsedAnswer);
-          return {
-            ...sentence,
-            correct_answer: parsedAnswer
-          };
-        });
+        newSentences = (data || []).map(sentence => ({
+          ...sentence,
+          correct_answer: sentence.correct_answer as unknown as string[]
+        }));
       }
 
       const combinedSentences = [...retry, ...newSentences];
