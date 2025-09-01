@@ -140,7 +140,7 @@ const Exercises = () => {
         if (error) throw error;
         newSentences = (data || []).map(sentence => ({
           ...sentence,
-          correct_answer: sentence.correct_answer as unknown as string[]
+          correct_answer: JSON.parse(sentence.correct_answer as string)
         }));
       }
 
