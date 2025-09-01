@@ -17,7 +17,7 @@ interface Sentence {
   english_translation: string | null;
   icelandic_left: string | null;
   icelandic_right: string | null;
-  correct_answer: string | null;
+  correct_answer: string[] | null;
   subcategory: string | null;
   base_form: string | null;
   word_category: string | null;
@@ -138,7 +138,10 @@ const Exercises = () => {
         });
 
         if (error) throw error;
-        newSentences = data || [];
+        newSentences = (data || []).map(sentence => ({
+          ...sentence,
+          correct_answer: sentence.correct_answer as unknown as string[]
+        }));
       }
 
       const combinedSentences = [...retry, ...newSentences];

@@ -14,7 +14,7 @@ interface ExerciseCardProps {
     icelandic_left: string | null;
     icelandic_right: string | null;
     english_translation: string | null;
-    correct_answer: string | null;
+    correct_answer: string[] | null;
     base_form: string | null;
     case: string | null;
   };
@@ -49,7 +49,20 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   }, [sentence]);
 
   const handleCheck = () => {
-    const correct = answer.toLowerCase().trim() === sentence.correct_answer?.toLowerCase().trim();
+    let correct = false;
+    
+    try {
+      if (sentence.correct_answer && Array.isArray(sentence.correct_answer)) {
+        const userAnswer = answer.toLowerCase().trim();
+        correct = sentence.correct_answer.some(answer => 
+          answer.toLowerCase().trim() === userAnswer
+        );
+      }
+    } catch (error) {
+      console.error('Error checking answer:', error);
+      correct = false;
+    }
+    
     setIsCorrect(correct);
     
     if (correct) {
