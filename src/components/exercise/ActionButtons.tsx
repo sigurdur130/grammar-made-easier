@@ -39,10 +39,16 @@ export function ActionButtons({
       
       {showAnswer && correctAnswer && (
         <span className="text-primary font-medium">
-          {correctAnswer.length === 1 
-            ? correctAnswer[0] 
-            : correctAnswer.join(' or ')
-          }
+          {(() => {
+            console.log('ActionButtons correctAnswer:', correctAnswer, 'Type:', typeof correctAnswer, 'IsArray:', Array.isArray(correctAnswer));
+            if (Array.isArray(correctAnswer)) {
+              return correctAnswer.length === 1 
+                ? correctAnswer[0] 
+                : correctAnswer.join(' or ');
+            } else {
+              return String(correctAnswer);
+            }
+          })()}
         </span>
       )}
     </div>
