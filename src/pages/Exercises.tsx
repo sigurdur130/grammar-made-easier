@@ -34,14 +34,12 @@ interface CasesFilters {
   caseFilters: string[];
   numberFilters: string[];
   definitenessFilters: string[];
-  exemplarFilters: number[];
 }
 
 const DEFAULT_CASES_FILTERS: CasesFilters = {
   caseFilters: ["Accusative"],
   numberFilters: ["Singular"],
-  definitenessFilters: ["Indefinite"],
-  exemplarFilters: [] // Will be populated with all available exemplars
+  definitenessFilters: ["Indefinite"]
 };
 
 const Exercises = () => {
@@ -61,23 +59,6 @@ const Exercises = () => {
     return JSON.stringify(filters1) !== JSON.stringify(filters2);
   };
 
-  // Fetch available exemplars for filtering
-  const {
-    data: availableExemplars
-  } = useQuery({
-    queryKey: ["exemplars"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("exemplars")
-        .select("id, exemplar")
-        .order("exemplar");
-
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: subcategory === "Cases"
-  });
-
   useEffect(() => {
     setCurrentIndex(0);
     setAnsweredCount(0);
@@ -88,21 +69,12 @@ const Exercises = () => {
     setHasIncorrectAttempt(false);
 
     if (subcategory === "Cases") {
-      // Initialize filters with all available exemplars selected by default
-      const defaultFilters = {
-        ...DEFAULT_CASES_FILTERS,
-        exemplarFilters: availableExemplars?.map(e => e.id) || []
-      };
-      setCurrentAppliedFilters(defaultFilters);
-      setPendingFilterChanges(defaultFilters);
-    } else {
-      // Reset filters for non-Cases subcategories
       setCurrentAppliedFilters(DEFAULT_CASES_FILTERS);
       setPendingFilterChanges(DEFAULT_CASES_FILTERS);
     }
 
     Promise.resolve().then(() => refetch());
-  }, [category, subcategory, availableExemplars]);
+  }, [category, subcategory]);
 
   const {
     data: subcategoryInfo
@@ -128,13 +100,12 @@ const Exercises = () => {
     }
   });
 
-
   const {
     data: sentences,
     isLoading,
     refetch
   } = useQuery({
-    queryKey: ["sentences", category, subcategory, masteredIds, retrySentences, subcategory === "Cases" ? currentAppliedFilters : null],
+    queryKey: ["sentences", currentAppliedFilters],
     queryFn: async () => {
       const retry = retrySentencesRef.current;
       const neededRandomSentences = 6 - retry.length;
@@ -157,8 +128,7 @@ const Exercises = () => {
           retry_ids: retry.map(s => s.id),
           cases_filter: currentAppliedFilters.caseFilters,
           numbers_filter: currentAppliedFilters.numberFilters,
-          definiteness_filter: currentAppliedFilters.definitenessFilters,
-          exemplar_filter: currentAppliedFilters.exemplarFilters
+          definiteness_filter: currentAppliedFilters.definitenessFilters
         } : {
           num_rows: neededRandomSentences,
           subcategory_filter: subcategory,
@@ -183,7 +153,6 @@ const Exercises = () => {
             notificationBody.caseFilters = currentAppliedFilters.caseFilters;
             notificationBody.numberFilters = currentAppliedFilters.numberFilters;
             notificationBody.definitenessFilters = currentAppliedFilters.definitenessFilters;
-            notificationBody.exemplarFilters = currentAppliedFilters.exemplarFilters;
           }
           await supabase.functions.invoke('notify-category-completed', {
             body: notificationBody
@@ -294,8 +263,6 @@ const Exercises = () => {
                     caseFilters={pendingFilterChanges.caseFilters}
                     numberFilters={pendingFilterChanges.numberFilters}
                     definitenessFilters={pendingFilterChanges.definitenessFilters}
-                    exemplarFilters={pendingFilterChanges.exemplarFilters}
-                    availableExemplars={availableExemplars || []}
                     onFiltersChange={handleFiltersChange}
                     hasPendingChanges={hasPendingChanges}
                     onApply={applyFilters}

@@ -5,13 +5,10 @@ interface CasesFilterProps {
   caseFilters: string[];
   numberFilters: string[];
   definitenessFilters: string[];
-  exemplarFilters: number[];
-  availableExemplars: { id: number; exemplar: string }[];
   onFiltersChange: (filters: {
     caseFilters: string[];
     numberFilters: string[];
     definitenessFilters: string[];
-    exemplarFilters: number[];
   }) => void;
   hasPendingChanges: boolean;
   onApply: () => void;
@@ -23,8 +20,6 @@ export function CasesFilter({
   caseFilters,
   numberFilters,
   definitenessFilters,
-  exemplarFilters,
-  availableExemplars,
   onFiltersChange,
   hasPendingChanges,
   onApply
@@ -37,8 +32,7 @@ export function CasesFilter({
     onFiltersChange({
       caseFilters: values,
       numberFilters,
-      definitenessFilters,
-      exemplarFilters
+      definitenessFilters
     });
   };
   const handleNumberChange = (values: string[]) => {
@@ -49,8 +43,7 @@ export function CasesFilter({
     onFiltersChange({
       caseFilters,
       numberFilters: values,
-      definitenessFilters,
-      exemplarFilters
+      definitenessFilters
     });
   };
   const handleDefinitenessChange = (values: string[]) => {
@@ -61,28 +54,12 @@ export function CasesFilter({
     onFiltersChange({
       caseFilters,
       numberFilters,
-      definitenessFilters: values,
-      exemplarFilters
+      definitenessFilters: values
     });
   };
-
-  const handleExemplarChange = (values: string[]) => {
-    // Prevent deselecting all options
-    if (values.length === 0) {
-      return;
-    }
-    const numericValues = values.map(Number);
-    onFiltersChange({
-      caseFilters,
-      numberFilters,
-      definitenessFilters,
-      exemplarFilters: numericValues
-    });
-  };
-
   return <Card className="w-full max-w-3xl mx-auto mb-6 mt-6">
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
           {/* Case Filter */}
           <div className="space-y-3">
             <h4 className="font-medium text-sm text-center">Case</h4>
@@ -110,27 +87,6 @@ export function CasesFilter({
               {DEFINITENESS_OPTIONS.map(option => <ToggleGroupItem key={option} value={option} className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-slate-300 data-[state=on]:text-accent-foreground">
                   {option}
                 </ToggleGroupItem>)}
-            </ToggleGroup>
-          </div>
-
-          {/* Exemplar Filter */}
-          <div className="space-y-3">
-            <h4 className="font-medium text-sm text-center">Exemplar</h4>
-            <ToggleGroup 
-              type="multiple" 
-              value={exemplarFilters.map(String)} 
-              onValueChange={handleExemplarChange} 
-              className="flex flex-col gap-2"
-            >
-              {availableExemplars.map(exemplar => (
-                <ToggleGroupItem 
-                  key={exemplar.id} 
-                  value={String(exemplar.id)} 
-                  className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-slate-300 data-[state=on]:text-accent-foreground"
-                >
-                  {exemplar.exemplar}
-                </ToggleGroupItem>
-              ))}
             </ToggleGroup>
           </div>
         </div>
