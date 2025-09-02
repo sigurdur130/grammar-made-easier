@@ -95,6 +95,10 @@ const Exercises = () => {
       };
       setCurrentAppliedFilters(defaultFilters);
       setPendingFilterChanges(defaultFilters);
+    } else {
+      // Reset filters for non-Cases subcategories
+      setCurrentAppliedFilters(DEFAULT_CASES_FILTERS);
+      setPendingFilterChanges(DEFAULT_CASES_FILTERS);
     }
 
     Promise.resolve().then(() => refetch());
@@ -130,7 +134,7 @@ const Exercises = () => {
     isLoading,
     refetch
   } = useQuery({
-    queryKey: ["sentences", currentAppliedFilters],
+    queryKey: ["sentences", category, subcategory, masteredIds, retrySentences, subcategory === "Cases" ? currentAppliedFilters : null],
     queryFn: async () => {
       const retry = retrySentencesRef.current;
       const neededRandomSentences = 6 - retry.length;
