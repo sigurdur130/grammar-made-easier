@@ -8,7 +8,8 @@ import { Progress } from "@/components/ui/progress";
 import { EndScreen } from "@/components/exercise/EndScreen";
 
 import { FurtherReading } from "@/components/exercise/FurtherReading";
-import { CasesFilter } from "@/components/exercise/CasesFilter";
+import { FilterButton } from "@/components/exercise/FilterButton";
+import { FilterMenu } from "@/components/exercise/FilterMenu";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -56,6 +57,7 @@ const Exercises = () => {
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
   const [currentAppliedFilters, setCurrentAppliedFilters] = useState<CasesFilters>(DEFAULT_CASES_FILTERS);
   const [pendingFilterChanges, setPendingFilterChanges] = useState<CasesFilters>(DEFAULT_CASES_FILTERS);
+  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
 
   const areFiltersDifferent = (filters1: CasesFilters, filters2: CasesFilters) => {
     return JSON.stringify(filters1) !== JSON.stringify(filters2);
@@ -252,7 +254,16 @@ const Exercises = () => {
     setRetrySentences([]);
     retrySentencesRef.current = [];
     setHasIncorrectAttempt(false);
+    setIsFilterMenuOpen(false);
     toast({ title: "Filters applied", description: "Fetching new sentences..." });
+  };
+
+  const resetFilters = () => {
+    const defaultFilters = {
+      ...DEFAULT_CASES_FILTERS,
+      exemplarFilters: availableExemplars?.map(e => e.id) || []
+    };
+    setPendingFilterChanges(defaultFilters);
   };
 
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
@@ -279,6 +290,9 @@ const Exercises = () => {
               />
             ) : (
               <>
+                {subcategory === "Cases" && (
+                  <FilterButton onClick={() => setIsFilterMenuOpen(true)} />
+                )}
                 <ExerciseCard
                   sentence={sentences[currentIndex]}
                   onCorrect={handleCorrectAnswer}
@@ -286,7 +300,9 @@ const Exercises = () => {
                   subcategory={subcategory || ''}
                 />
                 {subcategory === "Cases" && (
-                  <CasesFilter
+                  <FilterMenu
+                    open={isFilterMenuOpen}
+                    onOpenChange={setIsFilterMenuOpen}
                     caseFilters={pendingFilterChanges.caseFilters}
                     numberFilters={pendingFilterChanges.numberFilters}
                     definitenessFilters={pendingFilterChanges.definitenessFilters}
@@ -295,6 +311,7 @@ const Exercises = () => {
                     onFiltersChange={handleFiltersChange}
                     hasPendingChanges={hasPendingChanges}
                     onApply={applyFilters}
+                    onReset={resetFilters}
                   />
                 )}
                 {!isComplete && subcategoryInfo && (
