@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface CasesFilters {
   caseFilters: string[];
@@ -84,13 +85,13 @@ export function FilterMenu({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:w-96 sm:max-w-96">
+      <SheetContent side="right" className="w-full sm:w-[500px] sm:max-w-[500px] flex flex-col">
         <SheetHeader>
           <SheetTitle>Filters</SheetTitle>
         </SheetHeader>
         
-        <div className="py-6">
-          <Accordion type="multiple" defaultValue={["grammar", "exemplars"]} className="space-y-4">
+        <ScrollArea className="flex-1 py-6">
+          <Accordion type="multiple" defaultValue={[]} className="space-y-4 px-1">
             <AccordionItem value="grammar">
               <AccordionTrigger className="text-base font-medium">
                 Grammar
@@ -189,9 +190,9 @@ export function FilterMenu({
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-        </div>
+        </ScrollArea>
 
-        <SheetFooter className="flex-row justify-between gap-4">
+        <SheetFooter className="flex-row justify-between gap-4 border-t pt-4 mt-4">
           <Button 
             variant="outline" 
             onClick={onReset}

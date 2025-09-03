@@ -63,6 +63,17 @@ const Exercises = () => {
     return JSON.stringify(filters1) !== JSON.stringify(filters2);
   };
 
+  const isDefaultFilters = (filters: CasesFilters, exemplars: { id: number; exemplar: string }[]) => {
+    if (exemplars.length === 0) return true;
+    const defaultExemplarIds = exemplars.slice(0, 5).map(e => e.id);
+    return (
+      JSON.stringify(filters.caseFilters.sort()) === JSON.stringify(["Accusative"]) &&
+      JSON.stringify(filters.numberFilters.sort()) === JSON.stringify(["Singular"]) &&
+      JSON.stringify(filters.definitenessFilters.sort()) === JSON.stringify(["Indefinite"]) &&
+      JSON.stringify(filters.exemplarFilters.sort()) === JSON.stringify(defaultExemplarIds.sort())
+    );
+  };
+
   // Fetch available exemplars for filtering
   const {
     data: availableExemplars
@@ -291,7 +302,10 @@ const Exercises = () => {
             ) : (
               <>
                 {subcategory === "Cases" && (
-                  <FilterButton onClick={() => setIsFilterMenuOpen(true)} />
+                  <FilterButton 
+                    onClick={() => setIsFilterMenuOpen(true)} 
+                    hasActiveFilters={hasPendingChanges || !isDefaultFilters(currentAppliedFilters, availableExemplars)}
+                  />
                 )}
                 <ExerciseCard
                   sentence={sentences[currentIndex]}
