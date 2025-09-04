@@ -63,9 +63,9 @@ const Exercises = () => {
     return JSON.stringify(filters1) !== JSON.stringify(filters2);
   };
 
-  const isDefaultFilters = (filters: CasesFilters, exemplars: { id: number; exemplar: string; gender: string | null; "default?": boolean | null }[]) => {
+  const isDefaultFilters = (filters: CasesFilters, exemplars: { id: number; exemplar: string; gender: string | null; default: boolean | null }[]) => {
     if (exemplars.length === 0) return true;
-    const defaultExemplarIds = exemplars.filter(e => e["default?"]).map(e => e.id);
+    const defaultExemplarIds = exemplars.filter(e => e.default).map(e => e.id);
     return (
       JSON.stringify(filters.caseFilters.sort()) === JSON.stringify(["Accusative"]) &&
       JSON.stringify(filters.numberFilters.sort()) === JSON.stringify(["Singular"]) &&
@@ -82,14 +82,14 @@ const Exercises = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("exemplars")
-        .select('id, exemplar, gender, "default?"')
+        .select('id, exemplar, gender, default')
         .order("exemplar");
 
       if (error) {
         console.error("Error fetching exemplars:", error);
         return [];
       }
-      return (data || []) as unknown as { id: number; exemplar: string; gender: string | null; "default?": boolean | null }[];
+      return (data || []) as unknown as { id: number; exemplar: string; gender: string | null; default: boolean | null }[];
     },
     enabled: subcategory === "Cases"
   });
@@ -105,7 +105,7 @@ const Exercises = () => {
 
     if (subcategory === "Cases") {
       // Initialize filters with default exemplars selected
-      const defaultExemplarIds = availableExemplars?.filter(e => e["default?"])?.map(e => e.id) || [];
+      const defaultExemplarIds = availableExemplars?.filter(e => e.default)?.map(e => e.id) || [];
       const defaultFilters = {
         ...DEFAULT_CASES_FILTERS,
         exemplarFilters: defaultExemplarIds
@@ -274,7 +274,7 @@ const Exercises = () => {
   };
 
   const resetFilters = () => {
-    const defaultExemplarIds = availableExemplars?.filter(e => e["default?"])?.map(e => e.id) || [];
+    const defaultExemplarIds = availableExemplars?.filter(e => e.default)?.map(e => e.id) || [];
     const resetFilters = {
       ...DEFAULT_CASES_FILTERS,
       exemplarFilters: defaultExemplarIds
