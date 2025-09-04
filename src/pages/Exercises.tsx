@@ -63,9 +63,9 @@ const Exercises = () => {
     return JSON.stringify(filters1) !== JSON.stringify(filters2);
   };
 
-  const isDefaultFilters = (filters: CasesFilters, exemplars: { id: number; exemplar: string }[]) => {
+  const isDefaultFilters = (filters: CasesFilters, exemplars: { id: number; exemplar: string; gender: string | null; "default?": boolean | null }[]) => {
     if (exemplars.length === 0) return true;
-    const defaultExemplarIds = exemplars.slice(0, 5).map(e => e.id);
+    const defaultExemplarIds = exemplars.filter(e => e["default?"]).map(e => e.id);
     return (
       JSON.stringify(filters.caseFilters.sort()) === JSON.stringify(["Accusative"]) &&
       JSON.stringify(filters.numberFilters.sort()) === JSON.stringify(["Singular"]) &&
@@ -82,11 +82,14 @@ const Exercises = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("exemplars")
-        .select("id, exemplar")
+        .select('id, exemplar, gender, "default?"')
         .order("exemplar");
 
-      if (error) throw error;
-      return data || [];
+      if (error) {
+        console.error("Error fetching exemplars:", error);
+        return [];
+      }
+      return (data || []) as unknown as { id: number; exemplar: string; gender: string | null; "default?": boolean | null }[];
     },
     enabled: subcategory === "Cases"
   });
@@ -101,10 +104,11 @@ const Exercises = () => {
     setHasIncorrectAttempt(false);
 
     if (subcategory === "Cases") {
-      // Initialize filters with all available exemplars selected by default
+      // Initialize filters with default exemplars selected
+      const defaultExemplarIds = availableExemplars?.filter(e => e["default?"])?.map(e => e.id) || [];
       const defaultFilters = {
         ...DEFAULT_CASES_FILTERS,
-        exemplarFilters: availableExemplars?.map(e => e.id) || []
+        exemplarFilters: defaultExemplarIds
       };
       setCurrentAppliedFilters(defaultFilters);
       setPendingFilterChanges(defaultFilters);
@@ -270,11 +274,12 @@ const Exercises = () => {
   };
 
   const resetFilters = () => {
-    const defaultFilters = {
+    const defaultExemplarIds = availableExemplars?.filter(e => e["default?"])?.map(e => e.id) || [];
+    const resetFilters = {
       ...DEFAULT_CASES_FILTERS,
-      exemplarFilters: availableExemplars?.map(e => e.id) || []
+      exemplarFilters: defaultExemplarIds
     };
-    setPendingFilterChanges(defaultFilters);
+    setPendingFilterChanges(resetFilters);
   };
 
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;

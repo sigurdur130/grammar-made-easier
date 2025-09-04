@@ -1,8 +1,12 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ChevronDown } from "lucide-react";
 
 interface CasesFilters {
   caseFilters: string[];
@@ -18,7 +22,7 @@ interface FilterMenuProps {
   numberFilters: string[];
   definitenessFilters: string[];
   exemplarFilters: number[];
-  availableExemplars: { id: number; exemplar: string }[];
+  availableExemplars: { id: number; exemplar: string; gender: string | null; "default?": boolean | null }[];
   onFiltersChange: (filters: CasesFilters) => void;
   hasPendingChanges: boolean;
   onApply: () => void;
@@ -72,16 +76,54 @@ export function FilterMenu({
     });
   };
 
-  const handleExemplarChange = (values: string[]) => {
-    if (values.length === 0) return;
-    const numericValues = values.map(Number);
+  const handleExemplarChange = (exemplarId: number, checked: boolean) => {
+    let newExemplarFilters;
+    if (checked) {
+      newExemplarFilters = [...exemplarFilters, exemplarId];
+    } else {
+      newExemplarFilters = exemplarFilters.filter(id => id !== exemplarId);
+      // Ensure at least one exemplar remains selected
+      if (newExemplarFilters.length === 0) return;
+    }
+    
     onFiltersChange({
       caseFilters,
       numberFilters,
       definitenessFilters,
-      exemplarFilters: numericValues
+      exemplarFilters: newExemplarFilters
     });
   };
+
+  // Group exemplars by gender in the desired order
+  const groupedExemplars = React.useMemo(() => {
+    const genderOrder = ['masculine', 'feminine', 'neuter'];
+    const groups: Record<string, typeof availableExemplars> = {};
+    
+    availableExemplars.forEach(exemplar => {
+      const gender = exemplar.gender || 'other';
+      if (!groups[gender]) {
+        groups[gender] = [];
+      }
+      groups[gender].push(exemplar);
+    });
+
+    // Sort groups by the desired order
+    const sortedGroups: Array<{ gender: string; exemplars: typeof availableExemplars }> = [];
+    genderOrder.forEach(gender => {
+      if (groups[gender]) {
+        sortedGroups.push({ gender, exemplars: groups[gender] });
+      }
+    });
+    
+    // Add any other genders not in the main order
+    Object.keys(groups).forEach(gender => {
+      if (!genderOrder.includes(gender)) {
+        sortedGroups.push({ gender, exemplars: groups[gender] });
+      }
+    });
+
+    return sortedGroups;
+  }, [availableExemplars]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -169,23 +211,36 @@ export function FilterMenu({
                 Exemplars
               </AccordionTrigger>
               <AccordionContent>
-                <div className="space-y-3">
-                  <ToggleGroup 
-                    type="multiple" 
-                    value={exemplarFilters.map(String)} 
-                    onValueChange={handleExemplarChange} 
-                    className="grid grid-cols-2 gap-2"
-                  >
-                    {availableExemplars.map(exemplar => (
-                      <ToggleGroupItem 
-                        key={exemplar.id} 
-                        value={String(exemplar.id)} 
-                        className="justify-center rounded-md px-3 py-2 text-sm border border-input bg-background hover:bg-accent hover:text-accent-foreground data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                      >
-                        {exemplar.exemplar}
-                      </ToggleGroupItem>
-                    ))}
-                  </ToggleGroup>
+                <div className="space-y-4">
+                  {groupedExemplars.map(({ gender, exemplars }) => (
+                    <Collapsible key={gender} defaultOpen={false}>
+                      <CollapsibleTrigger className="flex items-center justify-between w-full p-2 text-left text-sm font-medium hover:bg-accent rounded-md">
+                        <span className="capitalize">{gender}</span>
+                        <ChevronDown className="h-4 w-4" />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="grid grid-cols-2 gap-2 mt-2 p-2">
+                          {exemplars.map(exemplar => (
+                            <div key={exemplar.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`exemplar-${exemplar.id}`}
+                                checked={exemplarFilters.includes(exemplar.id)}
+                                onCheckedChange={(checked) => 
+                                  handleExemplarChange(exemplar.id, !!checked)
+                                }
+                              />
+                              <label 
+                                htmlFor={`exemplar-${exemplar.id}`}
+                                className="text-sm cursor-pointer flex-1"
+                              >
+                                {exemplar.exemplar}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ))}
                 </div>
               </AccordionContent>
             </AccordionItem>
