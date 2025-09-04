@@ -22,7 +22,7 @@ interface FilterMenuProps {
   numberFilters: string[];
   definitenessFilters: string[];
   exemplarFilters: number[];
-  availableExemplars: { id: number; exemplar: string; gender: string | null; "default?": boolean | null }[];
+  availableExemplars: { id: number; exemplar: string; gender: string | null; default: boolean | null }[];
   onFiltersChange: (filters: CasesFilters) => void;
   hasPendingChanges: boolean;
   onApply: () => void;
