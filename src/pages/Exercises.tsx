@@ -58,6 +58,7 @@ const Exercises = () => {
   const [currentAppliedFilters, setCurrentAppliedFilters] = useState<CasesFilters>(DEFAULT_CASES_FILTERS);
   const [pendingFilterChanges, setPendingFilterChanges] = useState<CasesFilters>(DEFAULT_CASES_FILTERS);
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
+  const [lastNotificationTime, setLastNotificationTime] = useState<number | null>(null);
 
   const areFiltersDifferent = (filters1: CasesFilters, filters2: CasesFilters) => {
     return JSON.stringify(filters1) !== JSON.stringify(filters2);
@@ -102,6 +103,7 @@ const Exercises = () => {
     setRetrySentences([]);
     retrySentencesRef.current = [];
     setHasIncorrectAttempt(false);
+    setLastNotificationTime(null);
 
     if (subcategory === "Cases") {
       // Initialize filters with default exemplars selected
@@ -190,19 +192,26 @@ const Exercises = () => {
       const combinedSentences = [...retry, ...newSentences];
 
       if (newSentences.length < neededRandomSentences && retry.length === 0) {
-        try {
-          const notificationBody: any = { category, subcategory };
-          if (subcategory === "Cases") {
-            notificationBody.caseFilters = currentAppliedFilters.caseFilters;
-            notificationBody.numberFilters = currentAppliedFilters.numberFilters;
-            notificationBody.definitenessFilters = currentAppliedFilters.definitenessFilters;
-            notificationBody.exemplarFilters = currentAppliedFilters.exemplarFilters;
+        // Check if enough time has passed since last notification (10 seconds)
+        const now = Date.now();
+        const shouldSendNotification = !lastNotificationTime || (now - lastNotificationTime) >= 10000;
+        
+        if (shouldSendNotification) {
+          try {
+            const notificationBody: any = { category, subcategory };
+            if (subcategory === "Cases") {
+              notificationBody.caseFilters = currentAppliedFilters.caseFilters;
+              notificationBody.numberFilters = currentAppliedFilters.numberFilters;
+              notificationBody.definitenessFilters = currentAppliedFilters.definitenessFilters;
+              notificationBody.exemplarFilters = currentAppliedFilters.exemplarFilters;
+            }
+            await supabase.functions.invoke('notify-category-completed', {
+              body: notificationBody
+            });
+            setLastNotificationTime(now);
+          } catch (error) {
+            console.error("Error sending completion notification:", error);
           }
-          await supabase.functions.invoke('notify-category-completed', {
-            body: notificationBody
-          });
-        } catch (error) {
-          console.error("Error sending completion notification:", error);
         }
       }
 
@@ -270,6 +279,7 @@ const Exercises = () => {
     retrySentencesRef.current = [];
     setHasIncorrectAttempt(false);
     setIsFilterMenuOpen(false);
+    setLastNotificationTime(null);
     toast({ title: "Filters applied", description: "Fetching new sentences..." });
   };
 
