@@ -16,6 +16,7 @@ interface NotificationRequest {
   caseFilters?: string[];
   numberFilters?: string[];
   definitenessFilters?: string[];
+  exemplarFilters?: number[];
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -30,7 +31,8 @@ const handler = async (req: Request): Promise<Response> => {
       subcategory, 
       caseFilters, 
       numberFilters, 
-      definitenessFilters 
+      definitenessFilters,
+      exemplarFilters 
     }: NotificationRequest = await req.json();
     const timestamp = new Date().toISOString();
 
@@ -40,12 +42,13 @@ const handler = async (req: Request): Promise<Response> => {
       subcategory,
       caseFilters,
       numberFilters,
-      definitenessFilters
+      definitenessFilters,
+      exemplarFilters
     });
 
     // Format filter information for Cases subcategory
     let filterInfo = '';
-    if (subcategory === 'Cases' && caseFilters && numberFilters && definitenessFilters) {
+    if (subcategory === 'Cases' && caseFilters && numberFilters && definitenessFilters && exemplarFilters) {
       console.log("Adding filter info to email");
       filterInfo = `
         <h2>Active Filters:</h2>
@@ -53,6 +56,7 @@ const handler = async (req: Request): Promise<Response> => {
           <li><strong>Case:</strong> ${caseFilters.join(', ')}</li>
           <li><strong>Number:</strong> ${numberFilters.join(', ')}</li>
           <li><strong>Definiteness:</strong> ${definitenessFilters.join(', ')}</li>
+          <li><strong>Exemplar IDs:</strong> ${exemplarFilters.join(', ')}</li>
         </ul>
       `;
     } else {
@@ -60,7 +64,8 @@ const handler = async (req: Request): Promise<Response> => {
         isCorrectSubcategory: subcategory === 'Cases',
         hasCaseFilters: !!caseFilters,
         hasNumberFilters: !!numberFilters,
-        hasDefinitenessFilters: !!definitenessFilters
+        hasDefinitenessFilters: !!definitenessFilters,
+        hasExemplarFilters: !!exemplarFilters
       });
     }
 
