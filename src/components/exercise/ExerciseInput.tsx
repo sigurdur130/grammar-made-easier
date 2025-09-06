@@ -54,14 +54,14 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
   };
 
   return (
-    <div className="relative w-full sm:w-auto" style={{ minWidth }}>
+    <div className="relative w-full sm:w-auto flex justify-center" style={{ minWidth }}>
       {/* Floating Label */}
       {baseForm && (
         <label className={`
           absolute pointer-events-none transition-all duration-200 ease-out z-10
           ${shouldFloat 
             ? "top-0 left-0 -translate-y-[90%] text-xs scale-90 text-muted-foreground bg-background px-1" 
-            : "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-base md:text-lg text-muted-foreground/60"
+            : "top-1/2 -translate-y-1/2 text-base md:text-lg text-muted-foreground/60"
           }
           ${isFocused && shouldFloat ? "text-primary" : ""}
           ${isCorrect === true && shouldFloat ? "text-green-500 dark:text-green-400" : ""}
