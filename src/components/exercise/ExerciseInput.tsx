@@ -60,7 +60,7 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
         <label className={`
           absolute left-1/2 -translate-x-1/2 pointer-events-none transition-all duration-200 ease-out z-10
           ${shouldFloat 
-            ? "top-0 -translate-y-75% text-xs scale-90 text-muted-foreground bg-background px-1" 
+            ? "top-0 -translate-y-25% text-xs scale-90 text-muted-foreground bg-background px-1" 
             : "top-1/2 -translate-y-1/2 text-base md:text-lg text-muted-foreground/60"
           }
           ${isFocused && shouldFloat ? "text-primary" : ""}
