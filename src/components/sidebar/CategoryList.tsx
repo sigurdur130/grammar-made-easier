@@ -15,6 +15,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { LearnWithTeacher } from "./LearnWithTeacher";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FeedbackInSidebar } from "./FeedbackInSidebar";
 
 type CategoryListProps = {
   categories: Array<Database["public"]["Tables"]["word_categories"]["Row"]>;
@@ -94,6 +95,7 @@ export function CategoryList({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <FeedbackInSidebar />
       <ThemeToggle />
       <LearnWithTeacher />
     </Sidebar>
