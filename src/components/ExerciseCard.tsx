@@ -49,7 +49,8 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   }, [sentence]);
 
   const handleCheck = () => {
-    const correct = answer.toLowerCase().trim() === sentence.correct_answer?.toLowerCase().trim();
+    const correctAnswer = sentence.correct_answer ? String(sentence.correct_answer) : '';
+    const correct = answer.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
     setIsCorrect(correct);
     
     if (correct) {
