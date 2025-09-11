@@ -53,7 +53,7 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
         <span
           className={`absolute left-3 transition-all duration-200 pointer-events-none z-10 ${
             isFocused || answer.length > 0
-              ? "top-1 text-xs text-muted-foreground"
+              ? "-top-2 text-xs text-muted-foreground bg-background px-1"
               : "top-1/2 -translate-y-1/2 text-base text-muted-foreground/60"
           }`}
         >
@@ -73,7 +73,7 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
             : isCorrect === false
             ? "border-red-200 bg-red-50 dark:bg-red-950/30 dark:text-red-300"
             : "border-b-2 border-[#CBD5E0] hover:border-[#6B46C1] focus:border-[#6B46C1] dark:border-muted-foreground/40 dark:hover:border-primary dark:focus:border-primary dark:bg-muted/50 dark:text-card-foreground"
-        } text-base md:text-lg px-3 pt-6 pb-2 ${
+        } text-base md:text-lg px-3 py-2 ${
           shake ? "animate-[shake_0.5s_ease-in-out]" : ""
         }`}
       />
