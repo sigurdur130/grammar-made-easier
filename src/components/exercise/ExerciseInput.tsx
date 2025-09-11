@@ -51,10 +51,10 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
     <div className="relative w-full sm:w-auto" style={{ minWidth }}>
       {baseForm && (
         <span
-          className={`absolute left-3 transition-all duration-200 pointer-events-none z-10 ${
+          className={`absolute transition-all duration-200 pointer-events-none z-10 ${
             isFocused || answer.length > 0
-              ? "-top-2 text-xs text-muted-foreground bg-background px-1"
-              : "top-1/2 -translate-y-1/2 text-base text-muted-foreground/60"
+              ? "-top-3 left-3 text-xs text-muted-foreground bg-background px-1"
+              : "top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-base text-muted-foreground/60"
           }`}
         >
           {baseForm}
