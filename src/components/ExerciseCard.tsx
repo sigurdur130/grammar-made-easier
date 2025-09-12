@@ -101,10 +101,9 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-lg dark:shadow-md dark:bg-muted bg-background">
       <CardContent className="p-4 md:pt-6 md:px-6">
-        {/* Show case button - only visible for Cases subcategory */}
-        {subcategory === "Cases" && (
-          <div className="flex justify-between items-center mb-4 md:mb-6">
-            <h2 className="text-xl md:text-2xl font-semibold text-card-foreground">{subcategory}</h2>
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <h2 className="text-xl md:text-2xl font-semibold text-card-foreground">{subcategory}</h2>
+          {subcategory === "Cases" && (
             <div className="flex items-center gap-2">
               {showCaseHint && sentence.case && (
                 <span className="text-sm text-muted-foreground">
@@ -120,15 +119,8 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
                 {showCaseHint ? "Hide case" : "Show case"}
               </Button>
             </div>
-          </div>
-        )}
-
-        {/* Regular heading for non-Cases subcategories */}
-        {subcategory !== "Cases" && (
-          <div className="mb-4 md:mb-6">
-            <h2 className="text-xl md:text-2xl font-semibold text-card-foreground">{subcategory}</h2>
-          </div>
-        )}
+          )}
+        </div>
 
         {showCheckmark && (
           <FloatingCheckmark 

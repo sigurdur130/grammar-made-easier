@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { Filter } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { Progress } from "@/components/ui/progress";
 import { EndScreen } from "@/components/exercise/EndScreen";
 import { FurtherReading } from "@/components/exercise/FurtherReading";
-import { CasesFilter } from "@/components/exercise/CasesFilter";
+import { ExerciseFilterSidebar } from "@/components/exercise/ExerciseFilterSidebar";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Sentence {
@@ -54,6 +56,7 @@ const Exercises = () => {
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
   const [currentAppliedFilters, setCurrentAppliedFilters] = useState<CasesFilters>(DEFAULT_CASES_FILTERS);
   const [pendingFilterChanges, setPendingFilterChanges] = useState<CasesFilters>(DEFAULT_CASES_FILTERS);
+  const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
 
   // Helper function to check if filters are different
   const areFiltersDifferent = (filters1: CasesFilters, filters2: CasesFilters) => {
@@ -161,6 +164,13 @@ const Exercises = () => {
     }
   });
 
+  // Initialize pending filters when sidebar opens
+  useEffect(() => {
+    if (isFilterSidebarOpen) {
+      setPendingFilterChanges(currentAppliedFilters);
+    }
+  }, [isFilterSidebarOpen, currentAppliedFilters]);
+
   const handleCorrectAnswer = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
@@ -170,21 +180,6 @@ const Exercises = () => {
       currentIndex,
       totalSentences: sentences?.length
     });
-    
-    // Check if there are pending filter changes for Cases subcategory
-    if (subcategory === "Cases" && areFiltersDifferent(pendingFilterChanges, currentAppliedFilters)) {
-      console.log("Applying pending filter changes:", pendingFilterChanges);
-      // Apply the pending filter changes
-      setCurrentAppliedFilters(pendingFilterChanges);
-      // Reset all exercise state as if starting a new subcategory
-      setCurrentIndex(0);
-      setAnsweredCount(0);
-      setFirstTryCorrect(0);
-      setMasteredIds([]);
-      setRetrySentences([]);
-      setHasIncorrectAttempt(false);
-      return; // Exit early, the useQuery will refetch with new filters
-    }
     
     if (!hasIncorrectAttempt) {
       setFirstTryCorrect(prev => prev + 1);
@@ -223,6 +218,22 @@ const Exercises = () => {
   const handleFiltersChange = (filters: CasesFilters) => {
     setPendingFilterChanges(filters);
   };
+
+  const handleApplyFilters = () => {
+    setCurrentAppliedFilters(pendingFilterChanges);
+    setIsFilterSidebarOpen(false);
+    // Reset exercise state when filters are applied
+    setCurrentIndex(0);
+    setAnsweredCount(0);
+    setFirstTryCorrect(0);
+    setMasteredIds([]);
+    setRetrySentences([]);
+    setHasIncorrectAttempt(false);
+  };
+
+  const handleResetFilters = () => {
+    setPendingFilterChanges(DEFAULT_CASES_FILTERS);
+  };
   
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
   const isComplete = sentences && answeredCount === sentences.length;
@@ -235,19 +246,37 @@ const Exercises = () => {
           <div className="max-w-3xl mx-auto">
             <div className="top-12 md:top-0 bg-background/95 backdrop-blur-sm z-10 pb-2 -mt-2 pt-2 ">
               <Progress value={progress} className="mb-3" />
+              {subcategory === "Cases" && (
+                <div className="flex justify-center mb-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsFilterSidebarOpen(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <Filter className="h-4 w-4" />
+                    Filters
+                  </Button>
+                </div>
+              )}
             </div>
             {isLoading ? <div className="h-[400px] bg-muted animate-pulse rounded-lg" /> : sentences && sentences.length > 0 ? isComplete ? <EndScreen onRestart={handleRestart} firstTryCorrect={firstTryCorrect} totalExercises={sentences.length} isOutOfSentences={isOutOfSentences} /> : <>
                   <ExerciseCard sentence={sentences[currentIndex]} onCorrect={handleCorrectAnswer} onIncorrect={handleIncorrectAnswer} subcategory={subcategory || ''} />
-                  {subcategory === "Cases" && (
-                    <CasesFilter 
-                      caseFilters={pendingFilterChanges.caseFilters}
-                      numberFilters={pendingFilterChanges.numberFilters}
-                      definitenessFilters={pendingFilterChanges.definitenessFilters}
-                      onFiltersChange={handleFiltersChange}
-                    />
-                  )}
                   {!isComplete && subcategoryInfo && <FurtherReading content={subcategoryInfo.further_reading} />}
                 </> : null}
+            
+            {subcategory === "Cases" && (
+              <ExerciseFilterSidebar
+                isOpen={isFilterSidebarOpen}
+                onOpenChange={setIsFilterSidebarOpen}
+                caseFilters={pendingFilterChanges.caseFilters}
+                numberFilters={pendingFilterChanges.numberFilters}
+                definitenessFilters={pendingFilterChanges.definitenessFilters}
+                onFiltersChange={handleFiltersChange}
+                onApply={handleApplyFilters}
+                onReset={handleResetFilters}
+              />
+            )}
           </div>
         </main>
       </div>
