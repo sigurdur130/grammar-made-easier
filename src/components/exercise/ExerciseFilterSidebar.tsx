@@ -32,7 +32,7 @@ export function ExerciseFilterSidebar({
 }: ExerciseFilterSidebarProps) {
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-80">
+      <SheetContent side="right" className="sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>Filters</SheetTitle>
         </SheetHeader>

@@ -247,7 +247,7 @@ const Exercises = () => {
             <div className="top-12 md:top-0 bg-background/95 backdrop-blur-sm z-10 pb-2 -mt-2 pt-2 ">
               <Progress value={progress} className="mb-3" />
               {subcategory === "Cases" && (
-                <div className="flex justify-center mb-3">
+                <div className="flex justify-start mb-3">
                   <Button
                     variant="outline"
                     size="sm"
