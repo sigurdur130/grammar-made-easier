@@ -34,13 +34,8 @@ interface CasesFilters {
   caseFilters: string[];
   numberFilters: string[];
   definitenessFilters: string[];
+  exemplarFilters: number[];
 }
-
-const DEFAULT_CASES_FILTERS: CasesFilters = {
-  caseFilters: ["Accusative"],
-  numberFilters: ["Singular"],
-  definitenessFilters: ["Indefinite"]
-};
 
 const Exercises = () => {
   const {
@@ -54,14 +49,37 @@ const Exercises = () => {
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
-  const [currentAppliedFilters, setCurrentAppliedFilters] = useState<CasesFilters>(DEFAULT_CASES_FILTERS);
-  const [pendingFilterChanges, setPendingFilterChanges] = useState<CasesFilters>(DEFAULT_CASES_FILTERS);
+  const [currentAppliedFilters, setCurrentAppliedFilters] = useState<CasesFilters>({
+    caseFilters: ["Accusative"],
+    numberFilters: ["Singular"],
+    definitenessFilters: ["Indefinite"],
+    exemplarFilters: []
+  });
+  const [pendingFilterChanges, setPendingFilterChanges] = useState<CasesFilters>({
+    caseFilters: ["Accusative"],
+    numberFilters: ["Singular"],
+    definitenessFilters: ["Indefinite"],
+    exemplarFilters: []
+  });
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
 
   // Helper function to check if filters are different
   const areFiltersDifferent = (filters1: CasesFilters, filters2: CasesFilters) => {
     return JSON.stringify(filters1) !== JSON.stringify(filters2);
   };
+
+  // Fetch exemplars data
+  const { data: exemplars } = useQuery({
+    queryKey: ["exemplars"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("exemplars")
+        .select("id, exemplar_name, gender, default")
+        .order("gender");
+      if (error) throw error;
+      return data;
+    },
+  });
 
   // Reset all state when category or subcategory changes
   useEffect(() => {
@@ -71,12 +89,38 @@ const Exercises = () => {
     setMasteredIds([]);
     setRetrySentences([]);
     setHasIncorrectAttempt(false);
-    // Reset filters to defaults for Cases subcategory
+    
+    // Reset filters based on subcategory
     if (subcategory === "Cases") {
-      setCurrentAppliedFilters(DEFAULT_CASES_FILTERS);
-      setPendingFilterChanges(DEFAULT_CASES_FILTERS);
+      const defaultExemplars = exemplars?.filter(e => e.default).map(e => e.id) || [];
+      const defaultFilters = {
+        caseFilters: ["Accusative"],
+        numberFilters: ["Singular"],
+        definitenessFilters: ["Indefinite"],
+        exemplarFilters: defaultExemplars
+      };
+      setCurrentAppliedFilters(defaultFilters);
+      setPendingFilterChanges(defaultFilters);
+    } else {
+      const defaultFilters = {
+        caseFilters: ["Accusative"],
+        numberFilters: ["Singular"],
+        definitenessFilters: ["Indefinite"],
+        exemplarFilters: []
+      };
+      setCurrentAppliedFilters(defaultFilters);
+      setPendingFilterChanges(defaultFilters);
     }
-  }, [category, subcategory]);
+  }, [category, subcategory, exemplars]);
+
+  // Initialize exemplar filters when exemplars data is loaded and subcategory is Cases
+  useEffect(() => {
+    if (exemplars && subcategory === "Cases") {
+      const defaultExemplars = exemplars.filter(e => e.default).map(e => e.id);
+      setCurrentAppliedFilters(prev => ({ ...prev, exemplarFilters: defaultExemplars }));
+      setPendingFilterChanges(prev => ({ ...prev, exemplarFilters: defaultExemplars }));
+    }
+  }, [exemplars, subcategory]);
 
   const {
     data: subcategoryInfo
@@ -131,7 +175,8 @@ const Exercises = () => {
           retry_ids: retrySentences.map(s => s.id),
           cases_filter: currentAppliedFilters.caseFilters,
           numbers_filter: currentAppliedFilters.numberFilters,
-          definiteness_filter: currentAppliedFilters.definitenessFilters
+          definiteness_filter: currentAppliedFilters.definitenessFilters,
+          exemplar_filter: currentAppliedFilters.exemplarFilters
         } : {
           num_rows: neededRandomSentences,
           subcategory_filter: subcategory,
@@ -232,7 +277,13 @@ const Exercises = () => {
   };
 
   const handleResetFilters = () => {
-    setPendingFilterChanges(DEFAULT_CASES_FILTERS);
+    const defaultExemplars = exemplars?.filter(e => e.default).map(e => e.id) || [];
+    setPendingFilterChanges({
+      caseFilters: ["Accusative"],
+      numberFilters: ["Singular"],
+      definitenessFilters: ["Indefinite"],
+      exemplarFilters: defaultExemplars
+    });
   };
   
   const progress = sentences ? answeredCount / sentences.length * 100 : 0;
@@ -269,9 +320,11 @@ const Exercises = () => {
               <ExerciseFilterSidebar
                 isOpen={isFilterSidebarOpen}
                 onOpenChange={setIsFilterSidebarOpen}
+                exemplars={exemplars || []}
                 caseFilters={pendingFilterChanges.caseFilters}
                 numberFilters={pendingFilterChanges.numberFilters}
                 definitenessFilters={pendingFilterChanges.definitenessFilters}
+                exemplarFilters={pendingFilterChanges.exemplarFilters}
                 onFiltersChange={handleFiltersChange}
                 onApply={handleApplyFilters}
                 onReset={handleResetFilters}

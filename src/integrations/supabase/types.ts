@@ -39,6 +39,30 @@ export type Database = {
         }
         Relationships: []
       }
+      exemplars: {
+        Row: {
+          created_at: string
+          default: boolean | null
+          exemplar_name: string
+          gender: string | null
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          default?: boolean | null
+          exemplar_name: string
+          gender?: string | null
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          default?: boolean | null
+          exemplar_name?: string
+          gender?: string | null
+          id?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           id: string
@@ -184,6 +208,7 @@ Functions: {
       cases_filter?: string[]
       numbers_filter?: string[]
       definiteness_filter?: string[]
+      exemplar_filter?: number[]
     }
     Returns: {
       id: number

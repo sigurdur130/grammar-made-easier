@@ -2,19 +2,30 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { CasesFilter } from "./CasesFilter";
+import { ExemplarFilter } from "./ExemplarFilter";
 
 interface CasesFilters {
   caseFilters: string[];
   numberFilters: string[];
   definitenessFilters: string[];
+  exemplarFilters: number[];
+}
+
+interface Exemplar {
+  id: number;
+  exemplar_name: string;
+  gender: string | null;
+  default: boolean | null;
 }
 
 interface ExerciseFilterSidebarProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  exemplars: Exemplar[];
   caseFilters: string[];
   numberFilters: string[];
   definitenessFilters: string[];
+  exemplarFilters: number[];
   onFiltersChange: (filters: CasesFilters) => void;
   onApply: () => void;
   onReset: () => void;
@@ -23,9 +34,11 @@ interface ExerciseFilterSidebarProps {
 export function ExerciseFilterSidebar({
   isOpen,
   onOpenChange,
+  exemplars,
   caseFilters,
   numberFilters,
   definitenessFilters,
+  exemplarFilters,
   onFiltersChange,
   onApply,
   onReset,
@@ -39,7 +52,7 @@ export function ExerciseFilterSidebar({
         
         <div className="flex flex-col h-full">
           <div className="flex-1 py-6">
-            <Accordion type="single" collapsible defaultValue="grammar">
+            <Accordion type="multiple" defaultValue={["grammar"]}>
               <AccordionItem value="grammar">
                 <AccordionTrigger>Grammar</AccordionTrigger>
                 <AccordionContent>
@@ -48,6 +61,23 @@ export function ExerciseFilterSidebar({
                     numberFilters={numberFilters}
                     definitenessFilters={definitenessFilters}
                     onFiltersChange={onFiltersChange}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="exemplars">
+                <AccordionTrigger>Exemplars</AccordionTrigger>
+                <AccordionContent>
+                  <ExemplarFilter
+                    exemplars={exemplars}
+                    selectedExemplars={exemplarFilters}
+                    onExemplarChange={(exemplars) => 
+                      onFiltersChange({
+                        caseFilters,
+                        numberFilters,
+                        definitenessFilters,
+                        exemplarFilters: exemplars
+                      })
+                    }
                   />
                 </AccordionContent>
               </AccordionItem>

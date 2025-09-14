@@ -9,6 +9,7 @@ interface CasesFilterProps {
     caseFilters: string[];
     numberFilters: string[];
     definitenessFilters: string[];
+    exemplarFilters: number[];
   }) => void;
 }
 
@@ -32,6 +33,7 @@ export function CasesFilter({
       caseFilters: values,
       numberFilters,
       definitenessFilters,
+      exemplarFilters: [], // Will be handled by parent component
     });
   };
 
@@ -45,6 +47,7 @@ export function CasesFilter({
       caseFilters,
       numberFilters: values,
       definitenessFilters,
+      exemplarFilters: [], // Will be handled by parent component
     });
   };
 
@@ -58,6 +61,7 @@ export function CasesFilter({
       caseFilters,
       numberFilters,
       definitenessFilters: values,
+      exemplarFilters: [], // Will be handled by parent component
     });
   };
 
