@@ -43,6 +43,12 @@ export function ExerciseFilterSidebar({
   onApply,
   onReset,
 }: ExerciseFilterSidebarProps) {
+
+    const genderOrder = ["Masculine", "Feminine", "Neuter"];
+    const sortedExemplars = [...exemplars].sort(
+      (a, b) => genderOrder.indexOf(a.gender || "") - genderOrder.indexOf(b.gender || "")
+    );
+
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="sm:max-w-lg">
@@ -52,7 +58,7 @@ export function ExerciseFilterSidebar({
         
         <div className="flex flex-col h-full">
           <div className="flex-1 py-6">
-            <Accordion type="multiple" defaultValue={["grammar"]}>
+            <Accordion type="multiple" defaultValue={[]}>
               <AccordionItem value="grammar">
                 <AccordionTrigger>Grammar</AccordionTrigger>
                 <AccordionContent>
@@ -68,14 +74,14 @@ export function ExerciseFilterSidebar({
                 <AccordionTrigger>Exemplars</AccordionTrigger>
                 <AccordionContent>
                   <ExemplarFilter
-                    exemplars={exemplars}
+                    exemplars={sortedExemplars}
                     selectedExemplars={exemplarFilters}
-                    onExemplarChange={(exemplars) => 
+                    onExemplarChange={(exs) =>
                       onFiltersChange({
                         caseFilters,
                         numberFilters,
                         definitenessFilters,
-                        exemplarFilters: exemplars
+                        exemplarFilters: exs
                       })
                     }
                   />

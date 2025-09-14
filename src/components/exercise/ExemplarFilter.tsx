@@ -1,4 +1,4 @@
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
 interface Exemplar {
   id: number;
@@ -10,56 +10,47 @@ interface Exemplar {
 interface ExemplarFilterProps {
   exemplars: Exemplar[];
   selectedExemplars: number[];
-  onExemplarChange: (exemplars: number[]) => void;
+  onExemplarChange: (selected: number[]) => void;
 }
 
-export function ExemplarFilter({ 
-  exemplars, 
-  selectedExemplars, 
-  onExemplarChange 
-}: ExemplarFilterProps) {
-  // Group exemplars by gender
-  const groupedExemplars = exemplars.reduce((acc, exemplar) => {
-    const gender = exemplar.gender || "Unknown";
-    if (!acc[gender]) {
-      acc[gender] = [];
-    }
-    acc[gender].push(exemplar);
-    return acc;
-  }, {} as Record<string, Exemplar[]>);
-
-  const handleExemplarChange = (values: string[]) => {
-    // Convert string values back to numbers
-    const numericValues = values.map(v => parseInt(v, 10));
-    onExemplarChange(numericValues);
-  };
-
-  // Convert selected exemplars to strings for ToggleGroup
-  const selectedExemplarStrings = selectedExemplars.map(id => id.toString());
+export function ExemplarFilter({ exemplars, selectedExemplars, onExemplarChange }: ExemplarFilterProps) {
+  const genderOrder = ["Masculine", "Feminine", "Neuter"];
 
   return (
-    <div className="space-y-6">
-      {Object.entries(groupedExemplars).map(([gender, genderExemplars]) => (
-        <div key={gender} className="space-y-3">
-          <h5 className="font-medium text-sm">{gender}</h5>
-          <ToggleGroup 
-            type="multiple" 
-            value={selectedExemplarStrings} 
-            onValueChange={handleExemplarChange}
-            className="flex flex-col gap-2"
-          >
-            {genderExemplars.map((exemplar) => (
-              <ToggleGroupItem 
-                key={exemplar.id} 
-                value={exemplar.id.toString()}
-                className="justify-start rounded-full px-4 py-2 text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-              >
-                {exemplar.exemplar_name}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        </div>
-      ))}
-    </div>
+    <Accordion type="multiple" defaultValue={[]} className="space-y-2">
+      {genderOrder.map((gender) => {
+        const genderExemplars = exemplars.filter(e => e.gender === gender);
+        if (!genderExemplars.length) return null;
+
+        return (
+          <AccordionItem 
+            key={gender}
+            value={gender}
+            className="last:border-b-0">
+            <AccordionTrigger>{gender}</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col space-y-1">
+                {genderExemplars.map((ex) => (
+                  <label key={ex.id} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedExemplars.includes(ex.id)}
+                      onChange={() => {
+                        if (selectedExemplars.includes(ex.id)) {
+                          onExemplarChange(selectedExemplars.filter(id => id !== ex.id));
+                        } else {
+                          onExemplarChange([...selectedExemplars, ex.id]);
+                        }
+                      }}
+                    />
+                    {ex.exemplar_name}
+                  </label>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        );
+      })}
+    </Accordion>
   );
 }
