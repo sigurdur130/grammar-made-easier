@@ -27,7 +27,7 @@ export function ExemplarFilter({ exemplars, selectedExemplars, onExemplarChange 
             key={gender}
             value={gender}
             className="last:border-b-0">
-            <AccordionTrigger>{gender}</AccordionTrigger>
+            <AccordionTrigger className="font-medium text-sm">{gender}</AccordionTrigger>
             <AccordionContent className="!pb-0">
               <div className="grid grid-cols-2 gap-x-4 gap-y-1 pb-4">
                 {genderExemplars.map((ex) => (
