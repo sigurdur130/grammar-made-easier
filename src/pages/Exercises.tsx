@@ -74,7 +74,7 @@ const Exercises = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("exemplars")
-        .select("id, exemplar_name, gender, default")
+        .select("id, exemplar, gender, default")
         .order("gender");
       if (error) throw error;
       return data;

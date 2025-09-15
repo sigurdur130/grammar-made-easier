@@ -2,7 +2,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 
 interface Exemplar {
   id: number;
-  exemplar_name: string;
+  exemplar: string;
   gender: string | null;
   default: boolean | null;
 }
@@ -17,7 +17,7 @@ export function ExemplarFilter({ exemplars, selectedExemplars, onExemplarChange 
   const genderOrder = ["Masculine", "Feminine", "Neuter"];
 
   return (
-    <Accordion type="multiple" defaultValue={[]} className="space-y-2">
+    <Accordion type="multiple" defaultValue={[]} className="space-y-2 pl-4">
       {genderOrder.map((gender) => {
         const genderExemplars = exemplars.filter(e => e.gender === gender);
         if (!genderExemplars.length) return null;
@@ -29,7 +29,7 @@ export function ExemplarFilter({ exemplars, selectedExemplars, onExemplarChange 
             className="last:border-b-0">
             <AccordionTrigger>{gender}</AccordionTrigger>
             <AccordionContent className="!pb-0">
-              <div className="flex flex-col space-y-1 pb-4">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 pb-4">
                 {genderExemplars.map((ex) => (
                   <label key={ex.id} className="flex items-center gap-2">
                     <input
@@ -43,7 +43,7 @@ export function ExemplarFilter({ exemplars, selectedExemplars, onExemplarChange 
                         }
                       }}
                     />
-                    {ex.exemplar_name}
+                    {ex.exemplar}
                   </label>
                 ))}
               </div>
