@@ -28,8 +28,8 @@ export function ExemplarFilter({ exemplars, selectedExemplars, onExemplarChange 
             value={gender}
             className="last:border-b-0">
             <AccordionTrigger>{gender}</AccordionTrigger>
-            <AccordionContent>
-              <div className="flex flex-col space-y-1">
+            <AccordionContent className="!pb-0">
+              <div className="flex flex-col space-y-1 pb-4">
                 {genderExemplars.map((ex) => (
                   <label key={ex.id} className="flex items-center gap-2">
                     <input
