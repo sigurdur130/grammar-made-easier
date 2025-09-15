@@ -51,13 +51,13 @@ export function ExerciseFilterSidebar({
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="sm:max-w-lg">
+      <SheetContent side="right" className="sm:max-w-lg flex flex-col p-6">
         <SheetHeader>
           <SheetTitle>Filters</SheetTitle>
         </SheetHeader>
         
-        <div className="flex flex-col h-full">
-          <div className="flex-1 py-6">
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto py-6">
             <Accordion type="multiple" defaultValue={[]}>
               <AccordionItem value="grammar">
                 <AccordionTrigger>Grammar</AccordionTrigger>
