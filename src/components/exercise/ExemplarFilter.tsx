@@ -1,4 +1,5 @@
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Exemplar {
   id: number;
@@ -31,15 +32,15 @@ export function ExemplarFilter({ exemplars, selectedExemplars, onExemplarChange 
             <AccordionContent className="!pb-0">
               <div className="grid grid-cols-2 gap-x-4 gap-y-1 pb-4">
                 {genderExemplars.map((ex) => (
-                  <label key={ex.id} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
+                  <label key={ex.id} className="flex items-center gap-2 cursor-pointer">
+                    <Checkbox
+                      className="h-5 w-5"
                       checked={selectedExemplars.includes(ex.id)}
-                      onChange={() => {
-                        if (selectedExemplars.includes(ex.id)) {
-                          onExemplarChange(selectedExemplars.filter(id => id !== ex.id));
-                        } else {
+                      onCheckedChange={(checked) => {
+                        if (checked) {
                           onExemplarChange([...selectedExemplars, ex.id]);
+                        } else {
+                          onExemplarChange(selectedExemplars.filter(id => id !== ex.id));
                         }
                       }}
                     />
