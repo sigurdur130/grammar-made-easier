@@ -21,6 +21,12 @@ export function ExemplarFilter({ exemplars, selectedExemplars, onExemplarChange 
     <Accordion type="multiple" defaultValue={[]} className="space-y-2 pl-4">
       {genderOrder.map((gender) => {
         const genderExemplars = exemplars.filter(e => e.gender === gender);
+        const sortedExemplars = genderExemplars.sort((a, b) => {
+          if (a.default && !b.default) return -1;
+          if (!a.default && b.default) return 1;
+          return 0;
+        });
+
         if (!genderExemplars.length) return null;
 
         return (
@@ -30,11 +36,11 @@ export function ExemplarFilter({ exemplars, selectedExemplars, onExemplarChange 
             className="last:border-b-0">
             <AccordionTrigger className="font-medium text-sm">{gender}</AccordionTrigger>
             <AccordionContent className="!pb-0">
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 pb-4">
-                {genderExemplars.map((ex) => (
+              <div className="grid grid-cols-2 gap-2 pb-4">
+                {sortedExemplars.map((ex) => (
                   <label key={ex.id} className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
-                      className="h-5 w-5"
+                      className="h-4 w-4"
                       checked={selectedExemplars.includes(ex.id)}
                       onCheckedChange={(checked) => {
                         if (checked) {
