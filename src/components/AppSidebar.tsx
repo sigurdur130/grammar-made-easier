@@ -62,6 +62,9 @@ export function AppSidebar() {
       return data;
     },
     enabled: !!subcategories,
+    staleTime: Infinity,           // never considered stale
+    cacheTime: Infinity,           // keep in memory while page is open
+    refetchOnWindowFocus: false,   // don't refetch when switching tabs
   });
 
   const toggleCategory = (category: string) => {
