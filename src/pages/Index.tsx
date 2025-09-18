@@ -90,9 +90,9 @@ const Index = () => {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
+      <div className="flex h-screen w-full">
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className="flex-1 overflow-y-auto">
           <div className="px-4 py-6 md:p-6 pt-[calc(theme(spacing.6)_+_theme(spacing.14))] md:pt-6">
             <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center px-2">
               What do you want to practice today?

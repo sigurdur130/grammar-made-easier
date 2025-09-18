@@ -8,7 +8,7 @@ import {
 import { Database } from "@/integrations/supabase/types";
 
 type CategoryItemProps = {
-  category: { word_category: string | null };
+  categoryName: string;
   subcategories: Array<Database["public"]["Tables"]["subcategories"]["Row"]>;
   isOpen: boolean;
   onToggle: () => void;
@@ -16,7 +16,7 @@ type CategoryItemProps = {
 };
 
 export function CategoryItem({
-  category,
+  categoryName,
   subcategories,
   isOpen,
   onToggle,
@@ -28,7 +28,7 @@ export function CategoryItem({
         onClick={onToggle}
         className={isOpen ? "bg-accent" : ""}
       >
-        <span>{category.word_category}</span>
+        <span>{categoryName}</span>
         <ChevronDown
           className={`ml-auto h-4 w-4 transition-transform duration-300 ease-in-out ${
             isOpen ? "rotate-180" : ""
@@ -42,13 +42,13 @@ export function CategoryItem({
       >
         <SidebarMenuSub>
           {subcategories
-            ?.filter((sub) => sub.word_category === category.word_category)
+            ?.filter((sub) => sub.word_category === categoryName)
             .map((sub) => (
               <SidebarMenuSubButton
                 key={sub.subcategory}
                 onClick={() =>
                   onSubcategoryClick(
-                    category.word_category || "",
+                    categoryName || "",
                     sub.subcategory || ""
                   )
                 }

@@ -13,7 +13,7 @@ export function ThemeToggle() {
         variant="ghost"
         size="sm"
         onClick={toggleTheme}
-        className="flex w-full justify-between px-3 py-2"
+        className="flex w-full justify-between py-2"
       >
         <span>Toggle theme</span>
         {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
