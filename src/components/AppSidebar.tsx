@@ -39,6 +39,9 @@ export function AppSidebar() {
       console.log("Fetched subcategories:", data);
       return data as Subcategory[];
     },
+      staleTime: Infinity,           // never considered stale
+      cacheTime: Infinity,           // keep cached while page is open
+      refetchOnWindowFocus: false,   // don't refetch when switching tabs
   });
 
   const { data: categories, isLoading: categoriesLoading } = useQuery({
