@@ -37,6 +37,11 @@ interface CasesFilters {
   exemplarFilters: number[];
 }
 
+const { data, error } = await supabase.from("exemplars").select("exemplar");
+
+console.log(error);  // <- see the real error message from Supabase
+console.log(data);   // <- should be array if column exists
+
 const Exercises = () => {
   const {
     category,

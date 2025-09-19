@@ -43,21 +43,21 @@ export type Database = {
         Row: {
           created_at: string
           default: boolean | null
-          exemplar_name: string
+          exemplar: string
           gender: string | null
           id: number
         }
         Insert: {
           created_at?: string
           default?: boolean | null
-          exemplar_name: string
+          exemplar: string
           gender?: string | null
           id?: number
         }
         Update: {
           created_at?: string
           default?: boolean | null
-          exemplar_name?: string
+          exemplar?: string
           gender?: string | null
           id?: number
         }
