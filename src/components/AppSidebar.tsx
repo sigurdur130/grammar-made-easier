@@ -10,6 +10,7 @@ import { MobileNavbar } from "./MobileNavbar";
 import { FeedbackInSidebar } from "./sidebar/FeedbackInSidebar";
 import { ThemeToggle } from "./sidebar/ThemeToggle";
 import { LearnWithTeacher } from "./sidebar/LearnWithTeacher";
+import { Link } from "react-router-dom";
 
 // Subcategory type
 type Subcategory = {
@@ -82,10 +83,11 @@ export function AppSidebar() {
         <div className="flex flex-col h-screen p-4">
         {/* Top: Logo + Accordion, scrollable */}
         <div className="flex-1 overflow-y-auto">
-          <div className="flex items-center gap-2 mb-4">
-            <h2 className="text-lg font-bold">Grammar made easi(er)</h2>
-            <img src="/logo.png" alt="Logo" className="h-6 w-6"/>
-          </div>
+          <Link to="/" className="flex items-center gap-2 mb-4">
+            <h2 className="font-bold">Grammar made easi(er)</h2>
+            <img src="/logo.png" alt="Logo" className="h-6 w-6" />
+          </Link>
+
 
           <Accordion type="multiple" value={openCategories} onValueChange={(v) => setOpenCategories(v as string[])} >
             {categoryNames.map((category) => (
