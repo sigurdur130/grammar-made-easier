@@ -13,7 +13,7 @@ interface CasesFilters {
 
 interface Exemplar {
   id: number;
-  exemplar_name: string;
+  exemplar: string;
   gender: string | null;
   default: boolean | null;
 }
