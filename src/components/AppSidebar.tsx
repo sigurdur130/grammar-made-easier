@@ -12,7 +12,7 @@ import { ThemeToggle } from "./sidebar/ThemeToggle";
 import { LearnWithTeacher } from "./sidebar/LearnWithTeacher";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PanelLeftClose } from "lucide-react";
+import { Menu } from "lucide-react";
 
 // Subcategory type
 type Subcategory = {
@@ -84,7 +84,7 @@ export function AppSidebar() {
       <SidebarContent>
         <div className="flex flex-col h-screen p-4">
         {/* Top: Logo + Accordion, scrollable */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1">
           <div className="flex flex-row justify-between items-center mb-4">
             <Link to="/" className="flex items-center gap-2">
               <h2 className="font-bold">Grammar made easi(er)</h2>
@@ -97,18 +97,18 @@ export function AppSidebar() {
                 asChild
               >
                 <SidebarTrigger>
-                 <PanelLeftClose className="h-5 w-5" />
+                 <Menu className="h-5 w-5" />
                 </SidebarTrigger>
               </Button>
           </div>
           <Accordion type="multiple" value={openCategories} onValueChange={(v) => setOpenCategories(v as string[])} >
             {categoryNames.map((category) => (
-              <AccordionItem key={category} value={category}>
-                <AccordionTrigger onClick={() => handleToggleCategory(category)}>
+              <AccordionItem key={category} value={category} className="border-0 py-2">
+                <AccordionTrigger onClick={() => handleToggleCategory(category)} className="py-0">
                   {category}
                 </AccordionTrigger>
                 <AccordionContent>
-                  <ul className="pl-2">
+                  <ul className="pl-2 ml-2 border-l">
                     {categoriesMap[category].map((sub) => (
                       <li key={sub.subcategory}>
                         <button
