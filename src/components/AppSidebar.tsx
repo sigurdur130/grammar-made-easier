@@ -87,6 +87,18 @@ export function AppSidebar() {
             <h2 className="font-bold">Grammar made easi(er)</h2>
             <img src="/logo.png" alt="Logo" className="h-6 w-6" />
           </Link>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full absolute right-4"
+          asChild
+        >
+          <SidebarTrigger>
+            <Menu className="h-5 w-5" />
+          </SidebarTrigger>
+        </Button>
+      </div>
 
 
           <Accordion type="multiple" value={openCategories} onValueChange={(v) => setOpenCategories(v as string[])} >
@@ -116,7 +128,7 @@ export function AppSidebar() {
 
         {/* Bottom: sticks to bottom */}
         <div className="mt-4 flex flex-col gap-2">
-          <ThemeToggle />
+          <ThemeToggle/>
           <LearnWithTeacher />
           <FeedbackInSidebar />
         </div>

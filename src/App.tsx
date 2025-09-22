@@ -43,7 +43,7 @@ const App = () => (
         <BrowserRouter>
           <SidebarProvider>
             <div className="md:hidden">
-              <MobileNavbar />
+              <MobileNavbar/>
             </div>
             <AppLayout>
               <Routes>

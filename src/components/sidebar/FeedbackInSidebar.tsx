@@ -106,7 +106,7 @@ export const FeedbackInSidebar = ({ currentSentence }: { currentSentence?: numbe
           <Button
             variant="ghost"
             size="sm"
-            className="flex w-full justify-between px-3 py-2"
+            className="flex w-full justify-between px-0 py-2"
           >
             <span>Feedback</span>
             <MessageSquare className="h-5 w-5" />

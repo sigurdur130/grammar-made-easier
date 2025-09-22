@@ -10,7 +10,7 @@ export function LearnWithTeacher() {
         variant="ghost"
         size="sm"
         asChild
-        className="flex w-full justify-between px-3 py-2"
+        className="flex w-full justify-between px-3 py-2 px-0"
       >
         <a 
           href="https://icelandicmadeeasier.com" 
