@@ -5,12 +5,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { LoadingSkeleton } from "./sidebar/LoadingSkeleton";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { Sidebar, SidebarContent, useSidebar } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, useSidebar, SidebarTrigger } from "@/components/ui/sidebar";
 import { MobileNavbar } from "./MobileNavbar";
 import { FeedbackInSidebar } from "./sidebar/FeedbackInSidebar";
 import { ThemeToggle } from "./sidebar/ThemeToggle";
 import { LearnWithTeacher } from "./sidebar/LearnWithTeacher";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { PanelLeftClose } from "lucide-react";
 
 // Subcategory type
 type Subcategory = {
@@ -83,24 +85,22 @@ export function AppSidebar() {
         <div className="flex flex-col h-screen p-4">
         {/* Top: Logo + Accordion, scrollable */}
         <div className="flex-1 overflow-y-auto">
-          <Link to="/" className="flex items-center gap-2 mb-4">
-            <h2 className="font-bold">Grammar made easi(er)</h2>
-            <img src="/logo.png" alt="Logo" className="h-6 w-6" />
-          </Link>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full absolute right-4"
-          asChild
-        >
-          <SidebarTrigger>
-            <Menu className="h-5 w-5" />
-          </SidebarTrigger>
-        </Button>
-      </div>
-
-
+          <div className="flex flex-row justify-between items-center mb-4">
+            <Link to="/" className="flex items-center gap-2">
+              <h2 className="font-bold">Grammar made easi(er)</h2>
+              <img src="/logo.png" alt="Logo" className="h-6 w-6" />
+            </Link> 
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full absolute right-4 md:hidden"
+                asChild
+              >
+                <SidebarTrigger>
+                 <PanelLeftClose className="h-5 w-5" />
+                </SidebarTrigger>
+              </Button>
+          </div>
           <Accordion type="multiple" value={openCategories} onValueChange={(v) => setOpenCategories(v as string[])} >
             {categoryNames.map((category) => (
               <AccordionItem key={category} value={category}>

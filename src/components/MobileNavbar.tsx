@@ -21,7 +21,7 @@ export function MobileNavbar() {
           asChild
         >
           <SidebarTrigger>
-            <Menu className="h-5 w-5" />
+            <Menu className="h-5 w-5"/>
           </SidebarTrigger>
         </Button>
       </div>
