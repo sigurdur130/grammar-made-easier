@@ -51,7 +51,7 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
     <div className="relative w-full sm:w-auto" style={{ minWidth }}>
       {baseForm && (
         <span
-          className={`absolute transition-all duration-200 pointer-events-none z-10 ${
+          className={`absolute transition-all duration-200 pointer-events-none z-10 whitespace-nowrap ${
             isFocused || answer.length > 0
               ? "-top-3 left-3 text-xs text-muted-foreground bg-background px-1"
               : "top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-base text-muted-foreground/60"
@@ -68,9 +68,7 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         className={`w-full text-center border-t-0 border-x-0 rounded-none focus:ring-0 focus:outline-none ${
-          isCorrect === true
-            ? "border-green-500 bg-green-50 dark:bg-green-950/30 dark:text-green-300"
-            : isCorrect === false
+          isCorrect === false
             ? "border-red-200 bg-red-50 dark:bg-red-950/30 dark:text-red-300"
             : "border-b-2 border-[#CBD5E0] hover:border-[#6B46C1] focus:border-[#6B46C1] dark:border-muted-foreground/40 dark:hover:border-primary dark:focus:border-primary dark:bg-muted/50 dark:text-card-foreground"
         } text-base md:text-lg px-3 py-2 ${
