@@ -5,12 +5,12 @@ import { GraduationCap } from "lucide-react";
 
 export function LearnWithTeacher() {
   return (
-    <SidebarFooter className="border-t border-sidebar-border">
+    <SidebarFooter className="">
       <Button
         variant="ghost"
         size="sm"
         asChild
-        className="flex w-full justify-between px-3 py-2 px-0"
+        className="flex w-full justify-between"
       >
         <a 
           href="https://icelandicmadeeasier.com" 

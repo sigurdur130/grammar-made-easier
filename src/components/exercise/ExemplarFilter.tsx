@@ -18,7 +18,7 @@ export function ExemplarFilter({ exemplars, selectedExemplars, onExemplarChange 
   const genderOrder = ["Masculine", "Feminine", "Neuter"];
 
   return (
-    <Accordion type="multiple" defaultValue={[]} className="space-y-2 pl-4">
+    <Accordion type="multiple" defaultValue={[]} className="pl-2 ml-2 border-l">
       {genderOrder.map((gender) => {
         const genderExemplars = exemplars.filter(e => e.gender === gender);
         const sortedExemplars = genderExemplars.sort((a, b) => {
@@ -33,9 +33,9 @@ export function ExemplarFilter({ exemplars, selectedExemplars, onExemplarChange 
           <AccordionItem 
             key={gender}
             value={gender}
-            className="last:border-b-0">
+            className="">
             <AccordionTrigger className="font-medium text-sm">{gender}</AccordionTrigger>
-            <AccordionContent className="!pb-0">
+            <AccordionContent className="p-3">
               <div className="grid grid-cols-2 gap-2 pb-4">
                 {sortedExemplars.map((ex) => (
                   <label key={ex.id} className="flex items-center gap-2 cursor-pointer">

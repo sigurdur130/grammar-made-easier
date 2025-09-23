@@ -100,13 +100,13 @@ export const FeedbackInSidebar = ({ currentSentence }: { currentSentence?: numbe
   };
 
   return (
-    <SidebarFooter className="border-t border-sidebar-border">
+    <SidebarFooter className="">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
           <Button
             variant="ghost"
             size="sm"
-            className="flex w-full justify-between px-0 py-2"
+            className="flex w-full justify-between"
           >
             <span>Feedback</span>
             <MessageSquare className="h-5 w-5" />

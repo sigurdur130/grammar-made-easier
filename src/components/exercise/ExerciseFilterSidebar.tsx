@@ -59,7 +59,7 @@ export function ExerciseFilterSidebar({
         <div className="flex flex-col flex-1 overflow-hidden">
           <div className="flex-1 overflow-y-auto py-6">
             <Accordion type="multiple" defaultValue={[]}>
-              <AccordionItem value="grammar">
+              <AccordionItem value="grammar" className="py-2">
                 <AccordionTrigger>Grammar</AccordionTrigger>
                 <AccordionContent>
                   <CasesFilter

@@ -103,16 +103,16 @@ export function AppSidebar() {
           </div>
           <Accordion type="multiple" value={openCategories} onValueChange={(v) => setOpenCategories(v as string[])} >
             {categoryNames.map((category) => (
-              <AccordionItem key={category} value={category} className="border-0 py-2">
-                <AccordionTrigger onClick={() => handleToggleCategory(category)} className="py-0">
+              <AccordionItem key={category} value={category}>
+                <AccordionTrigger onClick={() => handleToggleCategory(category)}>
                   {category}
                 </AccordionTrigger>
                 <AccordionContent>
                   <ul className="pl-2 ml-2 border-l">
                     {categoriesMap[category].map((sub) => (
-                      <li key={sub.subcategory}>
+                      <li key={sub.subcategory} className="">
                         <button
-                          className="text-left w-full py-1 hover:text-blue-600"
+                          className="text-left w-full p-1 pl-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-lg"
                           onClick={() => handleSubcategoryClick(category, sub.subcategory)}
                         >
                           {sub.subcategory}
@@ -127,7 +127,7 @@ export function AppSidebar() {
         </div>
 
         {/* Bottom: sticks to bottom */}
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="mt-4 flex flex-col">
           <ThemeToggle/>
           <LearnWithTeacher />
           <FeedbackInSidebar />
