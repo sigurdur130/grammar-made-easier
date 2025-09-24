@@ -132,7 +132,6 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
           />
         )}
         
-
         <ExerciseContent
           ref={inputRef}
           sentence={sentence}

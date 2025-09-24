@@ -48,7 +48,7 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
   };
 
   return (
-    <div className="relative w-full sm:w-auto" style={{ minWidth }}>
+    <div className="relative w-full sm:w-auto border-t-0 border-x-0 border-b-2 border-[#CBD5E0] hover:border-[#6B46C1] focus:border-[#6B46C1] dark:border-muted-foreground/40 dark:hover:border-primary dark:focus:border-primary" style={{ minWidth }}>
       {baseForm && (
         <span
           className={`absolute transition-all duration-200 pointer-events-none z-10 whitespace-nowrap ${
@@ -67,10 +67,10 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
         onKeyPress={onKeyPress}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        className={`w-full text-center border-t-0 border-x-0 rounded-none focus:ring-0 focus:outline-none ${
+        className={`w-full text-center dark:bg-muted/50 dark:text-card-foreground border-none ${
           isCorrect === false
-            ? "border-red-200 bg-red-50 dark:bg-red-950/30 dark:text-red-300"
-            : "border-b-2 border-[#CBD5E0] hover:border-[#6B46C1] focus:border-[#6B46C1] dark:border-muted-foreground/40 dark:hover:border-primary dark:focus:border-primary dark:bg-muted/50 dark:text-card-foreground"
+            ? "border-red-200 bg-red-50 dark:bg-red-950/30 dark:text-red-300 "
+            : ""
         } text-base md:text-lg px-3 py-2 ${
           shake ? "animate-[shake_0.5s_ease-in-out]" : ""
         }`}
