@@ -63,7 +63,17 @@ export function AppSidebar() {
     categoriesMap[sub.word_category].push(sub);
   });
 
-  const categoryNames = Object.keys(categoriesMap);
+  const preferredWordCategoryOrder = [
+    "Nouns",
+    "Verbs",
+    "Adjectives",
+    "Prepositions",
+    "Numbers",
+  ];
+
+  const categoryNames = preferredWordCategoryOrder.filter(
+    (c) => categoriesMap[c]
+  );
 
   const handleToggleCategory = (category: string) => {
     setOpenCategories((prev) =>
