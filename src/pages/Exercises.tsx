@@ -109,7 +109,7 @@ const Exercises = () => {
   });
 
   const { data: sentences, isLoading, refetch } = useQuery({
-    queryKey: ["sentences", category, subcategory, currentAppliedFilters],
+    queryKey: ["sentences", subcategory, currentAppliedFilters],
     queryFn: async () => {
       const neededRandomSentences = 6 - retrySentences.length;
       let newSentences: Sentence[] = [];
@@ -150,6 +150,7 @@ const Exercises = () => {
 
       return combinedSentences;
     },
+    refetchOnWindowFocus: false,
   });
 
   // Initialize pending filters when sidebar opens
