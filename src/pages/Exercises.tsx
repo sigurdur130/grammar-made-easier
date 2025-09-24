@@ -111,14 +111,6 @@ const Exercises = () => {
   const { data: sentences, isLoading, refetch } = useQuery({
     queryKey: ["sentences", category, subcategory, currentAppliedFilters],
     queryFn: async () => {
-      console.log("Fetching sentences with:", {
-        category,
-        subcategory,
-        masteredIds,
-        retryIds: retrySentences.map((s) => s.id),
-        retrySentencesCount: retrySentences.length,
-      });
-
       const neededRandomSentences = 6 - retrySentences.length;
       let newSentences: Sentence[] = [];
 
@@ -155,18 +147,6 @@ const Exercises = () => {
       }
 
       const combinedSentences = [...retrySentences, ...newSentences];
-      console.log("Combined sentences:", combinedSentences);
-
-      if (newSentences.length < neededRandomSentences && retrySentences.length === 0) {
-        try {
-          await supabase.functions.invoke("notify-category-completed", {
-            body: { category, subcategory },
-          });
-          console.log("Notification sent for completed category");
-        } catch (error) {
-          console.error("Error sending completion notification:", error);
-        }
-      }
 
       return combinedSentences;
     },
@@ -183,13 +163,6 @@ const Exercises = () => {
   const handleCorrectAnswer = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
-
-    console.log("Handling correct answer:", {
-      sentenceId: currentSentence.id,
-      hasIncorrectAttempt,
-      currentIndex,
-      totalSentences: sentences?.length,
-    });
 
     if (!hasIncorrectAttempt) {
       setFirstTryCorrect((prev) => prev + 1);
@@ -214,7 +187,6 @@ const Exercises = () => {
     if (!currentSentence) return;
 
     if (!hasIncorrectAttempt && !retrySentences.some((s) => s.id === currentSentence.id)) {
-      console.log("Adding sentence to retry list:", currentSentence.id);
       setRetrySentences((prev) => [...prev, currentSentence]);
     }
 
@@ -222,7 +194,6 @@ const Exercises = () => {
   };
 
   const handleRestart = async () => {
-    console.log("Restarting exercises...");
     setCurrentIndex(0);
     setAnsweredCount(0);
     setFirstTryCorrect(0);

@@ -42,8 +42,6 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log("Feedback notification email sent successfully:", emailResponse);
-
     return new Response(JSON.stringify(emailResponse), {
       status: 200,
       headers: {

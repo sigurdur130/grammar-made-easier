@@ -14,7 +14,6 @@ export function CategoryCard({ title, category, difficulty }: CategoryCardProps)
   const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log("Navigating to exercises for:", category, title);
     navigate(`/exercises/${category}/${title}`);
   };
 
