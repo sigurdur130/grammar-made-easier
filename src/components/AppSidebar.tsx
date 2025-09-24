@@ -84,7 +84,7 @@ export function AppSidebar() {
         <div className="flex flex-col h-screen p-4">
         {/* Top: Logo + Accordion, scrollable */}
         <div className="flex-1">
-          <div className="flex flex-row justify-between items-center mb-4">
+          <div className="flex flex-row justify-between items-center mb-4 pl-2">
             <Link to="/" className="flex items-center gap-2">
               <h2 className="font-bold">Grammar made easi(er)</h2>
               <img src="/logo.png" alt="Logo" className="h-6 w-6" />
