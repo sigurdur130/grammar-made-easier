@@ -239,7 +239,7 @@ const Exercises = () => {
   const isOutOfSentences = sentences && sentences.length < 6;
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="w-full max-w-3xl mx-auto">
       <div className="top-12 md:top-0 bg-background/95 backdrop-blur-sm z-10 pb-2 -mt-2 pt-2">
         <Progress value={progress} className="mb-3" />
         {subcategory === "Cases" && (
