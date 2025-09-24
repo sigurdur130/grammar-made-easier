@@ -63,6 +63,32 @@ export function AppSidebar() {
     categoriesMap[sub.word_category].push(sub);
   });
 
+  const preferredSubcategoryOrder = [
+    "Gender",
+    "Gender recognition",
+    "Definite article",
+    "Plural",
+    "Cases",
+  ];
+
+  Object.keys(categoriesMap).forEach((category) => {
+    categoriesMap[category].sort((a, b) => {
+      const indexA = preferredSubcategoryOrder.indexOf(a.subcategory);
+      const indexB = preferredSubcategoryOrder.indexOf(b.subcategory);
+
+      // If both are in the preferred list, compare by index
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+      }
+      // If only A is in the list, it comes first
+      if (indexA !== -1) return -1;
+      // If only B is in the list, it comes first
+      if (indexB !== -1) return 1;
+      // If neither are in the list, keep their original order
+      return 0;
+    });
+  });
+
   const preferredWordCategoryOrder = [
     "Nouns",
     "Verbs",
