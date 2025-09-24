@@ -18,7 +18,6 @@ import { Menu } from "lucide-react";
 type Subcategory = {
   subcategory: string;
   word_category: string;
-  created_at: string;
   status: string;
   difficulty: string;
   further_reading: string | null;
@@ -35,7 +34,7 @@ export function AppSidebar() {
       const { data, error } = await supabase
         .from("subcategories")
         .select(
-          "subcategory, word_category, created_at, status, difficulty, further_reading"
+          "subcategory, word_category, status, difficulty, further_reading"
         )
         .eq("status", "online");
 

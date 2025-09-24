@@ -48,7 +48,7 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
   };
 
   return (
-    <div className="relative w-full sm:w-auto border-t-0 border-x-0 border-b-2 border-[#CBD5E0] hover:border-[#6B46C1] focus:border-[#6B46C1] dark:border-muted-foreground/40 dark:hover:border-primary dark:focus:border-primary" style={{ minWidth }}>
+    <div className="relative w-full sm:w-auto border-t-0 border-x-0 border-b-2 border-[#CBD5E0] hover:border-[#6B46C1] focus:border-[#6B46C1] dark:border-muted-foreground/40 dark:hover:border-primary dark:focus:border-primary mx-1" style={{ minWidth }}>
       {baseForm && (
         <span
           className={`absolute transition-all duration-200 pointer-events-none z-10 whitespace-nowrap ${
