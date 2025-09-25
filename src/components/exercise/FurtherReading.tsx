@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Book, ChevronDown, ChevronUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -31,7 +30,7 @@ export function FurtherReading({ content }: FurtherReadingProps) {
         </CollapsibleTrigger>
         <CollapsibleContent className="mt-2">
           <Card>
-            <CardContent className="p-4 prose dark:prose-invert prose-sm max-w-none prose-headings:mt-4 prose-headings:mb-2">
+            <CardContent className="p-4 prose dark:prose-invert prose-sm max-w-none prose-headings:mt-4 prose-headings:mb-2 prose-ul:m-0">
               <div 
                 dangerouslySetInnerHTML={{ __html: content }} 
                 className="html-content"

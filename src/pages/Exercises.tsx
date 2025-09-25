@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { EndScreen } from "@/components/exercise/EndScreen";
 import { ExerciseFilterSidebar } from "@/components/exercise/ExerciseFilterSidebar";
 import { supabase } from "@/integrations/supabase/client";
+import { FurtherReading } from "@/components/exercise/FurtherReading";
 
 interface Sentence {
   id: number;
@@ -261,19 +262,25 @@ const Exercises = () => {
         <div className="h-[400px] bg-muted animate-pulse rounded-lg" />
       ) : sentences && sentences.length > 0 ? (
         isComplete ? (
-          <EndScreen
-            onRestart={handleRestart}
-            firstTryCorrect={firstTryCorrect}
-            totalExercises={sentences.length}
-            isOutOfSentences={isOutOfSentences}
-          />
+          <>
+            <EndScreen
+              onRestart={handleRestart}
+              firstTryCorrect={firstTryCorrect}
+              totalExercises={sentences.length}
+              isOutOfSentences={isOutOfSentences}
+            />
+            <FurtherReading content={subcategoryInfo?.further_reading ?? null}/>
+          </>
         ) : (
-          <ExerciseCard
-            sentence={sentences[currentIndex]}
-            onCorrect={handleCorrectAnswer}
-            onIncorrect={handleIncorrectAnswer}
-            subcategory={subcategory || ""}
-          />
+          <>
+            <ExerciseCard
+              sentence={sentences[currentIndex]}
+              onCorrect={handleCorrectAnswer}
+              onIncorrect={handleIncorrectAnswer}
+              subcategory={subcategory || ""}
+            />
+            <FurtherReading content={subcategoryInfo?.further_reading ?? null}/>
+          </>
         )
       ) : null}
 
