@@ -53,7 +53,9 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
         <span
           className={`absolute transition-all duration-200 pointer-events-none z-10 whitespace-nowrap ${
             isFocused || answer.length > 0
-              ? "-top-3 left-3 text-xs text-muted-foreground bg-background px-1"
+              ? `-top-[14px] left-3 text-xs bg-background px-1 ${
+                isFocused && isCorrect === false ? "text-red-500" : "text-muted-foreground"
+              }`
               : "top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-base text-muted-foreground/60"
           }`}
         >
