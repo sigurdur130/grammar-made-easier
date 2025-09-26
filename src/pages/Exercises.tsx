@@ -9,6 +9,7 @@ import { EndScreen } from "@/components/exercise/EndScreen";
 import { ExerciseFilterSidebar } from "@/components/exercise/ExerciseFilterSidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { FurtherReading } from "@/components/exercise/FurtherReading";
+import { useRef } from "react";
 
 interface Sentence {
   id: number;
@@ -65,14 +66,16 @@ const Exercises = () => {
     },
   });
 
-  // Reset state on category/subcategory change
+  // Reset state on subcategory or filter change
   useEffect(() => {
-    setCurrentIndex(0);
-    setAnsweredCount(0);
-    setFirstTryCorrect(0);
-    setMasteredIds([]);
-    setRetrySentences([]);
-    setHasIncorrectAttempt(false);
+    console.log('useEffect triggered, setting clearIntentRef to true');
+    clearIntentRef.current = true;
+    console.log('clearIntentRef.current set to:', clearIntentRef.current);
+    refetch();
+  }, [subcategory, currentAppliedFilters]);
+
+  // Set default filters when subcategory changes
+  useEffect(() => {
 
     if (subcategory === "Cases") {
       const defaultExemplars = exemplars?.filter((e) => e.default).map((e) => e.id) || [];
@@ -94,7 +97,7 @@ const Exercises = () => {
       setCurrentAppliedFilters(defaultFilters);
       setPendingFilterChanges(defaultFilters);
     }
-  }, [category, subcategory, exemplars]);
+  }, [subcategory, exemplars]);
 
   const { data: subcategoryInfo } = useQuery({
     queryKey: ["subcategoryInfo", subcategory, category],
@@ -109,10 +112,30 @@ const Exercises = () => {
     },
   });
 
+  const clearIntentRef = useRef(false);
+
   const { data: sentences, isLoading, refetch } = useQuery({
-    queryKey: ["sentences", subcategory, currentAppliedFilters],
+    queryKey: ["sentences"],
     queryFn: async () => {
-      const neededRandomSentences = 6 - retrySentences.length;
+      console.log('Query running, clearIntentRef.current:', clearIntentRef.current);
+
+      let currentRetrySentences = retrySentences;
+
+      if (clearIntentRef.current) {
+        console.log('Clearing state...');
+        console.log('retrySentences before clearing:', retrySentences);
+        setCurrentIndex(0);
+        setAnsweredCount(0);
+        setFirstTryCorrect(0);
+        setHasIncorrectAttempt(false);
+        setMasteredIds([]);
+        setRetrySentences([]);
+        currentRetrySentences = [];
+        clearIntentRef.current = false;
+      }
+
+      const neededRandomSentences = 6 - currentRetrySentences.length;
+      
       let newSentences: Sentence[] = [];
 
       if (neededRandomSentences > 0) {
@@ -124,7 +147,7 @@ const Exercises = () => {
                 subcategory_filter: subcategory,
                 word_category_filter: category,
                 mastered_ids: masteredIds,
-                retry_ids: retrySentences.map((s) => s.id),
+                retry_ids: currentRetrySentences.map((s) => s.id),
                 cases_filter: currentAppliedFilters.caseFilters,
                 numbers_filter: currentAppliedFilters.numberFilters,
                 definiteness_filter: currentAppliedFilters.definitenessFilters,
@@ -135,7 +158,7 @@ const Exercises = () => {
                 subcategory_filter: subcategory,
                 word_category_filter: category,
                 mastered_ids: masteredIds,
-                retry_ids: retrySentences.map((s) => s.id),
+                retry_ids: currentRetrySentences.map((s) => s.id),
               }
         );
 
@@ -147,7 +170,7 @@ const Exercises = () => {
         newSentences = data || [];
       }
 
-      const combinedSentences = [...retrySentences, ...newSentences];
+      const combinedSentences = [...currentRetrySentences, ...newSentences];
 
       return combinedSentences;
     },
@@ -195,16 +218,6 @@ const Exercises = () => {
     setHasIncorrectAttempt(true);
   };
 
-  const handleRestart = async () => {
-    setCurrentIndex(0);
-    setAnsweredCount(0);
-    setFirstTryCorrect(0);
-    setHasIncorrectAttempt(false);
-    setMasteredIds([]);
-    setRetrySentences([]);
-    await refetch();
-  };
-
   const handleFiltersChange = (filters: CasesFilters) => {
     setPendingFilterChanges(filters);
   };
@@ -239,6 +252,13 @@ const Exercises = () => {
   const isComplete = sentences && answeredCount === sentences.length;
   const isOutOfSentences = sentences && sentences.length < 6;
 
+  // Add this temporary debugging useEffect
+  useEffect(() => {
+    console.log('retrySentences changed to:', retrySentences);
+    console.trace(); // This will show the call stack
+  }, [retrySentences]);
+
+
   return (
     <div className="w-full max-w-3xl mx-auto">
       <div className="top-12 md:top-0 bg-background/95 backdrop-blur-sm z-10 pb-2 -mt-2 pt-2">
@@ -264,7 +284,14 @@ const Exercises = () => {
         isComplete ? (
           <>
             <EndScreen
-              onRestart={handleRestart}
+              onStartFresh={() => {
+                clearIntentRef.current = true;
+                refetch();
+              }}
+              onKeepPracticing={() => {
+                clearIntentRef.current = false;
+                refetch();
+              }}
               firstTryCorrect={firstTryCorrect}
               totalExercises={sentences.length}
               isOutOfSentences={isOutOfSentences}
