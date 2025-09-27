@@ -53,7 +53,9 @@ const Exercises = () => {
   });
   const [pendingFilterChanges, setPendingFilterChanges] = useState(currentAppliedFilters);
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
+  const clearIntentRef = useRef(false);
 
+  // Fetch exemplars for filter sidebar
   const { data: exemplars } = useQuery({
     queryKey: ["exemplars"],
     queryFn: async () => {
@@ -66,15 +68,13 @@ const Exercises = () => {
     },
   });
 
-  // Reset state on subcategory or filter change
+  // Reset state on subcategory or filter change. The sentence fetching query clears states if clearIntentRef.current is true.
   useEffect(() => {
-    console.log('useEffect triggered, setting clearIntentRef to true');
     clearIntentRef.current = true;
-    console.log('clearIntentRef.current set to:', clearIntentRef.current);
     refetch();
   }, [subcategory, currentAppliedFilters]);
 
-  // Set default filters when subcategory changes
+  // Set default filters when subcategory changes. Why does this set accusative, singular, indefinite when subcat is not Cases? 
   useEffect(() => {
 
     if (subcategory === "Cases") {
@@ -99,8 +99,10 @@ const Exercises = () => {
     }
   }, [subcategory, exemplars]);
 
+
+  // Fetch further reading content for the subcategory. Why isn't this just part of the mount?
   const { data: subcategoryInfo } = useQuery({
-    queryKey: ["subcategoryInfo", subcategory, category],
+    queryKey: ["subcategoryInfo", subcategory],
     queryFn: async () => {
       const { data } = await supabase
         .from("subcategories")
@@ -112,25 +114,25 @@ const Exercises = () => {
     },
   });
 
-  const clearIntentRef = useRef(false);
-
+  // Fetch sentences, combining retrySentences and new random sentences as needed
   const { data: sentences, isLoading, refetch } = useQuery({
     queryKey: ["sentences"],
     queryFn: async () => {
-      console.log('Query running, clearIntentRef.current:', clearIntentRef.current);
 
+      // Declare a local variable for retry sentences. State is asynchronous, so if the query calls state, information can be stale.
       let currentRetrySentences = retrySentences;
 
+      // Always reset exercise state when fetching new sentences
+      setCurrentIndex(0);
+      setAnsweredCount(0);
+      setFirstTryCorrect(0);
+      setHasIncorrectAttempt(false);
+
+      // If clearIntentRef is true, reset all relevant state and set ref back to false.
       if (clearIntentRef.current) {
-        console.log('Clearing state...');
-        console.log('retrySentences before clearing:', retrySentences);
-        setCurrentIndex(0);
-        setAnsweredCount(0);
-        setFirstTryCorrect(0);
-        setHasIncorrectAttempt(false);
         setMasteredIds([]);
         setRetrySentences([]);
-        currentRetrySentences = [];
+        currentRetrySentences = []; // Reset local copy too
         clearIntentRef.current = false;
       }
 
@@ -138,7 +140,11 @@ const Exercises = () => {
       
       let newSentences: Sentence[] = [];
 
+      // Only fetch new sentences if we need more to reach 6 total
+
       if (neededRandomSentences > 0) {
+
+        // Fetch new random sentences from the database. Add filters if subcategory is Cases.
         const { data, error } = await supabase.rpc(
           "get_random_rows",
           subcategory === "Cases"
@@ -171,13 +177,14 @@ const Exercises = () => {
       }
 
       const combinedSentences = [...currentRetrySentences, ...newSentences];
+      console.log("Combined sentences:", combinedSentences);
 
       return combinedSentences;
     },
     refetchOnWindowFocus: false,
   });
 
-  // Initialize pending filters when sidebar opens
+  // Set pending filters when sidebar opens. Triggers on currentAppliedFilters change too, to keep in sync.
   useEffect(() => {
     if (isFilterSidebarOpen) {
       setPendingFilterChanges(currentAppliedFilters);
@@ -189,6 +196,7 @@ const Exercises = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
 
+    // If the answer was correct on the first try, increment firstTryCorrect and add to masteredIds. Remove from retrySentences if it was there.
     if (!hasIncorrectAttempt) {
       setFirstTryCorrect((prev) => prev + 1);
       setMasteredIds((prev) => [...prev, currentSentence.id]);
@@ -201,6 +209,7 @@ const Exercises = () => {
 
     setAnsweredCount((prev) => prev + 1);
 
+    // Move to next sentence if available
     if (sentences && currentIndex < sentences.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setHasIncorrectAttempt(false);
@@ -211,6 +220,7 @@ const Exercises = () => {
     const currentSentence = sentences?.[currentIndex];
     if (!currentSentence) return;
 
+    // If this is the first incorrect attempt for this sentence, add it to retrySentences
     if (!hasIncorrectAttempt && !retrySentences.some((s) => s.id === currentSentence.id)) {
       setRetrySentences((prev) => [...prev, currentSentence]);
     }
@@ -222,6 +232,7 @@ const Exercises = () => {
     setPendingFilterChanges(filters);
   };
 
+  // Apply filters and close sidebar.
   const handleApplyFilters = () => {
     setCurrentAppliedFilters(pendingFilterChanges);
     setIsFilterSidebarOpen(false);
@@ -252,12 +263,10 @@ const Exercises = () => {
   const isComplete = sentences && answeredCount === sentences.length;
   const isOutOfSentences = sentences && sentences.length < 6;
 
-  // Add this temporary debugging useEffect
-  useEffect(() => {
-    console.log('retrySentences changed to:', retrySentences);
-    console.trace(); // This will show the call stack
-  }, [retrySentences]);
-
+  console.log("Render check - isComplete:", isComplete);
+  console.log("Render check - answeredCount:", answeredCount);
+  console.log("Render check - sentences?.length:", sentences?.length);
+  console.log("Render check - currentIndex:", currentIndex);
 
   return (
     <div className="w-full max-w-3xl mx-auto">

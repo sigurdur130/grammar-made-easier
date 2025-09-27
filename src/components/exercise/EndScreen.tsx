@@ -7,7 +7,8 @@ import confetti from "canvas-confetti";
 import { useEffect, useRef } from "react";
 
 interface EndScreenProps {
-  onRestart: () => void;
+  onStartFresh: () => void;
+  onKeepPracticing: () => void;
   firstTryCorrect: number;
   totalExercises: number;
   isOutOfSentences?: boolean;
@@ -35,7 +36,8 @@ const getScoreMessage = (firstTryCorrect: number, total: number): string => {
 };
 
 export function EndScreen({
-  onRestart,
+  onStartFresh,
+  onKeepPracticing,
   firstTryCorrect,
   totalExercises,
   isOutOfSentences
@@ -84,9 +86,23 @@ export function EndScreen({
             {isOutOfSentences ? "Wow! You've mastered all the available sentences in this category. Want to start fresh and practice them again?" : getScoreMessage(firstTryCorrect, totalExercises)}
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-3">
-            <Button ref={buttonRef} onClick={onRestart} className="bg-primary hover:bg-primary/90 w-full sm:w-auto">
-              {isOutOfSentences ? "Start fresh" : "Keep practicing"}
-            </Button>
+            {isOutOfSentences ? (
+              <Button 
+                ref={buttonRef} 
+                onClick={onStartFresh} 
+                className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
+              >
+                Start fresh
+              </Button>
+            ) : (
+              <Button 
+                ref={buttonRef} 
+                onClick={onKeepPracticing}
+                className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
+              >
+                Keep practicing
+              </Button>
+            )}
             <Button 
               onClick={() => navigate('/')} 
               variant="outline" 
