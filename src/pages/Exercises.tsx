@@ -49,11 +49,12 @@ const Exercises = () => {
     caseFilters: ["Accusative"],
     numberFilters: ["Singular"],
     definitenessFilters: ["Indefinite"],
-    exemplarFilters: [],
+    exemplarFilters: [5, 7, 1, 2, 11],
   });
   const [pendingFilterChanges, setPendingFilterChanges] = useState(currentAppliedFilters);
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
-  const clearIntentRef = useRef(false);
+  const clearIntentRef = useRef(true);
+
 
   // Fetch exemplars for filter sidebar
   const { data: exemplars } = useQuery({
@@ -68,39 +69,7 @@ const Exercises = () => {
     },
   });
 
-  // Reset state on subcategory or filter change. The sentence fetching query clears states if clearIntentRef.current is true.
-  useEffect(() => {
-    clearIntentRef.current = true;
-    refetch();
-  }, [subcategory, currentAppliedFilters]);
-
-  // Set default filters when subcategory changes. Why does this set accusative, singular, indefinite when subcat is not Cases? 
-  useEffect(() => {
-
-    if (subcategory === "Cases") {
-      const defaultExemplars = exemplars?.filter((e) => e.default).map((e) => e.id) || [];
-      const defaultFilters = {
-        caseFilters: ["Accusative"],
-        numberFilters: ["Singular"],
-        definitenessFilters: ["Indefinite"],
-        exemplarFilters: defaultExemplars,
-      };
-      setCurrentAppliedFilters(defaultFilters);
-      setPendingFilterChanges(defaultFilters);
-    } else {
-      const defaultFilters = {
-        caseFilters: ["Accusative"],
-        numberFilters: ["Singular"],
-        definitenessFilters: ["Indefinite"],
-        exemplarFilters: [],
-      };
-      setCurrentAppliedFilters(defaultFilters);
-      setPendingFilterChanges(defaultFilters);
-    }
-  }, [subcategory, exemplars]);
-
-
-  // Fetch further reading content for the subcategory. Why isn't this just part of the mount?
+  // Fetch further reading content for the subcategory. 
   const { data: subcategoryInfo } = useQuery({
     queryKey: ["subcategoryInfo", subcategory],
     queryFn: async () => {
@@ -114,11 +83,11 @@ const Exercises = () => {
     },
   });
 
-  // Fetch sentences, combining retrySentences and new random sentences as needed
+  // This is Sir Findsalot. He fetches sentences, combining retrySentences and new random sentences as needed
   const { data: sentences, isLoading, refetch } = useQuery({
-    queryKey: ["sentences"],
+    queryKey: ["sentences", subcategory, currentAppliedFilters],
     queryFn: async () => {
-
+          
       // Declare a local variable for retry sentences. State is asynchronous, so if the query calls state, information can be stale.
       let currentRetrySentences = retrySentences;
 
@@ -128,12 +97,13 @@ const Exercises = () => {
       setFirstTryCorrect(0);
       setHasIncorrectAttempt(false);
 
-      // If clearIntentRef is true, reset all relevant state and set ref back to false.
+      // Reset additional state if you're not clicking 'keep practicing' 
       if (clearIntentRef.current) {
         setMasteredIds([]);
         setRetrySentences([]);
         currentRetrySentences = []; // Reset local copy too
-        clearIntentRef.current = false;
+      } else {
+        clearIntentRef.current = true;
       }
 
       const neededRandomSentences = 6 - currentRetrySentences.length;
@@ -177,14 +147,13 @@ const Exercises = () => {
       }
 
       const combinedSentences = [...currentRetrySentences, ...newSentences];
-      console.log("Combined sentences:", combinedSentences);
 
       return combinedSentences;
     },
     refetchOnWindowFocus: false,
   });
 
-  // Set pending filters when sidebar opens. Triggers on currentAppliedFilters change too, to keep in sync.
+  // This is Joan of Arc. She sets pending filters when sidebar opens. Triggers on currentAppliedFilters change too, to keep in sync.
   useEffect(() => {
     if (isFilterSidebarOpen) {
       setPendingFilterChanges(currentAppliedFilters);
@@ -228,24 +197,18 @@ const Exercises = () => {
     setHasIncorrectAttempt(true);
   };
 
+  // This is Kilroy. He updates pending filters when user makes changes in the sidebar. He's fucking with my exemplars when he shouldn't be!
   const handleFiltersChange = (filters: CasesFilters) => {
     setPendingFilterChanges(filters);
   };
 
-  // Apply filters and close sidebar.
+  // This is Samwise. He applies filters and closes sidebar.
   const handleApplyFilters = () => {
     setCurrentAppliedFilters(pendingFilterChanges);
     setIsFilterSidebarOpen(false);
-
-    // Reset exercise state when filters are applied
-    setCurrentIndex(0);
-    setAnsweredCount(0);
-    setFirstTryCorrect(0);
-    setMasteredIds([]);
-    setRetrySentences([]);
-    setHasIncorrectAttempt(false);
   };
 
+  // This is Frodo. He resets filters to default values.
   const handleResetFilters = () => {
     const defaultExemplars =
       exemplars?.filter((e) => e.default).map((e) => e.id) || [];
@@ -262,11 +225,6 @@ const Exercises = () => {
   const progress = sentences ? (answeredCount / sentences.length) * 100 : 0;
   const isComplete = sentences && answeredCount === sentences.length;
   const isOutOfSentences = sentences && sentences.length < 6;
-
-  console.log("Render check - isComplete:", isComplete);
-  console.log("Render check - answeredCount:", answeredCount);
-  console.log("Render check - sentences?.length:", sentences?.length);
-  console.log("Render check - currentIndex:", currentIndex);
 
   return (
     <div className="w-full max-w-3xl mx-auto">
@@ -294,7 +252,6 @@ const Exercises = () => {
           <>
             <EndScreen
               onStartFresh={() => {
-                clearIntentRef.current = true;
                 refetch();
               }}
               onKeepPracticing={() => {
