@@ -88,8 +88,9 @@ const Exercises = () => {
     queryKey: ["sentences", subcategory, currentAppliedFilters],
     queryFn: async () => {
           
-      // Declare a local variable for retry sentences. State is asynchronous, so if the query calls state, information can be stale.
+      // Declare local variables. State is asynchronous, so if the query calls state, information can be stale.
       let currentRetrySentences = retrySentences;
+      let currentMasteredIds = masteredIds
 
       // Always reset exercise state when fetching new sentences
       setCurrentIndex(0);
@@ -97,14 +98,19 @@ const Exercises = () => {
       setFirstTryCorrect(0);
       setHasIncorrectAttempt(false);
 
+      console.log("currentmasteredids before purge:", currentMasteredIds)
+
       // Reset additional state if you're not clicking 'keep practicing' 
       if (clearIntentRef.current) {
         setMasteredIds([]);
+        currentMasteredIds = [];
         setRetrySentences([]);
         currentRetrySentences = []; // Reset local copy too
       } else {
         clearIntentRef.current = true;
       }
+
+      console.log("currentmasteredids after purge:", currentMasteredIds)
 
       const neededRandomSentences = 6 - currentRetrySentences.length;
       
@@ -122,7 +128,7 @@ const Exercises = () => {
                 num_rows: neededRandomSentences,
                 subcategory_filter: subcategory,
                 word_category_filter: category,
-                mastered_ids: masteredIds,
+                mastered_ids: currentMasteredIds,
                 retry_ids: currentRetrySentences.map((s) => s.id),
                 cases_filter: currentAppliedFilters.caseFilters,
                 numbers_filter: currentAppliedFilters.numberFilters,
@@ -133,7 +139,7 @@ const Exercises = () => {
                 num_rows: neededRandomSentences,
                 subcategory_filter: subcategory,
                 word_category_filter: category,
-                mastered_ids: masteredIds,
+                mastered_ids: currentMasteredIds,
                 retry_ids: currentRetrySentences.map((s) => s.id),
               }
         );

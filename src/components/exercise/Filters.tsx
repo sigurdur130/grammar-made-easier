@@ -132,9 +132,7 @@ export function Filters({
 
       {/* Grammar Filter Accordion */}
       <AccordionItem value="grammar">
-        <h3>
-          <AccordionTrigger className="text-lg font-medium my-1">Grammar</AccordionTrigger>
-        </h3>
+        <AccordionTrigger className="text-lg font-medium my-1">Grammar</AccordionTrigger>
         <AccordionContent className="">
           <div className="space-y-4 p-4 pt-2">
             {/* Case Options */}
@@ -196,9 +194,7 @@ export function Filters({
 
       {/* Exemplar Filter Accordion */}
       <AccordionItem value="exemplars">
-        <h3>
-          <AccordionTrigger className="text-lg font-medium my-1">Exemplars</AccordionTrigger>
-        </h3>
+        <AccordionTrigger className="text-lg font-medium my-1">Exemplars</AccordionTrigger>
         <AccordionContent className="pt-2">
           {renderExemplarAccordion()}
         </AccordionContent>
