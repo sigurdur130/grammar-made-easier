@@ -86,7 +86,7 @@ export function Filters({
   // --- Exemplar rendering ---
   const genderOrder = ["Masculine", "Feminine", "Neuter"];
   const renderExemplarAccordion = () => (
-    <Accordion type="multiple" defaultValue={[]} className="pl-2 ml-2 border-l">
+    <Accordion type="multiple" defaultValue={[]} className="">
       {genderOrder.map((gender) => {
         const genderExemplars = exemplars.filter(e => e.gender === gender);
         const sortedExemplars = genderExemplars.sort((a, b) => {
@@ -194,8 +194,8 @@ export function Filters({
 
       {/* Exemplar Filter Accordion */}
       <AccordionItem value="exemplars">
-        <AccordionTrigger className="text-lg font-medium my-1">Exemplars</AccordionTrigger>
-        <AccordionContent className="pt-2">
+        <AccordionTrigger className="text-lg font-medium">Exemplars</AccordionTrigger>
+        <AccordionContent className="ml-2 pl-2 border-l">
           {renderExemplarAccordion()}
         </AccordionContent>
       </AccordionItem>
