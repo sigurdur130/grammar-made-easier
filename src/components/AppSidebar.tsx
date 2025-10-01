@@ -1,4 +1,3 @@
-// AppSidebar.tsx
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,7 +13,6 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 
-// Subcategory type
 type Subcategory = {
   subcategory: string;
   word_category: string;
@@ -23,7 +21,7 @@ type Subcategory = {
   further_reading: string | null;
 };
 
-export function AppSidebar() {
+export function AppSidebar( { currentSentence }: {currentSentence?: number }){
   const navigate = useNavigate();
   const { setOpenMobile, isMobile } = useSidebar();
   const [openCategories, setOpenCategories] = useState<string[]>([]); // controlled accordion
@@ -165,7 +163,7 @@ export function AppSidebar() {
         <div className="mt-4 flex flex-col">
           <ThemeToggle/>
           <LearnWithTeacher />
-          <FeedbackInSidebar />
+          <FeedbackInSidebar currentSentence={currentSentence} />
         </div>
       </div>
       </SidebarContent>

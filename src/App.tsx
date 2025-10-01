@@ -9,10 +9,11 @@ import { ThemeProvider } from "./providers/ThemeProvider";
 import { MobileNavbar } from "./components/MobileNavbar";
 import { SidebarProvider, SidebarInset, useSidebar } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { useState } from "react";
 
 const queryClient = new QueryClient();
 
-const AppLayout = ({ children }: { children: React.ReactNode }) => {
+const AppLayout = ({ children, currentSentence }: { children: React.ReactNode; currentSentence?: number }) => {
   const { openMobile } = useSidebar();
 
   return (
@@ -23,7 +24,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
           openMobile ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <AppSidebar/>
+        <AppSidebar currentSentence={currentSentence} />
       </div>
 
       {/* Main content */}
@@ -34,28 +35,36 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <SidebarProvider>
-            <div className="md:hidden">
-              <MobileNavbar/>
-            </div>
-            <AppLayout>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/exercises/:category/:subcategory" element={<Exercises />} />
-              </Routes>
-            </AppLayout>
-          </SidebarProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const [currentSentence, setCurrentSentence] = useState<number | undefined>(undefined);
+  console.log('In App - setCurrentSentence:', setCurrentSentence, 'type:', typeof setCurrentSentence);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <SidebarProvider>
+              <div className="md:hidden">
+                <MobileNavbar/>
+              </div>
+              <AppLayout currentSentence={currentSentence}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route 
+                    path="/exercises/:category/:subcategory" 
+                    element={<Exercises setCurrentSentence={setCurrentSentence} />} 
+                  />
+                </Routes>
+              </AppLayout>
+            </SidebarProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

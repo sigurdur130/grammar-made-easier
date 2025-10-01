@@ -36,7 +36,9 @@ interface CasesFilters {
   exemplarFilters: number[];
 }
 
-const Exercises = () => {
+const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | undefined) => void }) => {
+  console.log('setCurrentSentence:', setCurrentSentence, 'type:', typeof setCurrentSentence);
+
   const { category, subcategory } = useParams();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -54,6 +56,7 @@ const Exercises = () => {
   const [pendingFilterChanges, setPendingFilterChanges] = useState(currentAppliedFilters);
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
   const clearIntentRef = useRef(true);
+
 
 
   // Fetch exemplars for filter sidebar
@@ -98,8 +101,6 @@ const Exercises = () => {
       setFirstTryCorrect(0);
       setHasIncorrectAttempt(false);
 
-      console.log("currentmasteredids before purge:", currentMasteredIds)
-
       // Reset additional state if you're not clicking 'keep practicing' 
       if (clearIntentRef.current) {
         setMasteredIds([]);
@@ -109,8 +110,6 @@ const Exercises = () => {
       } else {
         clearIntentRef.current = true;
       }
-
-      console.log("currentmasteredids after purge:", currentMasteredIds)
 
       const neededRandomSentences = 6 - currentRetrySentences.length;
       
@@ -168,16 +167,16 @@ const Exercises = () => {
 
   // --- Handlers ---
   const handleCorrectAnswer = () => {
-    const currentSentence = sentences?.[currentIndex];
-    if (!currentSentence) return;
+    const sentenceToCheck = sentences?.[currentIndex];
+    if (!sentenceToCheck) return;
 
     // If the answer was correct on the first try, increment firstTryCorrect and add to masteredIds. Remove from retrySentences if it was there.
     if (!hasIncorrectAttempt) {
       setFirstTryCorrect((prev) => prev + 1);
-      setMasteredIds((prev) => [...prev, currentSentence.id]);
-      if (retrySentences.some((s) => s.id === currentSentence.id)) {
+      setMasteredIds((prev) => [...prev, sentenceToCheck.id]);
+      if (retrySentences.some((s) => s.id === sentenceToCheck.id)) {
         setRetrySentences((prev) =>
-          prev.filter((s) => s.id !== currentSentence.id)
+          prev.filter((s) => s.id !== sentenceToCheck.id)
         );
       }
     }
@@ -192,12 +191,12 @@ const Exercises = () => {
   };
 
   const handleIncorrectAnswer = () => {
-    const currentSentence = sentences?.[currentIndex];
-    if (!currentSentence) return;
+    const sentenceToCheck = sentences?.[currentIndex];
+    if (!sentenceToCheck) return;
 
     // If this is the first incorrect attempt for this sentence, add it to retrySentences
-    if (!hasIncorrectAttempt && !retrySentences.some((s) => s.id === currentSentence.id)) {
-      setRetrySentences((prev) => [...prev, currentSentence]);
+    if (!hasIncorrectAttempt && !retrySentences.some((s) => s.id === sentenceToCheck.id)) {
+      setRetrySentences((prev) => [...prev, sentenceToCheck]);
     }
 
     setHasIncorrectAttempt(true);
@@ -231,6 +230,11 @@ const Exercises = () => {
   const progress = sentences ? (answeredCount / sentences.length) * 100 : 0;
   const isComplete = sentences && answeredCount === sentences.length;
   const isOutOfSentences = sentences && sentences.length < 6;
+  const currentSentence = sentences?.[currentIndex].id;
+
+  useEffect(() => {
+    setCurrentSentence(currentSentence);
+  }, [currentSentence, setCurrentSentence]);
 
   return (
     <div className="w-full max-w-3xl mx-auto">
