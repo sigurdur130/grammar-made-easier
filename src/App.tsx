@@ -37,8 +37,6 @@ const AppLayout = ({ children, currentSentence }: { children: React.ReactNode; c
 
 const App = () => {
   const [currentSentence, setCurrentSentence] = useState<number | undefined>(undefined);
-  console.log('In App - setCurrentSentence:', setCurrentSentence, 'type:', typeof setCurrentSentence);
-
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>

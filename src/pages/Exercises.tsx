@@ -37,7 +37,6 @@ interface CasesFilters {
 }
 
 const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | undefined) => void }) => {
-  console.log('setCurrentSentence:', setCurrentSentence, 'type:', typeof setCurrentSentence);
 
   const { category, subcategory } = useParams();
 
@@ -202,7 +201,7 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
     setHasIncorrectAttempt(true);
   };
 
-  // This is Kilroy. He updates pending filters when user makes changes in the sidebar. He's fucking with my exemplars when he shouldn't be!
+  // This is Kilroy. He updates pending filters when user makes changes in the sidebar.
   const handleFiltersChange = (filters: CasesFilters) => {
     setPendingFilterChanges(filters);
   };
@@ -231,6 +230,30 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
   const isComplete = sentences && answeredCount === sentences.length;
   const isOutOfSentences = sentences && sentences.length < 6;
   const currentSentence = sentences?.[currentIndex].id;
+
+  const [hasSentNotification, setHasSentNotification] = useState(false);
+
+  useEffect(() => {
+    if (isOutOfSentences && !hasSentNotification) {
+      setHasSentNotification(true);
+
+      fetch("/functions/v1/notify-category-completed", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category,
+          subcategory,
+          filters: {
+            caseFilters: currentAppliedFilters.caseFilters.join(", "),
+            numberFilters: currentAppliedFilters.numberFilters.join(", "),
+            definitenessFilters: currentAppliedFilters.definitenessFilters.join(", "),
+            exemplarFilters: currentAppliedFilters.exemplarFilters.join(", "),
+          }
+        })
+      }).catch(console.error);
+    }
+  }, [isOutOfSentences, hasSentNotification]);
+
 
   useEffect(() => {
     setCurrentSentence(currentSentence);

@@ -13,6 +13,12 @@ const corsHeaders = {
 interface NotificationRequest {
   category: string;
   subcategory: string;
+  filters: {
+    caseFilters: string;
+    numberFilters: string;
+    definitenessFilters: string;
+    exemplarFilters: string;
+  };
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -22,7 +28,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { category, subcategory }: NotificationRequest = await req.json();
+    const { category, subcategory, filters }: NotificationRequest = await req.json();
     const timestamp = new Date().toISOString();
 
     const emailResponse = await resend.emails.send({
@@ -34,6 +40,13 @@ const handler = async (req: Request): Promise<Response> => {
         <p><strong>Category:</strong> ${category}</p>
         <p><strong>Subcategory:</strong> ${subcategory}</p>
         <p><strong>Timestamp:</strong> ${timestamp}</p>
+        <p><strong>Filters:</strong></p>
+        <ul>
+          <li>Case: ${filters.caseFilters}</li>
+          <li>Number: ${filters.numberFilters}</li>
+          <li>Definiteness: ${filters.definitenessFilters}</li>
+          <li>Exemplars: ${filters.exemplarFilters}</li>
+        </ul>
         <p>Time to add more sentences to the database!</p>
       `,
     });
