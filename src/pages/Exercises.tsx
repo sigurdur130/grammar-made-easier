@@ -237,7 +237,7 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
     if (isOutOfSentences && !hasSentNotification) {
       setHasSentNotification(true);
 
-      fetch("/functions/v1/notify-category-completed", {
+      fetch("https://mfqpuxijcbdhtqizpcdu.functions.supabase.co/notify-category-completed", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
