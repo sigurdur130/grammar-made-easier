@@ -17,9 +17,9 @@ interface EndScreenProps {
 const getScoreMessage = (firstTryCorrect: number, total: number): string => {
   switch (firstTryCorrect) {
     case 0:
-      return "Ouch, 0/6 right on the first try. That's got to hurt. Maybe hit the books and try again?";
+      return "Ouch, 0/6 right on the first try. Maybe hit the books and try again? There are great resources in Further Reading below!";
     case 1:
-      return "1/6 right on the first try. Hey, Rome wasn't built in a day! Keep going!";
+      return "1/6 right on the first try. Hey, Rome wasn't built in a day; keep going! Maybe check our Further Reading below?";
     case 2:
       return "2/6 right on the first try. You're getting there! Every journey starts with a single step.";
     case 3:

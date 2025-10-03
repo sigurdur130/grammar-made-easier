@@ -134,7 +134,7 @@ export const FeedbackInSidebar = ({ currentSentence }: { currentSentence?: numbe
                 required
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
-                placeholder="If your feedback refers to a particular sentence, please include the English translation so I know which sentence we're talking about =)"
+                placeholder="Thanks so much for taking the time! I read every piece of feedback and it helps me improve the app."
                 className="min-h-[150px]"
               />
             </div>

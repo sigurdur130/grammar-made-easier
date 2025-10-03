@@ -12,6 +12,7 @@ import { LearnWithTeacher } from "./sidebar/LearnWithTeacher";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 type Subcategory = {
   subcategory: string;

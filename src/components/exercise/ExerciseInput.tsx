@@ -53,10 +53,12 @@ export const ExerciseInput = forwardRef<ExerciseInputHandle, ExerciseInputProps>
         <span
           className={`absolute transition-all duration-200 pointer-events-none z-10 whitespace-nowrap ${
             isFocused || answer.length > 0
-              ? `-top-[14px] left-3 text-xs bg-background px-1 ${
-                isFocused && isCorrect === false ? "text-red-500" : "text-muted-foreground"
+              ? `-top-[16px] left-3 text-xs bg-background px-1 ${ // Focused or has input. No answer check yet.
+                isCorrect === false // Also check  answer state
+                ? "text-red-500 dark:bg-muted bg-background" // Answer was wrong
+                : "text-muted-foreground dark:bg-muted bg-background" // Hasn't been answered yet
               }`
-              : "top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-base text-muted-foreground/60"
+              : "top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-base text-muted-foreground/60" // Default: not focused and empty
           }`}
         >
           {baseForm}

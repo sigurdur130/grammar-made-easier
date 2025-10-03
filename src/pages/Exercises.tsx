@@ -263,7 +263,7 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
   return (
     <div className="w-full max-w-3xl mx-auto">
       <div className="top-12 md:top-0 bg-background/95 backdrop-blur-sm z-10 pb-2 -mt-2 pt-2">
-        <Progress value={progress} className="mb-3" />
+        <Progress value={progress} className="mb-3 dark:bg-muted/50" />
         {subcategory === "Cases" && (
           <div className="flex justify-start mb-3">
             <Button

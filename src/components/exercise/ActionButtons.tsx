@@ -21,7 +21,7 @@ export function ActionButtons({
     <div className="flex items-center justify-center gap-4">
       <Button
         onClick={onCheck}
-        className="px-8"
+        className="px-8 dark:bg-primary/80"
       >
         Check
       </Button>
