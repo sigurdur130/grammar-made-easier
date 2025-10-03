@@ -37,7 +37,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "Icelandic Made Easier <onboarding@resend.dev>",
       to: ["siggi@icelandicmadeeasier.com"],
-      subject: "Category Completed! 🎉",
+      subject: "This is a test! Delete this in a bit. Category Completed! 🎉",
       html: `
         <h1>A user has completed all available sentences!</h1>
         <p><strong>Category:</strong> ${category}</p>
