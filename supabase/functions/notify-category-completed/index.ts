@@ -10,34 +10,20 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-interface NotificationRequest {
-  category: string;
-  subcategory: string;
-  filters: {
-    caseFilters: string;
-    numberFilters: string;
-    definitenessFilters: string;
-    exemplarFilters: string;
-  };
-}
-
-const handler = async (req: Request): Promise<Response> => {
+const handler = async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const bodyText = await req.text();
-    console.log("Incoming body:", await req.text());
-
-    const { category, subcategory, filters }: NotificationRequest = await req.json();
+    const { category, subcategory, filters } = await req.json();
     const timestamp = new Date().toISOString();
 
     const emailResponse = await resend.emails.send({
       from: "Icelandic Made Easier <onboarding@resend.dev>",
       to: ["siggi@icelandicmadeeasier.com"],
-      subject: "This is a test! Delete this in a bit. Category Completed! 🎉",
+      subject: "Category Completed! 🎉",
       html: `
         <h1>A user has completed all available sentences!</h1>
         <p><strong>Category:</strong> ${category}</p>
@@ -64,7 +50,7 @@ const handler = async (req: Request): Promise<Response> => {
         ...corsHeaders,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in notify-category-completed function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
