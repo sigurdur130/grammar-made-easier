@@ -236,6 +236,7 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
   useEffect(() => {
     if (isOutOfSentences && !hasSentNotification) {
       setHasSentNotification(true);
+      console.log(fetch use-effect has triggered);
 
       fetch("https://mfqpuxijcbdhtqizpcdu.functions.supabase.co/notify-category-completed", {
         method: "POST",
