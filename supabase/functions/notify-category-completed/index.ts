@@ -29,7 +29,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const bodyText = await req.text();
-    console.log("Incoming request body:", bodyText);
+    console.log("Incoming body:", await req.text());
 
     const { category, subcategory, filters }: NotificationRequest = await req.json();
     const timestamp = new Date().toISOString();
@@ -45,6 +45,7 @@ const handler = async (req: Request): Promise<Response> => {
         <p><strong>Timestamp:</strong> ${timestamp}</p>
         <p><strong>Filters:</strong></p>
         <ul>
+          <li>Filters raw: ${JSON.stringify(filters)}</li>
           <li>Case: ${filters.caseFilters}</li>
           <li>Number: ${filters.numberFilters}</li>
           <li>Definiteness: ${filters.definitenessFilters}</li>
