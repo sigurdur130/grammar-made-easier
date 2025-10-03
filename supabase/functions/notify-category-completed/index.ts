@@ -28,6 +28,9 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    const bodyText = await req.text();
+    console.log("Incoming request body:", bodyText);
+
     const { category, subcategory, filters }: NotificationRequest = await req.json();
     const timestamp = new Date().toISOString();
 
