@@ -1,4 +1,4 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Filters } from "./Filters";
 
@@ -51,8 +51,9 @@ export function ExerciseFilterSidebar({
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="sm:max-w-lg flex flex-col p-6">
-        <SheetHeader>
+        <SheetHeader className="sr-only">
           <SheetTitle>Filters</SheetTitle>
+          <SheetDescription>Refine exercises by selecting filters below.</SheetDescription>
         </SheetHeader>
         
         <div className="flex flex-col flex-1 overflow-hidden">

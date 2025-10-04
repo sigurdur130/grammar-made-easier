@@ -109,11 +109,11 @@ export function Filters({
         return (
         <AccordionItem key={gender} value={gender}>
           <AccordionTrigger className="font-medium text-sm">{gender}</AccordionTrigger>
-          <AccordionContent className="p-3">
+          <AccordionContent className="p-3 pl-4">
             <div className="flex gap-4">
               
               {/* Strong Column */}
-              <div className="flex-1">
+              <div className="flex-1 border p-2 rounded-lg">
                 <div className="font-semibold mb-2">Strong</div>
                 <div className="flex flex-col gap-2">
                   {strongExemplars.map((ex) => (
@@ -136,7 +136,7 @@ export function Filters({
               </div>
 
               {/* Weak Column */}
-              <div className="flex-1">
+              <div className="flex-1 flex-1 border p-2 rounded-lg">
                 <div className="font-semibold mb-2">Weak</div>
                 <div className="flex flex-col gap-2">
                   {weakExemplars.map((ex) => (
