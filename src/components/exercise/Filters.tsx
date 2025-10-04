@@ -87,7 +87,7 @@ export function Filters({
   // --- Exemplar rendering ---
   const genderOrder = ["Masculine", "Feminine", "Neuter"];
   const renderExemplarAccordion = () => (
-    <Accordion type="multiple" defaultValue={["Masculine","Feminine", "Neuter"]} className="">
+    <Accordion type="multiple" className="">
       {genderOrder.map((gender) => {
         const genderExemplars = exemplars.filter(e => e.gender === gender);
         const sortedExemplars = genderExemplars.sort((a, b) => {
@@ -168,7 +168,7 @@ export function Filters({
 
   return (
   <div className="w-full max-w-3xl mx-auto mb-6 py-4 pl-4 space-y-6">
-    <Accordion type="multiple" defaultValue={["exemplars"]}>
+    <Accordion type="multiple">
 
       {/* Grammar Filter Accordion */}
       <AccordionItem value="grammar">
