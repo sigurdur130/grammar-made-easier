@@ -8,6 +8,7 @@ interface Exemplar {
   exemplar: string;
   gender: string | null;
   default: boolean | null;
+  weak_strong: string | null;
 }
 
 interface FiltersProps {
@@ -86,7 +87,7 @@ export function Filters({
   // --- Exemplar rendering ---
   const genderOrder = ["Masculine", "Feminine", "Neuter"];
   const renderExemplarAccordion = () => (
-    <Accordion type="multiple" defaultValue={[]} className="">
+    <Accordion type="multiple" defaultValue={["Masculine","Feminine", "Neuter"]} className="">
       {genderOrder.map((gender) => {
         const genderExemplars = exemplars.filter(e => e.gender === gender);
         const sortedExemplars = genderExemplars.sort((a, b) => {
@@ -94,41 +95,80 @@ export function Filters({
           if (!a.default && b.default) return 1;
           return 0;
         });
-
+        
         if (!genderExemplars.length) return null;
 
+        const strongExemplars = genderExemplars
+          .filter(e => e.weak_strong === 'Strong')
+          .sort((a, b) => (a.default && !b.default ? -1 : !a.default && b.default ? 1 : 0));
+        const weakExemplars = genderExemplars
+          .filter(e => e.weak_strong === 'Weak')
+          .sort((a, b) => (a.default && !b.default ? -1 : !a.default && b.default ? 1 : 0)
+          );
+
         return (
-          <AccordionItem key={gender} value={gender}>
-            <AccordionTrigger className="font-medium text-sm">{gender}</AccordionTrigger>
-            <AccordionContent className="p-3">
-              <div className="grid grid-cols-2 gap-2 pb-4">
-                {sortedExemplars.map((ex) => (
-                  <label key={ex.id} className="flex items-center gap-2 cursor-pointer">
-                    <Checkbox
-                      className="h-4 w-4"
-                      checked={exemplarFilters.includes(ex.id)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          handleExemplarChange([...exemplarFilters, ex.id]);
-                        } else {
-                          handleExemplarChange(exemplarFilters.filter(id => id !== ex.id));
-                        }
-                      }}
-                    />
-                    {ex.exemplar}
-                  </label>
-                ))}
+        <AccordionItem key={gender} value={gender}>
+          <AccordionTrigger className="font-medium text-sm">{gender}</AccordionTrigger>
+          <AccordionContent className="p-3">
+            <div className="flex gap-4">
+              
+              {/* Strong Column */}
+              <div className="flex-1">
+                <div className="font-semibold mb-2">Strong</div>
+                <div className="flex flex-col gap-2">
+                  {strongExemplars.map((ex) => (
+                    <label key={ex.id} className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        className="h-4 w-4"
+                        checked={exemplarFilters.includes(ex.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            handleExemplarChange([...exemplarFilters, ex.id]);
+                          } else {
+                            handleExemplarChange(exemplarFilters.filter(id => id !== ex.id));
+                          }
+                        }}
+                      />
+                      {ex.exemplar}
+                    </label>
+                  ))}
+                </div>
               </div>
-            </AccordionContent>
-          </AccordionItem>
-        );
-      })}
-    </Accordion>
-  );
+
+              {/* Weak Column */}
+              <div className="flex-1">
+                <div className="font-semibold mb-2">Weak</div>
+                <div className="flex flex-col gap-2">
+                  {weakExemplars.map((ex) => (
+                    <label key={ex.id} className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        className="h-4 w-4"
+                        checked={exemplarFilters.includes(ex.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            handleExemplarChange([...exemplarFilters, ex.id]);
+                          } else {
+                            handleExemplarChange(exemplarFilters.filter(id => id !== ex.id));
+                          }
+                        }}
+                      />
+                      {ex.exemplar}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      );
+    })}
+  </Accordion>
+);
 
   return (
   <div className="w-full max-w-3xl mx-auto mb-6 py-4 pl-4 space-y-6">
-    <Accordion type="multiple">
+    <Accordion type="multiple" defaultValue={["exemplars"]}>
 
       {/* Grammar Filter Accordion */}
       <AccordionItem value="grammar">

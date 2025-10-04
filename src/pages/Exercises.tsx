@@ -36,6 +36,14 @@ interface CasesFilters {
   exemplarFilters: number[];
 }
 
+interface Exemplar {
+  id: number;
+  exemplar: string;
+  gender: string | null;
+  default: boolean | null;
+  weak_strong: string | null;
+}
+
 const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | undefined) => void }) => {
 
   const { category, subcategory } = useParams();
@@ -64,9 +72,14 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
     queryFn: async () => {
       const { data, error } = await supabase
         .from("exemplars")
-        .select("id, exemplar, gender, default")
+        .select("id, exemplar, gender, default, weak_strong")
         .order("gender");
-      if (error) throw error;
+
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+
       return data;
     },
   });
@@ -236,7 +249,6 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
   useEffect(() => {
     if (isOutOfSentences && !hasSentNotification) {
       setHasSentNotification(true);
-      console.log("fetch use-effect has triggered. Current applied filters:", currentAppliedFilters);
 
       fetch("https://mfqpuxijcbdhtqizpcdu.functions.supabase.co/notify-category-completed", {
         method: "POST",
