@@ -11,7 +11,7 @@ interface CasesFilters {
 
 interface Exemplar {
   id: number;
-  exemplar: string;
+  exemplar_name: string;
   gender: string | null;
   default: boolean | null;
   weak_strong: string | null;

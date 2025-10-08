@@ -16,7 +16,7 @@ interface Sentence {
   english_translation: string | null;
   icelandic_left: string | null;
   icelandic_right: string | null;
-  correct_answer: string | null;
+  correct_answer: string[] | null;
   subcategory: string | null;
   base_form: string | null;
   word_category: string | null;

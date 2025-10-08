@@ -7,7 +7,7 @@ interface ActionButtonsProps {
   showAnswerButton: boolean;
   showAnswer: boolean;
   onToggleAnswer: () => void;
-  correctAnswer: string | null;
+  correctAnswer: string[] | null;
 }
 
 export function ActionButtons({ 
@@ -39,9 +39,10 @@ export function ActionButtons({
       
       {showAnswer && correctAnswer && (
         <span className="text-primary font-medium">
-          {correctAnswer}
+          {correctAnswer.join(', ')}
         </span>
       )}
+
     </div>
   );
 }

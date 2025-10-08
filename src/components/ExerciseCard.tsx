@@ -14,7 +14,7 @@ interface ExerciseCardProps {
     icelandic_left: string | null;
     icelandic_right: string | null;
     english_translation: string | null;
-    correct_answer: string | null;
+    correct_answer: string[] | null;
     base_form: string | null;
     case: string | null;
   };
@@ -49,8 +49,15 @@ export function ExerciseCard({ sentence, onCorrect, onIncorrect, subcategory }: 
   }, [sentence]);
 
   const handleCheck = () => {
-    const correctAnswer = sentence.correct_answer ? String(sentence.correct_answer) : '';
-    const correct = answer.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
+
+    // Parse the correct answers array from JSONB
+    const correctAnswers = sentence.correct_answer || [];
+
+    // Check if the user's answer matches ANY of the correct answers
+    const correct = correctAnswers.some(
+      correctAnswer => answer.toLowerCase().trim() === correctAnswer.toLowerCase().trim()
+    );
+    
     setIsCorrect(correct);
     
     if (correct) {
