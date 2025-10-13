@@ -85,7 +85,7 @@ export type Database = {
         Row: {
           base_form: string | null
           case: string | null
-          correct_answer: string | null
+          correct_answer: string[] | null
           created_at: string
           definiteness: string | null
           degree: string | null
@@ -103,7 +103,7 @@ export type Database = {
         Insert: {
           base_form?: string | null
           case?: string | null
-          correct_answer?: string | null
+          correct_answer?: string[] | null
           created_at?: string
           definiteness?: string | null
           degree?: string | null
@@ -121,7 +121,7 @@ export type Database = {
         Update: {
           base_form?: string | null
           case?: string | null
-          correct_answer?: string | null
+          correct_answer?: string[] | null
           created_at?: string
           definiteness?: string | null
           degree?: string | null
@@ -218,7 +218,7 @@ Functions: {
       english_translation: string
       icelandic_left: string
       icelandic_right: string
-      correct_answer: string
+      correct_answer: string[]
       subcategory: string
       base_form: string
       word_category: string
