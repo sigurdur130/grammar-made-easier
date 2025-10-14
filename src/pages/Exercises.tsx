@@ -10,6 +10,8 @@ import { ExerciseFilterSidebar } from "@/components/exercise/ExerciseFilterSideb
 import { supabase } from "@/integrations/supabase/client";
 import { FurtherReading } from "@/components/exercise/FurtherReading";
 import { useRef } from "react";
+import { useSearchParams } from "react-router-dom";
+import { parseFiltersFromURL, serializeFiltersToURL, getDefaultFilters } from "@/utils/filterUrlHelpers";
 
 interface Sentence {
   id: number;
@@ -38,7 +40,7 @@ interface CasesFilters {
 
 interface Exemplar {
   id: number;
-  exemplar: string;
+  exemplar_name: string;
   gender: string | null;
   default: boolean | null;
   weak_strong: string | null;
@@ -54,17 +56,30 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
   const [masteredIds, setMasteredIds] = useState<number[]>([]);
   const [retrySentences, setRetrySentences] = useState<Sentence[]>([]);
   const [hasIncorrectAttempt, setHasIncorrectAttempt] = useState(false);
-  const [currentAppliedFilters, setCurrentAppliedFilters] = useState<CasesFilters>({
-    caseFilters: ["Accusative"],
-    numberFilters: ["Singular"],
-    definitenessFilters: ["Indefinite"],
-    exemplarFilters: [5, 7, 1, 2, 11],
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  // For Cases subcategory, initialize filters from URL or use defaults
+  const initialFilters = subcategory === "Cases"
+    ? parseFiltersFromURL(searchParams)
+    : getDefaultFilters();
+  const [currentAppliedFilters, setCurrentAppliedFilters] = useState<CasesFilters>(initialFilters);
   const [pendingFilterChanges, setPendingFilterChanges] = useState(currentAppliedFilters);
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
   const clearIntentRef = useRef(true);
 
-
+  // Sync URL params with state for Cases subcategory
+  useEffect(() => {
+    if (subcategory === "Cases") {
+      // If URL has no filter params, initialize them with current filters
+      if (!searchParams.has('case')) {
+        const params = serializeFiltersToURL(currentAppliedFilters);
+        setSearchParams(params, { replace: true });
+      } else {
+        // If URL has params (from back/forward nav or direct link), sync to state
+        const filtersFromURL = parseFiltersFromURL(searchParams);
+        setCurrentAppliedFilters(filtersFromURL);
+      }
+    }
+  }, [searchParams, subcategory]);
 
   // Fetch exemplars for filter sidebar
   const { data: exemplars } = useQuery({
@@ -72,14 +87,13 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
     queryFn: async () => {
       const { data, error } = await supabase
         .from("exemplars")
-        .select("id, exemplar, gender, default, weak_strong")
+        .select("id, exemplar_name, gender, default, weak_strong")
         .order("gender");
 
       if (error) {
         console.error("Supabase error:", error);
         throw error;
       }
-
       return data;
     },
   });
@@ -219,9 +233,9 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
     setPendingFilterChanges(filters);
   };
 
-  // This is Samwise. He applies filters and closes sidebar.
   const handleApplyFilters = () => {
-    setCurrentAppliedFilters(pendingFilterChanges);
+    const params = serializeFiltersToURL(pendingFilterChanges);
+    setSearchParams(params);
     setIsFilterSidebarOpen(false);
   };
 
@@ -230,12 +244,16 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
     const defaultExemplars =
       exemplars?.filter((e) => e.default).map((e) => e.id) || [];
 
-    setPendingFilterChanges({
+    const resetFilters = {
       caseFilters: ["Accusative"],
       numberFilters: ["Singular"],
       definitenessFilters: ["Indefinite"],
       exemplarFilters: defaultExemplars,
-    });
+    };
+    
+    setPendingFilterChanges(resetFilters);
+    const params = serializeFiltersToURL(resetFilters);
+    setSearchParams(params);
   };
 
   // --- Derived state ---

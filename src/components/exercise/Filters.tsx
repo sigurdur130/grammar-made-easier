@@ -5,7 +5,7 @@ import { toast } from "@/hooks/use-toast";
 
 interface Exemplar {
   id: number;
-  exemplar: string;
+  exemplar_name: string;
   gender: string | null;
   default: boolean | null;
   weak_strong: string | null;
@@ -129,7 +129,7 @@ export function Filters({
                           }
                         }}
                       />
-                      {ex.exemplar}
+                      {ex.exemplar_name}
                     </label>
                   ))}
                 </div>
@@ -152,7 +152,7 @@ export function Filters({
                           }
                         }}
                       />
-                      {ex.exemplar}
+                      {ex.exemplar_name}
                     </label>
                   ))}
                 </div>

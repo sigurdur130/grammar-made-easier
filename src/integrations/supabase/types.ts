@@ -43,7 +43,7 @@ export type Database = {
         Row: {
           created_at: string
           default: boolean | null
-          exemplar: string
+          exemplar_name: string
           gender: string | null
           id: number
           weak_strong: string | null
@@ -51,7 +51,7 @@ export type Database = {
         Insert: {
           created_at?: string
           default?: boolean | null
-          exemplar: string
+          exemplar_name: string
           gender?: string | null
           id?: number
           weak_strong: string | null
@@ -59,7 +59,7 @@ export type Database = {
         Update: {
           created_at?: string
           default?: boolean | null
-          exemplar?: string
+          exemplar_name?: string
           gender?: string | null
           id?: number
           weak_strong: string | null
