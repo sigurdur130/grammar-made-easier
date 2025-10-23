@@ -4,8 +4,6 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { toast } from "@/hooks/use-toast";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Info } from "lucide-react";
-import { Json } from "@/integrations/supabase/types";
-
 
 interface Exemplar {
   id: number;
