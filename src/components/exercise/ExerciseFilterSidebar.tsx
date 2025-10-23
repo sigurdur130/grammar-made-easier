@@ -15,6 +15,9 @@ interface Exemplar {
   gender: string | null;
   default: boolean | null;
   weak_strong: string | null;
+  about: string | null;
+  pills: string[] | null;
+  bin_link: string | null;
 }
 
 interface ExerciseFilterSidebarProps {

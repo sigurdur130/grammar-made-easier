@@ -2,6 +2,10 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { Checkbox } from "@/components/ui/checkbox";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { toast } from "@/hooks/use-toast";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Info } from "lucide-react";
+import { Json } from "@/integrations/supabase/types";
+
 
 interface Exemplar {
   id: number;
@@ -9,6 +13,9 @@ interface Exemplar {
   gender: string | null;
   default: boolean | null;
   weak_strong: string | null;
+  about: string | null;
+  pills: string[] | null;
+  bin_link: string | null;
 }
 
 interface FiltersProps {
@@ -129,8 +136,48 @@ export function Filters({
                           }
                         }}
                       />
-                      {ex.exemplar_name}
+
+                      <span>{ex.exemplar_name}</span>
+
+                      {/* Info Popover */}
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            className="text-muted-foreground hover:text-primary focus:outline-none"
+                          >
+                            <Info className="w-4 h-4" />
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="max-w-xs p-3 space-y-2.5 text-sm rounded-md shadow-md pointer-events-auto">
+                          {ex.about && <p className="whitespace-pre-line">{ex.about}</p>}
+
+                          {ex.pills && ex.pills.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {ex.pills.map((pill, i) => (
+                                <span
+                                  key={i}
+                                  className="px-2 py-0.5 text-xs bg-muted rounded-full"
+                                >
+                                  {pill}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {ex.bin_link && (
+                            <a
+                              href={ex.bin_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block text-primary underline text-xs">
+                              See {ex.exemplar_name} on BIN →
+                            </a>
+                          )}
+                        </PopoverContent>
+                      </Popover>
                     </label>
+
                   ))}
                 </div>
               </div>
@@ -152,8 +199,51 @@ export function Filters({
                           }
                         }}
                       />
-                      {ex.exemplar_name}
+
+                      <span>{ex.exemplar_name}</span>
+
+                      {/* Info Popover */}
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            className="text-muted-foreground hover:text-primary focus:outline-none"
+                            onClick={(e) => e.stopPropagation()} // prevents label click toggling checkbox
+                          >
+                            <Info className="w-4 h-4" />
+                          </button>
+                        </PopoverTrigger>
+
+                        <PopoverContent className="max-w-xs p-3 space-y-2.5 text-sm rounded-md shadow-md">
+                          {ex.about && <p className="whitespace-pre-line">{ex.about}</p>}
+
+                          {ex.pills && ex.pills.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {ex.pills.map((pill, i) => (
+                                <span
+                                  key={i}
+                                  className="px-2 py-0.5 text-xs bg-muted rounded-full"
+                                >
+                                  {pill}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {ex.bin_link && (
+                            <a
+                              href={ex.bin_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block text-primary underline text-xs"
+                            >
+                              See {ex.exemplar_name} on BIN →
+                            </a>
+                          )}
+                        </PopoverContent>
+                      </Popover>
                     </label>
+
                   ))}
                 </div>
               </div>
