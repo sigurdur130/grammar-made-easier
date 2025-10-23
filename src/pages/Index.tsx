@@ -55,7 +55,7 @@ const Index = () => {
   );
 
   return (
-    <div className="px-4 py-6 md:p-6">
+    <div className="md:p-6">
       <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center px-2">
         Grammar made easi(er)
       </h1>
