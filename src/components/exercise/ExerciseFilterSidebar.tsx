@@ -53,7 +53,7 @@ export function ExerciseFilterSidebar({
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="sm:max-w-lg flex flex-col pb-6 sm:p-6">
+      <SheetContent side="right" className="sm:max-w-lg flex flex-col p-0 sm:p-6">
         <SheetHeader className="sr-only">
           <SheetTitle>Filters</SheetTitle>
           <SheetDescription>Refine exercises by selecting filters below.</SheetDescription>
