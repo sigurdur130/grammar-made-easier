@@ -47,6 +47,9 @@ export type Database = {
           gender: string | null
           id: number
           weak_strong: string | null
+          about: string | null
+          pills: string[] | null
+          bin_link: string | null
         }
         Insert: {
           created_at?: string
@@ -55,6 +58,9 @@ export type Database = {
           gender?: string | null
           id?: number
           weak_strong?: string | null
+          about?: string | null
+          pills?: string[] | null
+          bin_link?: string | null
         }
         Update: {
           created_at?: string
@@ -63,6 +69,9 @@ export type Database = {
           gender?: string | null
           id?: number
           weak_strong?: string | null
+          about?: string | null
+          pills?: string[] | null
+          bin_link?: string | null
         }
         Relationships: []
       }

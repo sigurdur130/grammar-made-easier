@@ -44,6 +44,9 @@ interface Exemplar {
   gender: string | null;
   default: boolean | null;
   weak_strong: string | null;
+  about: string | null;
+  pills: string[] | null;
+  bin_link: string | null;
 }
 
 const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | undefined) => void }) => {
@@ -87,7 +90,7 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
     queryFn: async () => {
       const { data, error } = await supabase
         .from("exemplars")
-        .select("id, exemplar_name, gender, default, weak_strong")
+        .select("id, exemplar_name, gender, default, weak_strong, about, pills, bin_link")
         .order("gender");
 
       if (error) {
