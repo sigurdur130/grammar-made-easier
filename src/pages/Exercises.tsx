@@ -115,7 +115,7 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
     },
   });
 
-  // This is Sir Findsalot. He fetches sentences, combining retrySentences and new random sentences as needed
+  // Fetch sentences based on subcategory, and applied filters
   const { data: sentences, isLoading, refetch } = useQuery({
     queryKey: ["sentences", subcategory, currentAppliedFilters],
     queryFn: async () => {
@@ -187,7 +187,7 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
     refetchOnWindowFocus: false,
   });
 
-  // This is Joan of Arc. She sets pending filters when sidebar opens. Triggers on currentAppliedFilters change too, to keep in sync.
+  // Set pending filters when sidebar opens. Triggers on currentAppliedFilters change too, to keep in sync.
   useEffect(() => {
     if (isFilterSidebarOpen) {
       setPendingFilterChanges(currentAppliedFilters);
@@ -231,7 +231,7 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
     setHasIncorrectAttempt(true);
   };
 
-  // This is Kilroy. He updates pending filters when user makes changes in the sidebar.
+  // Update pending filters when user makes changes in the sidebar.
   const handleFiltersChange = (filters: CasesFilters) => {
     setPendingFilterChanges(filters);
   };
@@ -242,7 +242,7 @@ const Exercises = ({ setCurrentSentence }: { setCurrentSentence: (id: number | u
     setIsFilterSidebarOpen(false);
   };
 
-  // This is Frodo. He resets filters to default values.
+  // Reset filters to default values when use clicks reset.
   const handleResetFilters = () => {
     const defaultExemplars =
       exemplars?.filter((e) => e.default).map((e) => e.id) || [];

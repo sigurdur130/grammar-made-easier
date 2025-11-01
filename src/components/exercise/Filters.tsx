@@ -34,6 +34,122 @@ const CASE_OPTIONS = ["Accusative", "Dative", "Genitive"];
 const NUMBER_OPTIONS = ["Singular", "Plural"];
 const DEFINITENESS_OPTIONS = ["Indefinite", "Definite"];
 
+{/* Toggle group for grammar like case, number, definiteness */}
+function MultiToggleGroup({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: string[];
+  value: string[];
+  onChange: (val: string[]) => void;
+}) {
+  return (
+    <div>
+      <div className="mb-2 font-medium">{label}</div>
+      <ToggleGroup
+        type="multiple"
+        value={value}
+        onValueChange={onChange}
+        className="flex flex-wrap gap-2 justify-start"
+      >
+        {options.map((option) => (
+          <ToggleGroupItem
+            key={option}
+            value={option}
+            className="px-6 py-2 rounded-md text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+          >
+            {option}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    </div>
+  );
+}
+
+{/* Inline reusable component for exemplar columns */}
+function ExemplarColumn({
+  label,
+  exemplars,
+  selectedIds,
+  onChange,
+}: {
+  label: string;
+  exemplars: {
+    id: number;
+    exemplar_name: string;
+    about?: string;
+    pills?: string[];
+    bin_link?: string;
+  }[];
+  selectedIds: number[];
+  onChange: (newSelected: number[]) => void;
+}) {
+  return (
+    <div className="flex-1 border p-2 rounded-lg">
+      <div className="font-semibold mb-2">{label}</div>
+      <div className="flex flex-col gap-2">
+        {exemplars.map((ex) => (
+          <label key={ex.id} className="flex items-center gap-2 cursor-pointer">
+            <Checkbox
+              className="h-4 w-4"
+              checked={selectedIds.includes(ex.id)}
+              onCheckedChange={(checked) => {
+                const newSelected = checked
+                  ? [...selectedIds, ex.id]
+                  : selectedIds.filter((id) => id !== ex.id);
+
+                onChange(newSelected);
+              }}
+            />
+
+            <span>{ex.exemplar_name}</span>
+
+            {/* Info Popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className="text-muted-foreground hover:text-primary focus:outline-none"
+                  onClick={(e) => e.stopPropagation()} // prevent toggling checkbox
+                >
+                  <Info className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="max-w-xs p-3 space-y-2.5 text-sm rounded-md shadow-md pointer-events-auto">
+                {ex.about && <p className="whitespace-pre-line">{ex.about}</p>}
+
+                {ex.pills && ex.pills.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {ex.pills.map((pill, i) => (
+                      <span key={i} className="px-2 py-0.5 text-xs bg-muted rounded-full">
+                        {pill}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {ex.bin_link && (
+                  <a
+                    href={ex.bin_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-primary underline text-xs"
+                  >
+                    See {ex.exemplar_name} on BIN →
+                  </a>
+                )}
+              </PopoverContent>
+            </Popover>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function Filters({
   caseFilters,
   numberFilters,
@@ -43,51 +159,32 @@ export function Filters({
   onFiltersChange,
 }: FiltersProps) {
 
-  // --- Cases / Number / Definiteness handlers ---
-  const handleCaseChange = (values: string[]) => {
-    if (values.length === 0) {
-      toast({
-        title: "If you deselect EVERYTHING, there won't be anything for you to practice!",
-        duration: 2000,
-      });
-        return;
-    }
-    onFiltersChange({ caseFilters: values, numberFilters, definitenessFilters, exemplarFilters });
-  };
+  //  Handlers for filter changes
+  type FilterKey = 
+  | "caseFilters" 
+  | "numberFilters" 
+  | "definitenessFilters" 
+  | "exemplarFilters";
 
-  const handleNumberChange = (values: string[]) => {
-    if (values.length === 0) {
-      toast({
-        title: "If you deselect EVERYTHING, there won't be anything for you to practice!",
-        duration: 2000,
-      });
-      return;
-    }
-    onFiltersChange({ caseFilters, numberFilters: values, definitenessFilters, exemplarFilters });
-  };
-
-  const handleDefinitenessChange = (values: string[]) => {
-    if (values.length === 0) {
+  function handleFilterChange<T extends string[] | number[]>(
+    key: FilterKey,
+    newValue: T
+  ) {
+    if (newValue.length === 0) {
       toast({
         title: "If you deselect EVERYTHING, there won't be anything for you to practice!",
         duration: 2000,
       });
       return;
     }
-    onFiltersChange({ caseFilters, numberFilters, definitenessFilters: values, exemplarFilters });
-  };
 
-  // --- Exemplar handler ---
-  const handleExemplarChange = (selected: number[]) => {
-      if (selected.length === 0) {
-        toast({
-          title: "If you deselect EVERYTHING, there won't be anything for you to practice!",
-          duration: 2000,
-        });
-        return;
-      }
-    onFiltersChange({ caseFilters, numberFilters, definitenessFilters, exemplarFilters: selected });
-  };
+    onFiltersChange({
+      caseFilters: key === "caseFilters" ? (newValue as string[]) : caseFilters,
+      numberFilters: key === "numberFilters" ? (newValue as string[]) : numberFilters,
+      definitenessFilters: key === "definitenessFilters" ? (newValue as string[]) : definitenessFilters,
+      exemplarFilters: key === "exemplarFilters" ? (newValue as number[]) : exemplarFilters,
+    });
+  }
 
   // --- Exemplar rendering ---
   const genderOrder = ["Masculine", "Feminine", "Neuter"];
@@ -95,11 +192,6 @@ export function Filters({
     <Accordion type="multiple" className="">
       {genderOrder.map((gender) => {
         const genderExemplars = exemplars.filter(e => e.gender === gender);
-        const sortedExemplars = genderExemplars.sort((a, b) => {
-          if (a.default && !b.default) return -1;
-          if (!a.default && b.default) return 1;
-          return 0;
-        });
         
         if (!genderExemplars.length) return null;
 
@@ -116,143 +208,25 @@ export function Filters({
           <AccordionTrigger className="font-medium text-sm">{gender}</AccordionTrigger>
           <AccordionContent className="p-3 pl-4">
             <div className="flex gap-4">
-              
-              {/* Strong Column */}
-              <div className="flex-1 border p-2 rounded-lg">
-                <div className="font-semibold mb-2">Strong</div>
-                <div className="flex flex-col gap-2">
-                  {strongExemplars.map((ex) => (
-                    <label key={ex.id} className="flex items-center gap-2 cursor-pointer">
-                      <Checkbox
-                        className="h-4 w-4"
-                        checked={exemplarFilters.includes(ex.id)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            handleExemplarChange([...exemplarFilters, ex.id]);
-                          } else {
-                            handleExemplarChange(exemplarFilters.filter(id => id !== ex.id));
-                          }
-                        }}
-                      />
-
-                      <span>{ex.exemplar_name}</span>
-
-                      {/* Info Popover */}
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <button
-                            type="button"
-                            className="text-muted-foreground hover:text-primary focus:outline-none"
-                          >
-                            <Info className="w-4 h-4" />
-                          </button>
-                        </PopoverTrigger>
-                        <PopoverContent className="max-w-xs p-3 space-y-2.5 text-sm rounded-md shadow-md pointer-events-auto">
-                          {ex.about && <p className="whitespace-pre-line">{ex.about}</p>}
-
-                          {ex.pills && ex.pills.length > 0 && (
-                            <div className="flex flex-wrap gap-1">
-                              {ex.pills.map((pill, i) => (
-                                <span
-                                  key={i}
-                                  className="px-2 py-0.5 text-xs bg-muted rounded-full"
-                                >
-                                  {pill}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-
-                          {ex.bin_link && (
-                            <a
-                              href={ex.bin_link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block text-primary underline text-xs">
-                              See {ex.exemplar_name} on BIN →
-                            </a>
-                          )}
-                        </PopoverContent>
-                      </Popover>
-                    </label>
-
-                  ))}
-                </div>
-              </div>
-
-              {/* Weak Column */}
-              <div className="flex-1 flex-1 border p-2 rounded-lg">
-                <div className="font-semibold mb-2">Weak</div>
-                <div className="flex flex-col gap-2">
-                  {weakExemplars.map((ex) => (
-                    <label key={ex.id} className="flex items-center gap-2 cursor-pointer">
-                      <Checkbox
-                        className="h-4 w-4"
-                        checked={exemplarFilters.includes(ex.id)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            handleExemplarChange([...exemplarFilters, ex.id]);
-                          } else {
-                            handleExemplarChange(exemplarFilters.filter(id => id !== ex.id));
-                          }
-                        }}
-                      />
-
-                      <span>{ex.exemplar_name}</span>
-
-                      {/* Info Popover */}
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <button
-                            type="button"
-                            className="text-muted-foreground hover:text-primary focus:outline-none"
-                            onClick={(e) => e.stopPropagation()} // prevents label click toggling checkbox
-                          >
-                            <Info className="w-4 h-4" />
-                          </button>
-                        </PopoverTrigger>
-
-                        <PopoverContent className="max-w-xs p-3 space-y-2.5 text-sm rounded-md shadow-md">
-                          {ex.about && <p className="whitespace-pre-line">{ex.about}</p>}
-
-                          {ex.pills && ex.pills.length > 0 && (
-                            <div className="flex flex-wrap gap-1">
-                              {ex.pills.map((pill, i) => (
-                                <span
-                                  key={i}
-                                  className="px-2 py-0.5 text-xs bg-muted rounded-full"
-                                >
-                                  {pill}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-
-                          {ex.bin_link && (
-                            <a
-                              href={ex.bin_link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block text-primary underline text-xs"
-                            >
-                              See {ex.exemplar_name} on BIN →
-                            </a>
-                          )}
-                        </PopoverContent>
-                      </Popover>
-                    </label>
-
-                  ))}
-                </div>
-              </div>
-
+              <ExemplarColumn
+                label="Strong"
+                exemplars={strongExemplars}
+                selectedIds={exemplarFilters}
+                onChange={(newSelected) => handleFilterChange("exemplarFilters", newSelected)}
+              />
+              <ExemplarColumn
+                label="Weak"
+                exemplars={weakExemplars}
+                selectedIds={exemplarFilters}
+                onChange={(newSelected) => handleFilterChange("exemplarFilters", newSelected)}
+              />
             </div>
           </AccordionContent>
         </AccordionItem>
-      );
-    })}
-  </Accordion>
-);
+        );
+      })}
+    </Accordion>
+  );
 
   return (
   <div className="w-full max-w-3xl mx-auto mb-6 py-4 pl-4 space-y-6">
@@ -263,59 +237,24 @@ export function Filters({
         <AccordionTrigger className="text-lg font-medium my-1">Grammar</AccordionTrigger>
         <AccordionContent className="">
           <div className="space-y-4 p-4 pt-2">
-            {/* Case Options */}
-            <ToggleGroup
-              type="multiple"
+            <MultiToggleGroup
+              label="Case"
+              options={CASE_OPTIONS}
               value={caseFilters}
-              onValueChange={handleCaseChange}
-              className="flex flex-wrap gap-2 justify-start"
-            >
-              {CASE_OPTIONS.map((option) => (
-                <ToggleGroupItem
-                  key={option}
-                  value={option}
-                  className="px-6 py-2 rounded-md text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                >
-                  {option}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-
-            {/* Number Options */}
-            <ToggleGroup
-              type="multiple"
+              onChange={(values) => handleFilterChange("caseFilters", values)}
+            />
+            <MultiToggleGroup
+              label="Number"
+              options={NUMBER_OPTIONS}
               value={numberFilters}
-              onValueChange={handleNumberChange}
-              className="flex flex-wrap gap-2 justify-start"
-            >
-              {NUMBER_OPTIONS.map((option) => (
-                <ToggleGroupItem
-                  key={option}
-                  value={option}
-                  className="px-6 py-2 rounded-md text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                >
-                  {option}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-
-            {/* Definiteness Options */}
-            <ToggleGroup
-              type="multiple"
+              onChange={(values) => handleFilterChange("numberFilters", values)}
+            />
+            <MultiToggleGroup
+              label="Definiteness"
+              options={DEFINITENESS_OPTIONS}
               value={definitenessFilters}
-              onValueChange={handleDefinitenessChange}
-              className="flex flex-wrap gap-2 justify-start"
-            >
-              {DEFINITENESS_OPTIONS.map((option) => (
-                <ToggleGroupItem
-                  key={option}
-                  value={option}
-                  className="px-6 py-2 rounded-md text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                >
-                  {option}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
+              onChange={(values) => handleFilterChange("definitenessFilters", values)}
+            />
           </div>
         </AccordionContent>
       </AccordionItem>
