@@ -34,6 +34,42 @@ const CASE_OPTIONS = ["Accusative", "Dative", "Genitive"];
 const NUMBER_OPTIONS = ["Singular", "Plural"];
 const DEFINITENESS_OPTIONS = ["Indefinite", "Definite"];
 
+{/* Toggle group for grammar like case, number, definiteness */}
+function MultiToggleGroup({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: string[];
+  value: string[];
+  onChange: (val: string[]) => void;
+}) {
+  return (
+    <div>
+      <div className="mb-2 font-medium">{label}</div>
+      <ToggleGroup
+        type="multiple"
+        value={value}
+        onValueChange={onChange}
+        className="flex flex-wrap gap-2 justify-start"
+      >
+        {options.map((option) => (
+          <ToggleGroupItem
+            key={option}
+            value={option}
+            className="px-6 py-2 rounded-md text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+          >
+            {option}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    </div>
+  );
+}
+
+
 export function Filters({
   caseFilters,
   numberFilters,
@@ -95,11 +131,6 @@ export function Filters({
     <Accordion type="multiple" className="">
       {genderOrder.map((gender) => {
         const genderExemplars = exemplars.filter(e => e.gender === gender);
-        const sortedExemplars = genderExemplars.sort((a, b) => {
-          if (a.default && !b.default) return -1;
-          if (!a.default && b.default) return 1;
-          return 0;
-        });
         
         if (!genderExemplars.length) return null;
 
@@ -263,59 +294,24 @@ export function Filters({
         <AccordionTrigger className="text-lg font-medium my-1">Grammar</AccordionTrigger>
         <AccordionContent className="">
           <div className="space-y-4 p-4 pt-2">
-            {/* Case Options */}
-            <ToggleGroup
-              type="multiple"
+            <MultiToggleGroup
+              label="Case"
+              options={CASE_OPTIONS}
               value={caseFilters}
-              onValueChange={handleCaseChange}
-              className="flex flex-wrap gap-2 justify-start"
-            >
-              {CASE_OPTIONS.map((option) => (
-                <ToggleGroupItem
-                  key={option}
-                  value={option}
-                  className="px-6 py-2 rounded-md text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                >
-                  {option}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-
-            {/* Number Options */}
-            <ToggleGroup
-              type="multiple"
+              onChange={handleCaseChange}
+            />
+            <MultiToggleGroup
+              label="Number"
+              options={NUMBER_OPTIONS}
               value={numberFilters}
-              onValueChange={handleNumberChange}
-              className="flex flex-wrap gap-2 justify-start"
-            >
-              {NUMBER_OPTIONS.map((option) => (
-                <ToggleGroupItem
-                  key={option}
-                  value={option}
-                  className="px-6 py-2 rounded-md text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                >
-                  {option}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-
-            {/* Definiteness Options */}
-            <ToggleGroup
-              type="multiple"
+              onChange={handleNumberChange}
+            />
+            <MultiToggleGroup
+              label="Definiteness"
+              options={DEFINITENESS_OPTIONS}
               value={definitenessFilters}
-              onValueChange={handleDefinitenessChange}
-              className="flex flex-wrap gap-2 justify-start"
-            >
-              {DEFINITENESS_OPTIONS.map((option) => (
-                <ToggleGroupItem
-                  key={option}
-                  value={option}
-                  className="px-6 py-2 rounded-md text-sm border border-input bg-muted/30 hover:bg-muted/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                >
-                  {option}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
+              onChange={handleDefinitenessChange}
+            />
           </div>
         </AccordionContent>
       </AccordionItem>
