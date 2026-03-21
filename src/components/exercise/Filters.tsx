@@ -188,6 +188,47 @@ export function Filters({
 
   // --- Exemplar rendering ---
   const genderOrder = ["Masculine", "Feminine", "Neuter"];
+
+  function GenderCheckbox({
+    label,
+    genderExemplars,
+    selectedIds,
+    onChange,
+  }: {
+    label: string;
+    genderExemplars: Exemplar[];
+    selectedIds: number[];
+    onChange: (newSelected: number[]) => void;
+  }) {
+    const genderIds = genderExemplars.map(e => e.id);
+    const selectedInGender = genderIds.filter(id => selectedIds.includes(id));
+
+    const allSelected = selectedInGender.length === genderIds.length;
+    const noneSelected = selectedInGender.length === 0;
+
+    const checkedState = allSelected ? true : noneSelected ? false : "indeterminate";
+
+    return (
+      <div className="flex items-center gap-2">
+        <Checkbox
+          className="h-4 w-4"
+          checked={checkedState}
+          onClick={(e) => e.stopPropagation()}
+          onCheckedChange={() => {
+            let newSelected;
+            if (allSelected) {
+              newSelected = selectedIds.filter(id => !genderIds.includes(id));
+            } else {
+              newSelected = Array.from(new Set([...selectedIds, ...genderIds]));
+            }
+            onChange(newSelected);
+          }}
+        />
+        <span>{label}</span>
+      </div>
+    );
+  }
+
   const renderExemplarAccordion = () => (
     <Accordion type="multiple" className="">
       {genderOrder.map((gender) => {
@@ -205,7 +246,14 @@ export function Filters({
 
         return (
         <AccordionItem key={gender} value={gender}>
-          <AccordionTrigger className="font-medium text-sm">{gender}</AccordionTrigger>
+          <AccordionTrigger className="font-medium text-sm">
+            <GenderCheckbox
+              label={gender}
+              genderExemplars={[...strongExemplars, ...weakExemplars]}
+              selectedIds={exemplarFilters}
+              onChange={(newSelected) => handleFilterChange("exemplarFilters", newSelected)}
+            />
+          </AccordionTrigger>
           <AccordionContent className="p-3 pl-4">
             <div className="flex gap-4">
               <ExemplarColumn
